@@ -25,7 +25,8 @@ public:
 
 	virtual void onEnter() {};
 	virtual void onExit() {};
-
+	void addEntity(Entity* entity);
+	void removeEntity(Entity* entity);
 	//virtual void render(Image* framebuffer) {};
 	virtual void update(float second_elapsed) {};
 };
