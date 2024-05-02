@@ -1,5 +1,6 @@
 #pragma once
 #include "framework/input.h"
+#include "framework/entities/entity.h"
 #include <string>
 
 enum {
@@ -20,6 +21,7 @@ public:
 
 
 	Stage() { };
+	std::vector<Entity*> entities;
 
 	virtual void onEnter() {};
 	virtual void onExit() {};
