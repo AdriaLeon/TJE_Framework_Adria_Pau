@@ -11,7 +11,7 @@ class EntityMesh : public Entity {
 
 	public:
 	EntityMesh() {};
-	EntityMesh(Mesh* mesh, const Material* material, const std::string& name = "");
+	//EntityMesh(Mesh* mesh, const Material* material, const std::string& name = "");
 	~EntityMesh();
 
 	// Attributes of the derived class  
