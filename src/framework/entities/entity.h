@@ -18,6 +18,7 @@ public:
 
 	Entity* parent = nullptr;
 	std::vector<Entity*> children;
+	std::vector<Entity*> s_to_destroy;
 
 	void addChild(Entity* child);
 	void removeChild(Entity* child);

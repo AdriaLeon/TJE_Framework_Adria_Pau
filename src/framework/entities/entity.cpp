@@ -59,3 +59,22 @@ float Entity::distance(Entity* e)
 {
 	return model.getTranslation().distance(e->model.getTranslation());
 }
+/*
+void Entity::destroy() {
+
+	s_to_destroy.push_back(this);
+
+	// Propagate destruction
+	for (int i = 0; i < children.size(); i++)
+		children[i]->destroy();
+}
+}
+
+// Per frame:
+
+for (int i = 0; i < s_to_destroy.size(); i++)
+	delete s_to_destroy[i];
+}
+
+s_to_destroy.empty();
+*/

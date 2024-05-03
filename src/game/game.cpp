@@ -5,6 +5,7 @@
 #include "graphics/fbo.h"
 #include "graphics/shader.h"
 #include "framework/input.h"
+#include "stage.h"
 
 #include <cmath>
 
@@ -14,6 +15,7 @@ Texture* texture = NULL;
 Shader* shader = NULL;
 float angle = 0;
 float mouse_speed = 100.0f;
+EntityMesh* cube;
 
 Game* Game::instance = NULL;
 
@@ -49,6 +51,7 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	// Example of shader loading using the shaders manager
 	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
 
+	cube = new EntityMesh(mesh, texture, shader, Vector4(1, 1, 1, 1));
 	// Hide the cursor
 	SDL_ShowCursor(!mouse_locked); //hide or show the mouse
 }
@@ -73,25 +76,7 @@ void Game::render(void)
 	// Create model matrix for cube
 	Matrix44 m;
 	m.rotate(angle*DEG2RAD, Vector3(0.0f, 1.0f, 0.0f));
-
-	if(shader)
-	{
-		// Enable shader
-		shader->enable();
-
-		// Upload uniforms
-		shader->setUniform("u_color", Vector4(1,1,1,1));
-		shader->setUniform("u_viewprojection", camera->viewprojection_matrix );
-		shader->setUniform("u_texture", texture, 0);
-		shader->setUniform("u_model", m);
-		shader->setUniform("u_time", time);
-
-		// Do the draw call
-		mesh->render( GL_TRIANGLES );
-
-		// Disable shader
-		shader->disable();
-	}
+	cube->render(m);
 
 	// Draw the floor grid
 	drawGrid();

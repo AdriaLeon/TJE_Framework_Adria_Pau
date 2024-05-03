@@ -1,6 +1,7 @@
 #pragma once
 #include "framework/input.h"
 #include "framework/entities/entity.h"
+#include "framework/entities/entityMesh.h"
 #include <string>
 
 enum {
