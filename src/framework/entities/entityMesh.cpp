@@ -9,6 +9,7 @@ EntityMesh::EntityMesh(Mesh* mesh, Material* material, const std::string& name)
 	this->isInstanced = true;
 }
 
+
 EntityMesh::~EntityMesh() { };
 
 //Checks if we are using the entity 
@@ -18,26 +19,22 @@ bool EntityMesh::IsInstanciated() {
 
 void EntityMesh::render(Camera* camera) {
 
-	const Matrix44& globalMatrix = getGlobalMatrix();
-
 	if (!mesh || !material)		return;
 
 	if (!material->shader) {
-		material->shader = Shader::Get(isInstanced ? ("data/shaders/instanced.vs" ,"data/shaders/flat.fs") : ("data/shaders/basic.vs", "data/shaders/normal.fs"));
+		material->shader = Shader::Get(isInstanced ? ("data/shaders/basic.vs", "data/shaders/texture.fs") : ("data/shaders/basic.vs", "data/shaders/flat.fs"));
 	}
 
-	assert(material->shader); //Check there's no problem with the shader
 	// Enable shader and pass uniforms 
 	material->shader->enable();
 	material->shader->setUniform("u_color", material->color);
 	material->shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
-	material->shader->setUniform("u_texture", globalMatrix);
+	material->shader->setUniform("u_model", getGlobalMatrix());
 	material->shader->setUniform("u_time", time);
 	if (material) {
 		if (material->diffuse) {
 			material->shader->setUniform("u_texture", material->diffuse, 0);
 		}
-		material->shader->setUniform("u_model", getGlobalMatrix());
 	}
 
 	// Render the mesh using the shader

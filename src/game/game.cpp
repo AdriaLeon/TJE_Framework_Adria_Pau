@@ -11,6 +11,7 @@
 
 //some globals
 Mesh* mesh = NULL;
+Material material;
 Texture* texture = NULL;
 Shader* shader = NULL;
 float angle = 0;
@@ -43,15 +44,16 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	camera->setPerspective(70.f,window_width/(float)window_height,0.1f,10000.f); //set the projection, we want to be perspective
 
 	// Load one texture using the Texture Manager
-	texture = Texture::Get("data/textures/texture.tga");
+	material.diffuse = Texture::Get("data/textures/texture.tga");
+
+	// Example of shader loading using the shaders manager
+	material.shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
 
 	// Example of loading Mesh from Mesh Manager
 	mesh = Mesh::Get("data/meshes/box.ASE");
 
-	// Example of shader loading using the shaders manager
-	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
+	cube = new EntityMesh(mesh, &material, "Cube");
 
-	cube = new EntityMesh(mesh, texture, shader, Vector4(1, 1, 1, 1));
 	// Hide the cursor
 	SDL_ShowCursor(!mouse_locked); //hide or show the mouse
 }
@@ -76,7 +78,8 @@ void Game::render(void)
 	// Create model matrix for cube
 	Matrix44 m;
 	m.rotate(angle*DEG2RAD, Vector3(0.0f, 1.0f, 0.0f));
-	cube->render(m);
+	cube->model = m;
+	cube->render(camera);
 
 	// Draw the floor grid
 	drawGrid();
