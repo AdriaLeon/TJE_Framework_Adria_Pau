@@ -10,25 +10,19 @@
 class EntityMesh : public Entity {
 
 	public:
-	EntityMesh() {};
-	EntityMesh(Mesh* mesh, Texture* texture, Shader* shader, Vector4 color) {
-		this->mesh = mesh;
-		this->texture = texture;
-		this->shader = shader;
-		this->color = color;
-
-	};
-	//~EntityMesh(); TODO:
+	EntityMesh() {};  //Create empty entityMesh
+	EntityMesh(Mesh* mesh, Material* material, const std::string& name); //Create entityMesh
+	~EntityMesh(); //desproy entityMesh
 
 	// Attributes of the derived class  
 	Mesh* mesh = nullptr;
-	Texture* texture = nullptr;
-	Shader* shader = nullptr;
 	Material* material = nullptr;
-	Vector4 color;
+	bool isInstanced;
+
+	bool IsInstanciated();
 
 	// Methods overwritten from base class
-	void render(Matrix44 m);
+	void render(Camera* camera);
 	void update(float elapsed_time);
 	void setMaterial(Material* material);
 };

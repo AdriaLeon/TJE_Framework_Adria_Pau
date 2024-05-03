@@ -1,23 +1,38 @@
 #include "entityMesh.h"
 #include "framework/camera.h"
 
+EntityMesh::EntityMesh(Mesh* mesh, Material* material, const std::string& name)
+{
+	this->mesh = mesh;
+	this->material = material;
+	this->name = name;
+	this->isInstanced = true;
+}
 
+EntityMesh::~EntityMesh() { };
 
-void EntityMesh::render(Matrix44 m) {
+//Checks if we are using the entity 
+bool EntityMesh::IsInstanciated() {
+	return isInstanced;
+}
 
-	// Get the last camera that was activated 
-	Camera* camera = Camera::current;
+void EntityMesh::render(Camera* camera) {
 
-	// Enable shader and pass uniforms 
-	if (material) {
-		material->shader->enable(); //TODO: Implementar el material en la funcion entityMesh, como el ejemplo no tiene lo he comentado
+	const Matrix44& globalMatrix = getGlobalMatrix();
+
+	if (!mesh || !material)		return;
+
+	if (!material->shader) {
+		material->shader = Shader::Get(isInstanced ? ("data/shaders/instanced.vs" ,"data/shaders/flat.fs") : ("data/shaders/basic.vs", "data/shaders/normal.fs"));
 	}
-	shader->enable();
-	shader->setUniform("u_color", color);
-	shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
-	shader->setUniform("u_texture", texture, 1);
-	shader->setUniform("u_model", m);
-	shader->setUniform("u_time", time);
+
+	assert(material->shader); //Check there's no problem with the shader
+	// Enable shader and pass uniforms 
+	material->shader->enable();
+	material->shader->setUniform("u_color", material->color);
+	material->shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
+	material->shader->setUniform("u_texture", globalMatrix);
+	material->shader->setUniform("u_time", time);
 	if (material) {
 		if (material->diffuse) {
 			material->shader->setUniform("u_texture", material->diffuse, 0);
@@ -29,11 +44,7 @@ void EntityMesh::render(Matrix44 m) {
 	mesh->render(GL_TRIANGLES);
 
 	// Disable shader after finishing rendering
-	shader->disable();
-
-	if (material) {
-		material->shader->disable();
-	}
+	material->shader->disable();
 
 	Entity::render(camera);
 };
@@ -44,5 +55,30 @@ void EntityMesh::update(float elapsed_time) {
 
 void EntityMesh::setMaterial(Material* material) {
 	this->material = material;
-	this->shader = this->material->shader;
 }
+
+
+
+
+
+//In case we want to add level of detail depending on the distance
+
+/*
+std::vector<Matrix44> models;
+
+std::vector<sMeshLOD> meshLods;
+
+void EntityMesh::addLOD(Mesh* mesh, float distance)
+{
+	meshLods.push_back({ mesh, distance });
+
+	std::sort(meshLods.begin(), meshLods.end(), [](const sMeshLOD& lod1, const sMeshLOD& lod2) {
+		return lod1.distance > lod2.distance;
+		});
+}
+
+void EntityMesh::addInstance(const Matrix44& model)
+{
+	models.push_back(model);
+}
+*/
