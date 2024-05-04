@@ -7,6 +7,7 @@
 #include "framework/includes.h"
 #include "framework/camera.h"
 #include "framework/utils.h"
+#include "stage.h"
 
 class Game
 {
@@ -24,6 +25,8 @@ public:
 	float elapsed_time;
 	int fps;
 	bool must_exit;
+
+	void goToStage(int new_stage);
 
 	//some vars
 	Camera* camera; //our global camera

@@ -11,7 +11,7 @@ class EntityMesh : public Entity {
 
 	public:
 	EntityMesh() {};  //Create empty entityMesh
-	EntityMesh(Mesh* mesh, Material* material, const std::string& name); //Create entityMesh
+	EntityMesh(Mesh* mesh, Shader* shader, Texture* texture, const std::string& name); //Create entityMesh
 	~EntityMesh(); //desproy entityMesh
 
 	// Attributes of the derived class  

@@ -1,10 +1,13 @@
 #include "entityMesh.h"
 #include "framework/camera.h"
 
-EntityMesh::EntityMesh(Mesh* mesh, Material* material, const std::string& name)
+EntityMesh::EntityMesh(Mesh* mesh, Shader* shader, Texture* texture, const std::string& name)
 {
 	this->mesh = mesh;
-	this->material = material;
+
+	this->material = new Material;
+	this->material->diffuse = texture;
+	this->material->shader = shader;
 	this->name = name;
 	this->isInstanced = true;
 }

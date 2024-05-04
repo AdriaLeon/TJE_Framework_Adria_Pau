@@ -2,6 +2,8 @@
 #include "framework/input.h"
 #include "framework/entities/entity.h"
 #include "framework/entities/entityMesh.h"
+#include "framework/camera.h"
+#include "game.h"
 #include <string>
 
 enum {
@@ -20,6 +22,8 @@ class Stage
 
 public:
 
+	Camera* camera;
+	float mouse_speed = 100.0f;
 
 	Stage() { };
 	std::vector<Entity*> entities;
@@ -28,7 +32,7 @@ public:
 	virtual void onExit() {};
 	void addEntity(Entity* entity);
 	void removeEntity(Entity* entity);
-	//virtual void render(Image* framebuffer) {};
+	virtual void render( void ) {};
 	virtual void update(float second_elapsed) {};
 };
 
@@ -38,10 +42,14 @@ class IntroStage : public Stage
 
 public:
 
+	float angle;
+	EntityMesh* cube;
+
+	IntroStage() {};
 	virtual void onEnter() override;
 	virtual void onExit() override;
 
-	//virtual void render(Image* framebuffer) override;
+	virtual void render( void ) override;
 	virtual void update(float second_elapsed) override;
 };
 
@@ -51,23 +59,25 @@ class PlayStage : public Stage
 
 public:
 
+	PlayStage() {};
 	virtual void onEnter() override;
 	virtual void onExit() override;
 
-	//virtual void render(Image* framebuffer) override;
+	virtual void render(void) override;
 	virtual void update(float second_elapsed) override;
 };
 
-class Game_Over_Stage : public Stage
+class GameOverStage : public Stage
 {
 	int type = GAME_OVER_STAGE;
 
 public:
 
+	GameOverStage() {};
 	virtual void onEnter() override;
 	virtual void onExit() override;
 
-	//virtual void render(Image* framebuffer) override;
+	virtual void render(void) override;
 	virtual void update(float second_elapsed) override;
 
 };
