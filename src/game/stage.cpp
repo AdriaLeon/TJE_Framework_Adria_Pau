@@ -11,6 +11,10 @@ void Stage::removeEntity(Entity* entity) {
     }
 }
 
+void Stage::removeAllEntities() {
+	entities.clear();
+}
+
 void IntroStage::onEnter() {
 
 	angle = 0;

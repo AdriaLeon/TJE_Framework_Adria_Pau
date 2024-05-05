@@ -32,6 +32,7 @@ public:
 	virtual void onExit() {};
 	void addEntity(Entity* entity);
 	void removeEntity(Entity* entity);
+	void removeAllEntities();
 	virtual void render( void ) {};
 	virtual void update(float second_elapsed) {};
 };
