@@ -1,19 +1,5 @@
 #include "stage.h"
 
-void Stage::addEntity(Entity* entity) {
-    entities.push_back(entity);
-}
-
-void Stage::removeEntity(Entity* entity) {
-    auto it = std::find(entities.begin(), entities.end(), entity);
-    if (it != entities.end()) {
-        entities.erase(it);
-    }
-}
-
-void Stage::removeAllEntities() {
-	entities.clear();
-}
 
 void IntroStage::onEnter() {
 
@@ -42,10 +28,11 @@ void IntroStage::onEnter() {
 	//Method 2
 	cube = new EntityMesh((char*)"data/meshes/box.ASE", (char*)"data/shaders/basic.vs", (char*)"data/shaders/texture.fs", (char*)"data/textures/texture.tga", "Cube");
 
-
 }
 
-void IntroStage::onExit() {};
+void IntroStage::onExit() {
+	world->removeAllEntities();
+};
 
 void IntroStage::render( void ) {
 	// Set the clear color (the background color)
@@ -67,7 +54,7 @@ void IntroStage::render( void ) {
 	m.rotate(angle * DEG2RAD, Vector3(0.0f, 1.0f, 0.0f));
 	cube->model = m;
 	cube->render(camera);
-
+	 
 	// Draw the floor grid
 	drawGrid();
 

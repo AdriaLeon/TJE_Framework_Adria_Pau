@@ -59,7 +59,7 @@ float Entity::distance(Entity* e)
 {
 	return model.getTranslation().distance(e->model.getTranslation());
 }
-/*
+
 void Entity::destroy() {
 
 	s_to_destroy.push_back(this);
@@ -68,13 +68,13 @@ void Entity::destroy() {
 	for (int i = 0; i < children.size(); i++)
 		children[i]->destroy();
 }
+
+// Per frame cleanup function
+void Entity::cleanupEntities() {
+	// Delete entities marked for destruction
+	for (int i = 0; i < Entity::s_to_destroy.size(); i++)
+		delete Entity::s_to_destroy[i];
+
+	// Clear the vector after deletion
+	Entity::s_to_destroy.clear();
 }
-
-// Per frame:
-
-for (int i = 0; i < s_to_destroy.size(); i++)
-	delete s_to_destroy[i];
-}
-
-s_to_destroy.empty();
-*/

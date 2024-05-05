@@ -5,6 +5,11 @@
 
 class Camera;
 
+enum class eEntityType {
+	MESH,
+	PLAYER
+};
+
 class Entity {
 
 public:
@@ -15,6 +20,7 @@ public:
 	std::string name;
 
 	Matrix44 model;
+	std::vector<Matrix44> models;
 
 	Entity* parent = nullptr;
 	std::vector<Entity*> children;
@@ -31,4 +37,14 @@ public:
 	// Some useful methods
 	Matrix44 getGlobalMatrix();
 	float distance(Entity* e);
+
+	void destroy(); //cleans all s_to_destroy vector
+	void cleanupEntities();
+
+	// Getter and setter for entityType
+	eEntityType getEntityType() const {
+		return entityType;
+	}
+
+	eEntityType entityType;
 };

@@ -4,6 +4,7 @@
 #include "framework/entities/entityMesh.h"
 #include "framework/camera.h"
 #include "game.h"
+#include "world.h"
 #include <string>
 
 enum {
@@ -15,6 +16,8 @@ enum {
 	STAGES_SIZE
 };
 
+// Forward declaration of World class
+class World;
 
 class Stage
 {
@@ -22,17 +25,14 @@ class Stage
 
 public:
 
+	World* world;
 	Camera* camera;
 	float mouse_speed = 100.0f;
 
 	Stage() { };
-	std::vector<Entity*> entities;
 
 	virtual void onEnter() {};
 	virtual void onExit() {};
-	void addEntity(Entity* entity);
-	void removeEntity(Entity* entity);
-	void removeAllEntities();
 	virtual void render( void ) {};
 	virtual void update(float second_elapsed) {};
 };
