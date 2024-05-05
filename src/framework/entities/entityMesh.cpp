@@ -12,6 +12,27 @@ EntityMesh::EntityMesh(Mesh* mesh, Shader* shader, Texture* texture, const std::
 	this->isInstanced = true;
 }
 
+EntityMesh::EntityMesh(char* Smesh, char* shaderVs, char* shaderFs, char* Stexture, const std::string& name)
+{
+
+	this->material = new Material;
+
+	// Load one texture using the Texture Manager
+	Texture* texture = Texture::Get(Stexture);
+
+	// Example of shader loading using the shaders manager
+	Shader* shader = Shader::Get(shaderVs, shaderFs);
+
+	// Example of loading Mesh from Mesh Manager
+	Mesh* mesh = Mesh::Get(Smesh);
+
+	this->mesh = mesh;
+	this->material->diffuse = texture;
+	this->material->shader = shader;
+	this->name = name;
+	this->isInstanced = true;
+}
+
 
 EntityMesh::~EntityMesh() { };
 

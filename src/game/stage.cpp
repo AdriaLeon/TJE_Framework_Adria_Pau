@@ -20,7 +20,8 @@ void IntroStage::onEnter() {
     camera->lookAt(Vector3(0.f, 100.f, 100.f), Vector3(0.f, 0.f, 0.f), Vector3(0.f, 1.f, 0.f)); //position the camera and point to 0,0,0
     camera->setPerspective(70.f, Game::instance->window_width / (float)Game::instance->window_height, 0.1f, 10000.f); //set the projection, we want to be perspective
 
-    // Load one texture using the Texture Manager
+	//Method 1
+    /*// Load one texture using the Texture Manager
 	Texture* texture;
     texture = Texture::Get("data/textures/texture.tga");
 
@@ -32,7 +33,10 @@ void IntroStage::onEnter() {
     // Example of loading Mesh from Mesh Manager
     mesh = Mesh::Get("data/meshes/box.ASE");
 
-    cube = new EntityMesh(mesh, shader, texture, "Cube");
+    cube = new EntityMesh(mesh, shader, texture, "Cube");*/
+
+	//Method 2
+	cube = new EntityMesh((char*)"data/meshes/box.ASE", (char*)"data/shaders/basic.vs", (char*)"data/shaders/texture.fs", (char*)"data/textures/texture.tga", "Cube");
 
 
 }
