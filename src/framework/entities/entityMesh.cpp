@@ -54,6 +54,17 @@ void EntityMesh::render(Camera* camera) {
 
 	if (!mesh)		return;
 
+	const Matrix44& globalMatrix = getGlobalMatrix();
+
+	// Compute bounding sphere center in world coords
+	Vector3 sphere_center = globalMatrix * mesh->box.center;
+	Vector3 halfsize = globalMatrix * mesh->box.halfsize;
+
+	// Discard objects whose bounding sphere is not inside the camera frustum
+	if ((!camera->testBoxInFrustum(sphere_center, halfsize) ||
+		camera->eye.distance(sphere_center) > 5000.0f))
+		return;
+
 	if (!material.shader) {
 		material.shader = Shader::Get(isInstanced ? ("data/shaders/basic.vs", "data/shaders/texture.fs") : ("data/shaders/basic.vs", "data/shaders/flat.fs"));
 	}
@@ -71,7 +82,7 @@ void EntityMesh::render(Camera* camera) {
 		material.shader->setUniform("u_texture", material.diffuse->getWhiteTexture(), 0);
 	}
 	if(isInstanced)
-		material.shader->setUniform("u_model", getGlobalMatrix());
+		material.shader->setUniform("u_model", globalMatrix);
 
 	// Render the mesh using the shader
 	mesh->render(GL_TRIANGLES);

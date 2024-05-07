@@ -9,7 +9,7 @@ World::World() {
 	instance = this;
 	root = new Entity();
 
-	parseScene("data/myscene.scene");
+	parseScene("data/testscene.scene");
 }
 void World::addEntity(Entity* entity) {
 	entities.push_back(entity);
