@@ -1,10 +1,14 @@
 #include "entityMesh.h"
 #include "framework/camera.h"
 
-EntityMesh::EntityMesh(Mesh* mesh, Material* material) 
+EntityMesh::EntityMesh(Mesh* mesh, Material material) 
 {
 	this->mesh = mesh;
+	entityType = eEntityType::MESH;
+
 	this->material = material;
+	this->material.shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
+	this->isInstanced = true;
 }
 
 EntityMesh::EntityMesh(Mesh* mesh, Shader* shader, Texture* texture, const std::string& name)
@@ -12,9 +16,8 @@ EntityMesh::EntityMesh(Mesh* mesh, Shader* shader, Texture* texture, const std::
 	this->mesh = mesh;
 	entityType = eEntityType::MESH;
 
-	this->material = new Material;
-	this->material->diffuse = texture;
-	this->material->shader = shader;
+	this->material.diffuse = texture;
+	this->material.shader = shader;
 	this->name = name;
 	this->isInstanced = true;
 }
@@ -22,7 +25,6 @@ EntityMesh::EntityMesh(Mesh* mesh, Shader* shader, Texture* texture, const std::
 EntityMesh::EntityMesh(char* Smesh, char* shaderVs, char* shaderFs, char* Stexture, const std::string& name)
 {
 
-	this->material = new Material;
 
 	// Load one texture using the Texture Manager
 	Texture* texture = Texture::Get(Stexture);
@@ -34,8 +36,8 @@ EntityMesh::EntityMesh(char* Smesh, char* shaderVs, char* shaderFs, char* Stextu
 	Mesh* mesh = Mesh::Get(Smesh);
 
 	this->mesh = mesh;
-	this->material->diffuse = texture;
-	this->material->shader = shader;
+	this->material.diffuse = texture;
+	this->material.shader = shader;
 	this->name = name;
 	this->isInstanced = true;
 }
@@ -50,29 +52,32 @@ bool EntityMesh::IsInstanciated() {
 
 void EntityMesh::render(Camera* camera) {
 
-	if (!mesh || !material)		return;
+	if (!mesh)		return;
 
-	if (!material->shader) {
-		material->shader = Shader::Get(isInstanced ? ("data/shaders/basic.vs", "data/shaders/texture.fs") : ("data/shaders/basic.vs", "data/shaders/flat.fs"));
+	if (!material.shader) {
+		material.shader = Shader::Get(isInstanced ? ("data/shaders/basic.vs", "data/shaders/texture.fs") : ("data/shaders/basic.vs", "data/shaders/flat.fs"));
 	}
 
 	// Enable shader and pass uniforms 
-	material->shader->enable();
-	material->shader->setUniform("u_color", material->color);
-	material->shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
-	material->shader->setUniform("u_model", getGlobalMatrix());
-	material->shader->setUniform("u_time", time);
-	if (material) {
-		if (material->diffuse) {
-			material->shader->setUniform("u_texture", material->diffuse, 0);
-		}
+	material.shader->enable();
+	material.shader->setUniform("u_color", material.color);
+	material.shader->setUniform("u_camera_position", camera->eye);
+	material.shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
+	material.shader->setUniform("u_time", time);
+	if (material.diffuse) {
+		material.shader->setUniform("u_texture", material.diffuse, 0);
 	}
+	else {
+		material.shader->setUniform("u_texture", material.diffuse->getWhiteTexture(), 0);
+	}
+	if(isInstanced)
+		material.shader->setUniform("u_model", getGlobalMatrix());
 
 	// Render the mesh using the shader
 	mesh->render(GL_TRIANGLES);
 
 	// Disable shader after finishing rendering
-	material->shader->disable();
+	material.shader->disable();
 
 	Entity::render(camera);
 };
@@ -81,7 +86,7 @@ void EntityMesh::update(float elapsed_time) {
 	Entity::update(elapsed_time);
 }
 
-void EntityMesh::setMaterial(Material* material) {
+void EntityMesh::setMaterial(Material material) {
 	this->material = material;
 }
 

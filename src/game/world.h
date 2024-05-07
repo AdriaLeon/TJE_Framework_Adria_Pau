@@ -11,9 +11,9 @@ class World {
 public:
     static World* instance;
     std::vector<Entity*> entities;  //wa may create a superior class method or do a list for each type of entity I will leave like this at the moment
-    Entity root;
+    Entity* root;
 
-    std::map<std::string, sRenderData> meshes_to_load;
+    World();
 
     // Method to add or delete entities
     void addEntity(Entity* entity);
@@ -26,6 +26,6 @@ public:
     // Method to update all entities
     void updateAll(float delta_time);
 
-    bool parseScene(const char* filename, Entity* root);
+    bool parseScene(const char* filename);
     void renderEntities(Camera* camera);
 };

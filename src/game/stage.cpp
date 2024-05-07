@@ -5,6 +5,8 @@ void IntroStage::onEnter() {
 
 	angle = 0;
 
+	world = new World();
+
     // Create our camera
     camera = new Camera();
     camera->lookAt(Vector3(0.f, 100.f, 100.f), Vector3(0.f, 0.f, 0.f), Vector3(0.f, 1.f, 0.f)); //position the camera and point to 0,0,0
@@ -34,7 +36,7 @@ void IntroStage::onEnter() {
 }
 
 void IntroStage::onExit() {
-	World::instance->removeAllEntities();
+	world->removeAllEntities();
 };
 
 void IntroStage::render( void ) {
@@ -51,8 +53,10 @@ void IntroStage::render( void ) {
 	Matrix44 m;
 	m.rotate(angle * DEG2RAD, Vector3(0.0f, 1.0f, 0.0f));
 	cube->model = m;
-	cube->render(camera);
+	//cube->render(camera);
 	 
+	world->renderAll(camera);
+
 	// Draw the floor grid
 	drawGrid();
 }
@@ -77,6 +81,8 @@ void IntroStage::update(float second_elapsed) {
 	if (Input::isKeyPressed(SDL_SCANCODE_S) || Input::isKeyPressed(SDL_SCANCODE_DOWN)) camera->move(Vector3(0.0f, 0.0f, -1.0f) * speed);
 	if (Input::isKeyPressed(SDL_SCANCODE_A) || Input::isKeyPressed(SDL_SCANCODE_LEFT)) camera->move(Vector3(1.0f, 0.0f, 0.0f) * speed);
 	if (Input::isKeyPressed(SDL_SCANCODE_D) || Input::isKeyPressed(SDL_SCANCODE_RIGHT)) camera->move(Vector3(-1.0f, 0.0f, 0.0f) * speed);
+
+	world->updateAll(second_elapsed);
 }
 
 void PlayStage::onEnter() {};

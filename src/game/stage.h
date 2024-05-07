@@ -24,6 +24,7 @@ class Stage
 	int type = INTRO_STAGE;
 
 public:
+	World* world;
 	Camera* camera;
 
 	float mouse_speed = 100.0f;

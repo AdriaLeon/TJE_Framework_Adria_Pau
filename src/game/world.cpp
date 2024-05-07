@@ -2,8 +2,15 @@
 #include <iostream> // For input/output streams
 #include <fstream>  // For file input/output streams
 
-World* World::instance = NULL;
+World* World::instance = nullptr;
 
+World::World() {
+
+	instance = this;
+	root = new Entity();
+
+	parseScene("data/myscene.scene");
+}
 void World::addEntity(Entity* entity) {
 	entities.push_back(entity);
 }
@@ -21,7 +28,7 @@ void World::removeAllEntities() {
 }
 
 //Revisar que fa i adaptar-lo al nostre codi, codi de parseScene proporcionat a l'aula global amb alguna petita modificació
-bool World::parseScene(const char* filename, Entity* root)
+bool World::parseScene(const char* filename)
 {
 	std::cout << " + Scene loading: " << filename << "..." << std::endl;
 
@@ -35,6 +42,8 @@ bool World::parseScene(const char* filename, Entity* root)
 	std::string scene_info, mesh_name, model_data;
 	file >> scene_info; file >> scene_info;
 	int mesh_count = 0;
+
+	std::map<std::string, sRenderData> meshes_to_load;
 
 	// Read file line by line and store mesh path and model info in separated variables
 	while (file >> mesh_name >> model_data)
@@ -80,7 +89,7 @@ bool World::parseScene(const char* filename, Entity* root)
 		}
 		else { //mesh has to have the same name as the entity
 			Mesh* mesh = Mesh::Get(mesh_name.c_str());
-			new_entity = new EntityMesh(mesh, &mat);
+			new_entity = new EntityMesh(mesh, mat);
 		}
 
 		if (!new_entity) {
@@ -105,6 +114,14 @@ bool World::parseScene(const char* filename, Entity* root)
 
 	std::cout << "Scene [OK]" << " Meshes added: " << mesh_count << std::endl;
 	return true;
+}
+
+void World::renderAll(Camera* camera) {
+	root->render(camera);
+}
+
+void World::updateAll(float delta_time) {
+
 }
 
 void World::renderEntities(Camera* camera) {
