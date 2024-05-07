@@ -10,6 +10,8 @@ void IntroStage::onEnter() {
     camera->lookAt(Vector3(0.f, 100.f, 100.f), Vector3(0.f, 0.f, 0.f), Vector3(0.f, 1.f, 0.f)); //position the camera and point to 0,0,0
     camera->setPerspective(70.f, Game::instance->window_width / (float)Game::instance->window_height, 0.1f, 10000.f); //set the projection, we want to be perspective
 
+	//world->parseScene();
+
 	//Method 1
     /*// Load one texture using the Texture Manager
 	Texture* texture;
@@ -28,18 +30,14 @@ void IntroStage::onEnter() {
 	//Method 2
 	cube = new EntityMesh((char*)"data/meshes/box.ASE", (char*)"data/shaders/basic.vs", (char*)"data/shaders/texture.fs", (char*)"data/textures/texture.tga", "Cube");
 
+	//world->root.addChild(cube);
 }
 
 void IntroStage::onExit() {
-	world->removeAllEntities();
+	World::instance->removeAllEntities();
 };
 
 void IntroStage::render( void ) {
-	// Set the clear color (the background color)
-	glClearColor(0.0, 0.0, 0.0, 1.0);
-
-	// Clear the window and the depth buffer
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Set the camera as default
 	camera->enable();
@@ -57,12 +55,6 @@ void IntroStage::render( void ) {
 	 
 	// Draw the floor grid
 	drawGrid();
-
-	// Render the FPS, Draw Calls, etc
-	drawText(2, 2, getGPUStats(), Vector3(1, 1, 1), 2);
-
-	// Swap between front buffer and back buffer
-	SDL_GL_SwapWindow(Game::instance->window);
 }
 
 void IntroStage::update(float second_elapsed) {

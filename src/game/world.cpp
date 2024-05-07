@@ -138,3 +138,49 @@ void World::renderEntities(Camera* camera) {
 
 	}
 }
+
+
+
+
+///Update
+
+/*
+camera_yaw -= input:: mouse.delta.x * elap_second
+camera_pitch -= input:: mouse.delta.y * elap_second
+
+if(first_person){
+	eye = player->model.getTranslation() + Vector(0,1,0) * obit_dist;
+	center = eye + front;
+else{ tercera persona){
+	eye = player->model.getTranslation() - Vector(0,1,0) + front * obit_dist;
+	center = player->model.getTranslation() + Vector(1,1,0);
+*/
+
+
+
+
+/*Class EntityPlayer{
+	Movimiento
+		movement lo mismo que en 2d pero en 3 dimensiones
+
+		Matrix44 wYaw;
+		wYaw.setRotation(camera_yaw, Vectro(0,1,0));
+
+		Vector3 front = wYaw.frontVector;
+		Vectro3 right = WYaw.rightVector;
+
+		position += velocity * seconds_elapsed;
+
+	Collisiones
+		Needs an EntityCollider class
+		eCollisionFilter type of colliders (do an enum)
+
+		
+}*/
+
+/*getCollision(....) {
+	if (!(layer & filter)) { Check if collitions needs to be checked
+		return;
+	}
+
+*/
