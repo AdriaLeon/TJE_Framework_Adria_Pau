@@ -172,8 +172,60 @@ else{ tercera persona){
 		position += velocity * seconds_elapsed;
 
 	Collisiones
+		//////collisions with world
+		#Get instances from world
+		sphere_radius
+		sphere_ground_radious
+		player_height
+
+		Shader, Mesh #get them
+		Matrix44 m = model;
+
+		shader->enable();
+
+		//first spher
+		{
+			m.translate(0,player_height,0);
+			m.scale(sphere_radious, sphere_ground_radious);
+
+			....
+		}
+
+		//second sphere
+		{
+			m = model;
+			m.translate(0,player_height,0);
+			m.scale(sphere_radious, sphere_ground_radious);
+
+			....
+		}
+
+		//Check collision with floor then with wall and last if plater its on the floor
+		if(mesh->(testSphereCollision(m, floor_sphere_center, sphere_radious, collision_ point, collision_normal)
+			collision.push_back({collision_point, collision_normal.normalize(), floor....)
+
+
+		///////sends a ray whith the mouse and check where it collisions
 		Needs an EntityCollider class
 		eCollisionFilter type of colliders (do an enum)
+
+		for (entities)
+			get collider entities if not collider skip
+
+			Vector3 col_point;  //te lo rellena la funcion
+			Vector3 col_normal;  //te lo rellena la funcion
+			if(collider->mesh->testRayCollision(collider->model, ray_origin, ray_direction,col_point,col_normal))  //tambien se pude usar max_dist (6 param para saber si esta tocando el suelo distancia entre suelo i centro de personaje)
+				collisions.push_back(col_point);
+		}
+
+		//Generate entities
+
+		for(auto& col_point : colisions)
+		{
+			Mesh* mesh = Mesh::Get()
+			EntityMesh* new_entity = new EntityMesh(mesh, material);
+			new:entity->model.setTranslation(col_point);
+			World::get:instance()->addEntity(new_entity);
 
 		
 }*/
