@@ -9,8 +9,9 @@ World::World() {
 	instance = this;
 	root = new Entity();
 
-	parseScene("data/testscene.scene");
+	parseScene("data/myscene.scene");
 }
+
 void World::addEntity(Entity* entity) {
 	entities.push_back(entity);
 }
@@ -100,11 +101,14 @@ bool World::parseScene(const char* filename)
 
 		// Create instanced entity
 		if (render_data.models.size() > 1) {
+			if(!new_entity->isInstanced)
+				new_entity->material.shader = Shader::Get("data/shaders/instanced.vs", "data/shaders/color.fs");
 			new_entity->isInstanced = true;
 			new_entity->models = render_data.models; // Add all instances
 		}
 		// Create normal entity
 		else {
+			new_entity->material.shader = Shader::Get("data/shaders/basic.vs", "data/shaders/color.fs");
 			new_entity->model = render_data.models[0];
 		}
 
@@ -121,7 +125,7 @@ void World::renderAll(Camera* camera) {
 }
 
 void World::updateAll(float delta_time) {
-
+	root->update(delta_time);
 }
 
 void World::renderEntities(Camera* camera) {

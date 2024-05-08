@@ -7,8 +7,7 @@ EntityMesh::EntityMesh(Mesh* mesh, Material material)
 	entityType = eEntityType::MESH;
 
 	this->material = material;
-	this->material.shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
-	this->isInstanced = true;
+	this->isInstanced = false;
 }
 
 EntityMesh::EntityMesh(Mesh* mesh, Shader* shader, Texture* texture, const std::string& name)
@@ -19,7 +18,7 @@ EntityMesh::EntityMesh(Mesh* mesh, Shader* shader, Texture* texture, const std::
 	this->material.diffuse = texture;
 	this->material.shader = shader;
 	this->name = name;
-	this->isInstanced = true;
+	this->isInstanced = false;
 }
 
 EntityMesh::EntityMesh(char* Smesh, char* shaderVs, char* shaderFs, char* Stexture, const std::string& name)
@@ -39,7 +38,7 @@ EntityMesh::EntityMesh(char* Smesh, char* shaderVs, char* shaderFs, char* Stextu
 	this->material.diffuse = texture;
 	this->material.shader = shader;
 	this->name = name;
-	this->isInstanced = true;
+	this->isInstanced = false;
 }
 
 
@@ -81,11 +80,19 @@ void EntityMesh::render(Camera* camera) {
 	else {
 		material.shader->setUniform("u_texture", material.diffuse->getWhiteTexture(), 0);
 	}
-	if(isInstanced)
+	if (!isInstanced){
 		material.shader->setUniform("u_model", globalMatrix);
-
-	// Render the mesh using the shader
-	mesh->render(GL_TRIANGLES);
+		// Render the mesh using the shader
+		mesh->render(GL_TRIANGLES);
+	} else {
+		mesh->renderInstanced(GL_TRIANGLES, models.data(),models.size());
+		/*// Iterate by instance and only upload the data that // is different, and do the drawcall
+		for (int i = 0; i < models.size(); ++i)
+		{
+			material.shader->setUniform("u_model", models[i]);
+			mesh->render(GL_TRIANGLES);
+		}*/
+	}
 
 	// Disable shader after finishing rendering
 	material.shader->disable();
