@@ -9,7 +9,6 @@ World::World() {
 	instance = this;
 	root = new Entity();
 
-
 	parseScene("data/myscene.scene");
 }
 
@@ -162,10 +161,10 @@ void World::renderEntities(Camera* camera) {
 }
 
 World* World::get_instance() {
-	if (instance == nullptr) {
-		instance = new World();
-	}
-	return instance;
+    if (instance == nullptr) {
+        instance = new World();
+    }
+    return instance;
 }
 ///Update
 

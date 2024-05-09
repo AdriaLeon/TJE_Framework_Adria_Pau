@@ -9,16 +9,6 @@ EntityMesh::EntityMesh(Mesh* mesh, Material material)
 	this->material = material;
 	this->isInstanced = false;
 }
-
-EntityMesh::EntityMesh(Mesh* mesh, Texture* texture)
-{
-	this->mesh = mesh;
-	entityType = eEntityType::MESH;
-
-	this->material.diffuse = texture;
-	this->isInstanced = false;
-}
-
 EntityMesh::EntityMesh(Mesh* mesh, Shader* shader, Texture* texture, const std::string& name)
 {
 	this->mesh = mesh;
@@ -143,23 +133,24 @@ void EntityMesh::addInstance(const Matrix44& model)
 }
 */
 
+/*
 void EntityPlayer::update(float elapsed_time) {
 	/*float camera_yaw = World::get_instance()->camera_yaw;
 
 	Matrix44 mYaw;
 	mYaw.setRotation(camera_yaw, Vector3(0,1,0));
-	*/
+	
 
 	Vector3 front = Vector3(0, 0, -1);
 	Vector3 right = Vector3(1, 0, 0);
 
 	Vector3 position = model.getTranslation();
 
-	/*float camera_yaw = World::get_instance()->camera_yaw;
+	float camera_yaw = World::get_instance()->camera_yaw;
 
 	Matrix44 mYaw;
 	mYaw.setRotation(camera_yaw, Vector3(0,1,0));
-	*/
+
 
 	Vector3 front = Vector3(0, 0, -1);
 	Vector3 right = Vector3(1, 0, 0);
@@ -182,3 +173,5 @@ void EntityPlayer::update(float elapsed_time) {
 	float speed_mult = 10; //TODO: Definir velocidad del jugador
 
 }
+
+*/
