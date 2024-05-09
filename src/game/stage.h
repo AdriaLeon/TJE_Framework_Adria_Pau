@@ -26,6 +26,7 @@ class Stage
 public:
 	World* world;
 	Camera* camera;
+	EntityMesh* background;
 
 	float mouse_speed = 100.0f;
 

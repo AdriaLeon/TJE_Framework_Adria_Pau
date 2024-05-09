@@ -10,11 +10,19 @@ EntityMesh::EntityMesh(Mesh* mesh, Material material)
 	this->isInstanced = false;
 }
 
-EntityMesh::EntityMesh(Mesh* mesh, Shader* shader, Texture* texture, const std::string& name)
+EntityMesh::EntityMesh(Mesh* mesh, Texture* texture)
 {
 	this->mesh = mesh;
 	entityType = eEntityType::MESH;
 
+	this->material.diffuse = texture;
+	this->isInstanced = false;
+}
+
+EntityMesh::EntityMesh(Mesh* mesh, Shader* shader, Texture* texture, const std::string& name)
+{
+	this->mesh = mesh;
+	entityType = eEntityType::MESH;
 	this->material.diffuse = texture;
 	this->material.shader = shader;
 	this->name = name;
@@ -134,3 +142,43 @@ void EntityMesh::addInstance(const Matrix44& model)
 	models.push_back(model);
 }
 */
+
+void EntityPlayer::update(float elapsed_time) {
+	/*float camera_yaw = World::get_instance()->camera_yaw;
+
+	Matrix44 mYaw;
+	mYaw.setRotation(camera_yaw, Vector3(0,1,0));
+	*/
+
+	Vector3 front = Vector3(0, 0, -1);
+	Vector3 right = Vector3(1, 0, 0);
+
+	Vector3 position = model.getTranslation();
+
+	/*float camera_yaw = World::get_instance()->camera_yaw;
+
+	Matrix44 mYaw;
+	mYaw.setRotation(camera_yaw, Vector3(0,1,0));
+	*/
+
+	Vector3 front = Vector3(0, 0, -1);
+	Vector3 right = Vector3(1, 0, 0);
+
+	Vector3 position = model.getTranslation();
+	Vector3 move_dir;
+	//TODO: Normalizar move_dir para los movimientos diagonales
+	if (Input::isKeyPressed(SDL_SCANCODE_W) || Input::isKeyPressed(SDL_SCANCODE_UP)) {
+		move_dir += front;
+	}
+	if (Input::isKeyPressed(SDL_SCANCODE_S) || Input::isKeyPressed(SDL_SCANCODE_DOWN)) {
+		move_dir -= front;
+	}
+	if (Input::isKeyPressed(SDL_SCANCODE_A) || Input::isKeyPressed(SDL_SCANCODE_LEFT)) {
+		move_dir += right;
+	}
+	if (Input::isKeyPressed(SDL_SCANCODE_D) || Input::isKeyPressed(SDL_SCANCODE_RIGHT)) {
+		move_dir -= right;
+	}
+	float speed_mult = 10; //TODO: Definir velocidad del jugador
+
+}

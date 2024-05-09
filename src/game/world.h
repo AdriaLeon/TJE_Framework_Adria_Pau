@@ -10,7 +10,7 @@
 class World {
 public:
     static World* instance;
-    std::vector<Entity*> entities;  //wa may create a superior class method or do a list for each type of entity I will leave like this at the moment
+    std::vector<Entity*> entities;  //we may create a superior class method or do a list for each type of entity I will leave like this at the moment
     Entity* root;
 
     World();
@@ -28,4 +28,5 @@ public:
 
     bool parseScene(const char* filename);
     void renderEntities(Camera* camera);
+    static World* get_instance();
 };
