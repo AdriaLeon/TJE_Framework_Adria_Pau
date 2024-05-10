@@ -5,30 +5,13 @@ void IntroStage::onEnter() {
 
 	angle = 0;
 
-	world = new World();
-
     // Create our camera
     camera = new Camera();
     camera->lookAt(Vector3(0.f, 100.f, 100.f), Vector3(0.f, 0.f, 0.f), Vector3(0.f, 1.f, 0.f)); //position the camera and point to 0,0,0
     camera->setPerspective(70.f, Game::instance->window_width / (float)Game::instance->window_height, 0.1f, 10000.f); //set the projection, we want to be perspective
 
-	Texture* cubemap = new Texture();
 
-	cubemap->loadCubemap("snowBG", {
-		"data/textures/snowBG/posx.png",
-		"data/textures/snowBG/negx.png",
-		"data/textures/snowBG/posy.png",
-		"data/textures/snowBG/negy.png",
-		"data/textures/snowBG/posz.png",
-		"data/textures/snowBG/negz.png"
-		});
-	Mesh* mesh;
-	mesh = Mesh::Get("data/meshes/box.ASE");
-	//TODO: Las texturas no aparecen, parece algo del shader
-	Shader* shader;
-	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/flat.fs");
-	this->background = new EntityMesh(mesh, shader,cubemap, "bg");
-	//world->parseScene();
+	world = new World();
 
 	//Method 1
     /*// Load one texture using the Texture Manager
@@ -64,12 +47,7 @@ void IntroStage::render( void ) {
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
-
-	// We render the background image
-	//background->model = TODO:Hay que poner el cubemap en frente de la camara
-	glDisable(GL_DEPTH_TEST);
-	background->render(camera);
-	glEnable(GL_DEPTH_TEST);
+;
 	// Create model matrix for cube
 	Matrix44 m;
 	m.rotate(angle * DEG2RAD, Vector3(0.0f, 1.0f, 0.0f));

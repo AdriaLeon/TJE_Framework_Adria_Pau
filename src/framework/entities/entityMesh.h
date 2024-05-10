@@ -21,6 +21,8 @@ class EntityMesh : public Entity {
 	Material material;
 	bool isInstanced;
 
+	std::vector<Matrix44> models_to_render;
+
 	bool IsInstanciated();
 
 	// Methods overwritten from base class

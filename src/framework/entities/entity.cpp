@@ -3,6 +3,8 @@
 
 #include <algorithm>
 
+
+
 void Entity::render(Camera* camera)
 {
 	for (int i = 0; i < children.size(); ++i) {

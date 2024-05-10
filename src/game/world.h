@@ -3,6 +3,7 @@
 #include "framework/includes.h"
 #include "framework/utils.h"
 #include "framework/entities/entity.h"
+#include "framework/entities/entityMesh.h"
 #include "framework/camera.h"
 #include "game.h"
 #include <string>
@@ -12,6 +13,8 @@ public:
     static World* instance;
     std::vector<Entity*> entities;  //we may create a superior class method or do a list for each type of entity I will leave like this at the moment
     Entity* root;
+
+    EntityMesh* landscape;
 
     World();
 
@@ -27,6 +30,7 @@ public:
     void updateAll(float delta_time);
 
     bool parseScene(const char* filename);
+    void loadCubeMap();
     void renderEntities(Camera* camera);
     static World* get_instance();
 };

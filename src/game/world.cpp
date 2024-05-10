@@ -9,6 +9,8 @@ World::World() {
 	instance = this;
 	root = new Entity();
 
+	loadCubeMap();
+
 	parseScene("data/myscene.scene");
 }
 
@@ -120,7 +122,37 @@ bool World::parseScene(const char* filename)
 	return true;
 }
 
+void World::loadCubeMap() {
+
+	Texture* cubemap = new Texture;
+
+	cubemap->loadCubemap("snowBG", {
+		"data/textures/snowBG/posx.png",
+		"data/textures/snowBG/negx.png",
+		"data/textures/snowBG/negy.png",
+		"data/textures/snowBG/posy.png",
+		"data/textures/snowBG/posz.png",
+		"data/textures/snowBG/negz.png"
+		});
+
+	Mesh* mesh;
+	mesh = Mesh::Get("data/meshes/box.ASE");
+
+	//TODO: Las texturas no aparecen, parece algo del shader
+	Shader* shader;
+	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/cubemap.fs");
+
+	landscape = new EntityMesh(mesh, shader, cubemap, "snowBG");
+}
+
 void World::renderAll(Camera* camera) {
+
+	// We render the background image
+	//background->model = TODO:Hay que poner el cubemap en frente de la camara
+	glDisable(GL_DEPTH_TEST);
+	landscape->render(camera);
+	glEnable(GL_DEPTH_TEST);
+
 	root->render(camera);
 }
 
