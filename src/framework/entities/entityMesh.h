@@ -16,7 +16,7 @@ class EntityMesh : public Entity {
 	EntityMesh(char* Smesh, char* shaderVs, char* shaderFs, char* Stexture, const std::string& name); //Create entityMesh
 	~EntityMesh(); //desproy entityMesh
 
-	// Attributes of the derived class  
+	// Attributes of the derived class  a
 	Mesh* mesh = nullptr;
 	Material material;
 	bool isInstanced;
@@ -30,11 +30,3 @@ class EntityMesh : public Entity {
 	void update(float elapsed_time);
 	void setMaterial(Material material);
 };
-/*
-class EntityPlayer : public EntityMesh {
-	public:
-		Vector3 position;
-
-		void update(float elapsed_time);
-};
-*/
