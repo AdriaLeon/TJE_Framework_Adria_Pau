@@ -203,21 +203,6 @@ World* World::get_instance() {
     }
     return instance;
 }
-///Update
-
-/*
-camera_yaw -= input:: mouse.delta.x * elap_second
-camera_pitch -= input:: mouse.delta.y * elap_second
-
-if(first_person){
-	eye = player->model.getTranslation() + Vector(0,1,0) * obit_dist;
-	center = eye + front;
-else{ tercera persona){
-	eye = player->model.getTranslation() - Vector(0,1,0) + front * obit_dist;
-	center = player->model.getTranslation() + Vector(1,1,0);
-*/
-
-
 
 
 /*Class EntityPlayer{
