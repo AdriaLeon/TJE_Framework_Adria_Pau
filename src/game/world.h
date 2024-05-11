@@ -32,5 +32,6 @@ public:
     bool parseScene(const char* filename);
     void loadCubeMap();
     void renderEntities(Camera* camera);
+    void updateCubemap(Camera* camera);
     static World* get_instance();
 };

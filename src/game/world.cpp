@@ -137,8 +137,6 @@ void World::loadCubeMap() {
 
 	Mesh* mesh;
 	mesh = Mesh::Get("data/meshes/box.ASE");
-
-	//TODO: Las texturas no aparecen, parece algo del shader
 	Shader* shader;
 	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/cubemap.fs");
 
@@ -158,6 +156,10 @@ void World::renderAll(Camera* camera) {
 
 void World::updateAll(float delta_time) {
 	root->update(delta_time);
+}
+
+void World::updateCubemap(Camera* camera) {
+	this->landscape->model.setTranslation(camera->eye);
 }
 
 void World::renderEntities(Camera* camera) {

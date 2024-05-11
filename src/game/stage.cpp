@@ -82,6 +82,7 @@ void IntroStage::update(float second_elapsed) {
 	if (Input::isKeyPressed(SDL_SCANCODE_D) || Input::isKeyPressed(SDL_SCANCODE_RIGHT)) camera->move(Vector3(-1.0f, 0.0f, 0.0f) * speed);
 
 	world->updateAll(second_elapsed);
+	world->updateCubemap(camera);
 }
 
 void PlayStage::onEnter() {};
