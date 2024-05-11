@@ -1,5 +1,7 @@
+
 #include "entityPlayer.h"
 #include "framework/camera.h"
+#include "game/world.h"
 
 EntityPlayer::EntityPlayer(Mesh* mesh, Material material){
 	this->mesh = mesh;
@@ -34,3 +36,14 @@ void EntityPlayer::render(Camera* camera) {
 	// Disable shader after finishing rendering
 	material.shader->disable();
 };
+
+void EntityPlayer::update(float elapsed_time) {
+
+	float camera_yaw = World::get_instance()->camera_yaw;
+
+	Entity::update(elapsed_time);
+}
+
+void EntityPlayer::setMaterial(Material material) {
+	this->material = material;
+}

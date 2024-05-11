@@ -8,7 +8,6 @@ World::World() {
 
 	instance = this;
 	root = new Entity();
-
 	loadCubeMap();
 
 	parseScene("data/myscene.scene");
@@ -160,6 +159,10 @@ void World::updateAll(float delta_time) {
 
 void World::updateCubemap(Camera* camera) {
 	this->landscape->model.setTranslation(camera->eye);
+}
+
+void World::setCamerayaw(Camera* camera) {
+	this->camera_yaw = camera->getYaw();
 }
 
 void World::renderEntities(Camera* camera) {

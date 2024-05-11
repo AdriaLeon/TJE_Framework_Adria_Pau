@@ -13,6 +13,7 @@ public:
     static World* instance;
     std::vector<Entity*> entities;  //we may create a superior class method or do a list for each type of entity I will leave like this at the moment
     Entity* root;
+    float camera_yaw;
 
     EntityMesh* landscape;
 
@@ -22,7 +23,7 @@ public:
     void addEntity(Entity* entity);
     void removeEntity(Entity* entity);
     void removeAllEntities();
-
+    void setCamerayaw(Camera* camera);
     // Method to redner all entities, this should be done calling just one function on entity since we will do the tree approach
     void renderAll(Camera* camera);
 
