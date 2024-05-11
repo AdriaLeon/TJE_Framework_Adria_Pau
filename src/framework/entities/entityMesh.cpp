@@ -158,12 +158,7 @@ void EntityPlayer::update(float elapsed_time) {
 
 	Matrix44 mYaw;
 	mYaw.setRotation(camera_yaw, Vector3(0,1,0));
-	
 
-	Vector3 front = Vector3(0, 0, -1);
-	Vector3 right = Vector3(1, 0, 0);
-
-	Vector3 position = model.getTranslation();
 
 	float camera_yaw = World::get_instance()->camera_yaw;
 
