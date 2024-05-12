@@ -11,6 +11,7 @@ World::World() {
 	loadCubeMap();
 
 	parseScene("data/myscene.scene");
+	loadPlayer();
 }
 
 void World::addEntity(Entity* entity) {
@@ -121,6 +122,19 @@ bool World::parseScene(const char* filename)
 	return true;
 }
 
+void World::loadPlayer() {
+	/*
+	Texture* texture = Texture::Get("data/textures/texture.tga");
+	Shader* shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
+	Mesh* mesh = Mesh::Get("data/meshes/Ghost Character.obj");
+	Material* material;
+	material->diffuse = texture;
+	material->shader = shader;
+	EntityPlayer* tmp = new EntityPlayer(mesh, material);
+	//Habría que ponerle en la posición inicial haciendo un set translation en la model
+	*/
+}
+
 void World::loadCubeMap() {
 
 	Texture* cubemap = new Texture;
@@ -145,15 +159,16 @@ void World::loadCubeMap() {
 void World::renderAll(Camera* camera) {
 
 	// We render the background image
-	//background->model = TODO:Hay que poner el cubemap en frente de la camara
 	glDisable(GL_DEPTH_TEST);
 	landscape->render(camera);
 	glEnable(GL_DEPTH_TEST);
 
 	root->render(camera);
+	//player->render(camera);
 }
 
 void World::updateAll(float delta_time) {
+	//player->update(delta_time);
 	root->update(delta_time);
 }
 

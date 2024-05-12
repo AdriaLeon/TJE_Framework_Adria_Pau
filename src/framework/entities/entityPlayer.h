@@ -11,15 +11,15 @@ class EntityPlayer : public Entity {
 
 public:
 	Mesh* mesh = nullptr;
-	Material material;
+	Material* material = nullptr;
 	bool onFloor;
 	float walkSpeed;
 
 	EntityPlayer() {};  //Create empty entityPlayer
-	EntityPlayer(Mesh* mesh, Material material); //Create entityMesh
+	EntityPlayer(Mesh* mesh, Material* material); //Create entityMesh
 
 	// Methods overwritten from base class
 	void render(Camera* camera);
 	void update(float elapsed_time);
-	void setMaterial(Material material);
+	void setMaterial(Material* material);
 };

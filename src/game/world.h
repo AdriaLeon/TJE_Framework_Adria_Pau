@@ -4,6 +4,7 @@
 #include "framework/utils.h"
 #include "framework/entities/entity.h"
 #include "framework/entities/entityMesh.h"
+#include "framework/entities/entityPlayer.h"
 #include "framework/camera.h"
 #include "game.h"
 #include <string>
@@ -16,6 +17,8 @@ public:
     float camera_yaw;
 
     EntityMesh* landscape;
+    EntityPlayer* player;
+
 
     World();
 
@@ -32,6 +35,7 @@ public:
 
     bool parseScene(const char* filename);
     void loadCubeMap();
+    void loadPlayer();
     void renderEntities(Camera* camera);
     void updateCubemap(Camera* camera);
     static World* get_instance();

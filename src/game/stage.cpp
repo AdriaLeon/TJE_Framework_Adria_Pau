@@ -14,8 +14,8 @@ void IntroStage::onEnter() {
 	world = new World();
 
 	//Method 1
-    /*// Load one texture using the Texture Manager
-	Texture* texture;
+    // Load one texture using the Texture Manager
+	/*Texture* texture;
     texture = Texture::Get("data/textures/texture.tga");
 
     // Example of shader loading using the shaders manager
@@ -24,14 +24,15 @@ void IntroStage::onEnter() {
 
     Mesh* mesh;
     // Example of loading Mesh from Mesh Manager
-    mesh = Mesh::Get("data/meshes/box.ASE");
+    mesh = Mesh::Get("data/meshes/Ghost Character.ASE");
 
-    cube = new EntityMesh(mesh, shader, texture, "Cube");*/
+    cube = new EntityMesh(mesh, shader, texture, "Char");
 
 	//Method 2
 	cube = new EntityMesh((char*)"data/meshes/box.ASE", (char*)"data/shaders/basic.vs", (char*)"data/shaders/texture.fs", (char*)"data/textures/texture.tga", "Cube");
 
-	//world->root.addChild(cube);
+	cube->render(camera);
+	*/
 }
 
 void IntroStage::onExit() {
@@ -51,7 +52,7 @@ void IntroStage::render( void ) {
 	// Create model matrix for cube
 	Matrix44 m;
 	m.rotate(angle * DEG2RAD, Vector3(0.0f, 1.0f, 0.0f));
-	cube->model = m;
+	//cube->model = m;
 	//cube->render(camera);
 	 
 	world->renderAll(camera);
