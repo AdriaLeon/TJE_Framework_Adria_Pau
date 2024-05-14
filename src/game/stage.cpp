@@ -82,6 +82,15 @@ void IntroStage::update(float second_elapsed) {
 	if (Input::isKeyPressed(SDL_SCANCODE_A) || Input::isKeyPressed(SDL_SCANCODE_LEFT)) camera->move(Vector3(1.0f, 0.0f, 0.0f) * speed);
 	if (Input::isKeyPressed(SDL_SCANCODE_D) || Input::isKeyPressed(SDL_SCANCODE_RIGHT)) camera->move(Vector3(-1.0f, 0.0f, 0.0f) * speed);
 
+	//La camara en primera persona deberia ser algo asi 
+	/*
+	Matrix44 final_rotation = (mPitch * this->world->camera_yaw);
+	Vector3 front = final_rotation.frontVector().normalize;
+	Vector3 eye = world->player->model.getTranslation() + Vector3(0.0f, 0.1f, 0.0f);
+	Vector3 center = camera->eye + front;
+	camera->lookAt(eye, center, Vector(0,1,0));
+	*/
+
 	world->setCamerayaw(camera);
 	world->updateAll(second_elapsed);
 	world->updateCubemap(camera);

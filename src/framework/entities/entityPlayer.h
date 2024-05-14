@@ -14,6 +14,7 @@ public:
 	Material* material = nullptr;
 	bool onFloor;
 	float walkSpeed;
+	Vector3 velocity;
 
 	EntityPlayer() {};  //Create empty entityPlayer
 	EntityPlayer(Mesh* mesh, Material* material); //Create entityMesh

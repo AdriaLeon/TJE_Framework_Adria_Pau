@@ -13,6 +13,7 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material* material){
 	this->onFloor = TRUE;
 	this->material = material;
 	this->walkSpeed = 10.0f;
+	this->velocity = Vector3(0,0,0);
 }
 
 void EntityPlayer::render(Camera* camera) {
@@ -52,6 +53,8 @@ void EntityPlayer::update(float elapsed_time) {
 
 	Vector3 front = Vector3(0, 0, -1);
 	Vector3 right = Vector3(1, 0, 0);
+	//Guardamos speed_mult a parte por si queremos hacer un botón de sprint
+	float speed_mult = this->walkSpeed; 
 
 	Vector3 position = model.getTranslation();
 
@@ -69,8 +72,21 @@ void EntityPlayer::update(float elapsed_time) {
 	if (Input::isKeyPressed(SDL_SCANCODE_D) || Input::isKeyPressed(SDL_SCANCODE_RIGHT)) {
 		move_dir -= right;
 	}
-	float speed_mult = this->walkSpeed;
-	this->model.setTranslation(position + move_dir * speed_mult);
+	//Añado un boton de correr por si hay que probar cosas, en teoria la version final no tendra
+	if (Input::isKeyPressed(SDL_SCANCODE_LSHIFT)) {
+		speed_mult *= 3.0f;
+	}
+	move_dir.normalize();
+	move_dir *= speed_mult;
+	velocity += move_dir;
+	position += velocity * elapsed_time;
+
+	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
+	velocity.x *= 0.5f;
+	velocity.y *= 0.5f;
+
+	this->model.setTranslation(position);
+	this->model.rotate(camera_yaw, Vector3(0, 1, 0));
 
 	Entity::update(elapsed_time);
 }
