@@ -39,8 +39,21 @@ void EntityPlayer::render(Camera* camera) {
 	else {
 		material->shader->setUniform("u_texture", material->diffuse->getWhiteTexture(), 0);
 	}
+	const Matrix44& globalMatrix = getGlobalMatrix();
 
+	// Compute bounding sphere center in world coords
+	Vector3 sphere_center = globalMatrix * mesh->box.center;
+	Vector3 halfsize = globalMatrix * mesh->box.halfsize;
+
+	// Discard objects whose bounding sphere is not inside the camera frustum
+	if ((!camera->testBoxInFrustum(sphere_center, halfsize) ||
+		camera->eye.distance(sphere_center) > 5000.0f))
+		return;
+
+	material->shader->setUniform("u_model", globalMatrix);
+	// Render the mesh using the shader
 	mesh->render(GL_TRIANGLES);
+
 	// Disable shader after finishing rendering
 	material->shader->disable();
 };
@@ -59,18 +72,19 @@ void EntityPlayer::update(float elapsed_time) {
 
 	Vector3 position = model.getTranslation();
 
+	Vector3 new_velocity;
 	Vector3 move_dir;
 	//TODO: Normalizar move_dir para los movimientos diagonales
-	if (Input::isKeyPressed(SDL_SCANCODE_W) || Input::isKeyPressed(SDL_SCANCODE_UP)) {
+	if (Input::isKeyPressed(SDL_SCANCODE_W)) {// || Input::isKeyPressed(SDL_SCANCODE_UP)) {
 		move_dir += front;
 	}
-	if (Input::isKeyPressed(SDL_SCANCODE_S) || Input::isKeyPressed(SDL_SCANCODE_DOWN)) {
+	if (Input::isKeyPressed(SDL_SCANCODE_S)) {// || Input::isKeyPressed(SDL_SCANCODE_DOWN)) {
 		move_dir -= front;
 	}
-	if (Input::isKeyPressed(SDL_SCANCODE_A) || Input::isKeyPressed(SDL_SCANCODE_LEFT)) {
+	if (Input::isKeyPressed(SDL_SCANCODE_A)) {// || Input::isKeyPressed(SDL_SCANCODE_LEFT)) {
 		move_dir += right;
 	}
-	if (Input::isKeyPressed(SDL_SCANCODE_D) || Input::isKeyPressed(SDL_SCANCODE_RIGHT)) {
+	if (Input::isKeyPressed(SDL_SCANCODE_D)) {// || Input::isKeyPressed(SDL_SCANCODE_RIGHT)) {
 		move_dir -= right;
 	}
 	//Añado un boton de correr por si hay que probar cosas, en teoria la version final no tendra
@@ -79,12 +93,18 @@ void EntityPlayer::update(float elapsed_time) {
 	}
 	move_dir.normalize();
 	move_dir *= speed_mult;
-	velocity += move_dir;
+	new_velocity = velocity;
+	new_velocity += move_dir;
+	if (abs(new_velocity.x) + abs(new_velocity.z) < 25)
+		velocity = new_velocity;
+	//velocity = move_dir;
 	position += velocity * elapsed_time;
 
 	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
-	velocity.x *= 0.5f;
-	velocity.y *= 0.5f;
+	float velocity_x_reduction = velocity.x * 2.0f * elapsed_time;
+	float velocity_z_reduction = velocity.z * 2.0f * elapsed_time;
+	velocity.x -= velocity_x_reduction;
+	velocity.z -= velocity_z_reduction;
 
 	this->model.setTranslation(position);
 	this->model.rotate(camera_yaw, Vector3(0, 1, 0));

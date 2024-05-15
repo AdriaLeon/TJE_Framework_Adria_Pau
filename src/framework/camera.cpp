@@ -321,13 +321,6 @@ float Camera::getYaw() {
 	// atan2 returns the angle in radians [-pi, pi]
 	float yaw = atan2(direction.z, direction.x);
 
-	// Convert radians to degrees
-	yaw = yaw * RAD2DEG;
-
-	// Adjust the angle to be in the range [0, 360]
-	if (yaw < 0)
-		yaw += 360.0f;
-
 	return yaw;
 }
 

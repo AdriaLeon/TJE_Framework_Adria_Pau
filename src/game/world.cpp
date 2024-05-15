@@ -8,6 +8,7 @@ World::World() {
 
 	instance = this;
 	root = new Entity();
+	player = nullptr;
 	loadCubeMap();
 
 	parseScene("data/myscene.scene");
@@ -123,9 +124,9 @@ bool World::parseScene(const char* filename)
 }
 
 void World::loadPlayer() {
-	Texture* texture = Texture::Get("data/textures/texture.tga");
-	Shader* shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
-	Mesh* mesh = Mesh::Get("data/meshes/Alien/Alien.obj");
+	Texture* texture = Texture::Get("data/Player/Alien.mtl");
+	Shader* shader = Shader::Get("data/shaders/basic.vs", "data/shaders/color.fs");
+	Mesh* mesh = Mesh::Get("data/Player/Alien.obj");
 	Material* material = new Material();
 	material->diffuse = texture;
 	material->shader = shader;
