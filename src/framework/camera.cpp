@@ -314,14 +314,17 @@ char Camera::testBoxInFrustum(const Vector3& center, const Vector3& halfsize)
 }
 
 float Camera::getYaw() {
-	// Calculate the direction vector from eye to center
 	Vector3 direction = (center - eye).normalize();
-
-	// Calculate the yaw angle using arctangent
-	// atan2 returns the angle in radians [-pi, pi]
 	float yaw = atan2(direction.z, direction.x);
 
 	return yaw;
 }
+
+float Camera::getMPitch() {
+	Vector3 direction = (center - eye).normalize();
+	float pitch = asin(direction.y);
+	return pitch; 
+}
+
 
 

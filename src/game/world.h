@@ -15,6 +15,7 @@ public:
     std::vector<Entity*> entities;  //we may create a superior class method or do a list for each type of entity I will leave like this at the moment
     Entity* root;
     float camera_yaw;
+    float camera_pitch;
 
     EntityMesh* landscape;
     EntityPlayer* player;

@@ -64,9 +64,14 @@ void EntityPlayer::update(float elapsed_time) {
 
 	Matrix44 mYaw;
 	mYaw.setRotation(camera_yaw, Vector3(0, 1, 0));
-
 	Vector3 front = Vector3(0, 0, -1);
 	Vector3 right = Vector3(1, 0, 0);
+
+	//rotacion inicial para eliminar el desfase inicial
+	Matrix44 initial_rotation;
+	initial_rotation.rotate(DEG2RAD * 90.0f, Vector3(0, 1, 0));
+	model = initial_rotation * model;
+
 	//Guardamos speed_mult a parte por si queremos hacer un botón de sprint
 	float speed_mult = this->walkSpeed; 
 
@@ -74,7 +79,7 @@ void EntityPlayer::update(float elapsed_time) {
 
 	Vector3 new_velocity;
 	Vector3 move_dir;
-	//TODO: Normalizar move_dir para los movimientos diagonales
+
 	if (Input::isKeyPressed(SDL_SCANCODE_W)) {// || Input::isKeyPressed(SDL_SCANCODE_UP)) {
 		move_dir += front;
 	}
@@ -82,10 +87,10 @@ void EntityPlayer::update(float elapsed_time) {
 		move_dir -= front;
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_A)) {// || Input::isKeyPressed(SDL_SCANCODE_LEFT)) {
-		move_dir += right;
+		move_dir -= right;
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_D)) {// || Input::isKeyPressed(SDL_SCANCODE_RIGHT)) {
-		move_dir -= right;
+		move_dir += right;
 	}
 	//Añado un boton de correr por si hay que probar cosas, en teoria la version final no tendra
 	if (Input::isKeyPressed(SDL_SCANCODE_LSHIFT)) {
@@ -97,17 +102,18 @@ void EntityPlayer::update(float elapsed_time) {
 	new_velocity += move_dir;
 	if (abs(new_velocity.x) + abs(new_velocity.z) < 25)
 		velocity = new_velocity;
-	//velocity = move_dir;
 	position += velocity * elapsed_time;
 
 	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
-	float velocity_x_reduction = velocity.x * 2.0f * elapsed_time;
-	float velocity_z_reduction = velocity.z * 2.0f * elapsed_time;
+	float velocity_x_reduction = velocity.x * 2.5f * elapsed_time;
+	float velocity_z_reduction = velocity.z * 2.5f * elapsed_time;
 	velocity.x -= velocity_x_reduction;
 	velocity.z -= velocity_z_reduction;
 
+	float offset = DEG2RAD * 90.0f;
+
 	this->model.setTranslation(position);
-	this->model.rotate(camera_yaw, Vector3(0, 1, 0));
+	this->model.rotate(camera_yaw-offset, Vector3(0, 1, 0));
 
 	Entity::update(elapsed_time);
 }

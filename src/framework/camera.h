@@ -39,6 +39,7 @@ public:
 	Matrix44 projection_matrix;
 	Matrix44 viewprojection_matrix;
 
+	bool first_person = false;
 	Camera();
 
 	//set as current
@@ -76,5 +77,6 @@ public:
 	char testBoxInFrustum( const Vector3& center, const Vector3& halfsize);
 
 	float getYaw();
+	float getMPitch();
 
 };
