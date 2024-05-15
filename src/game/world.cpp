@@ -123,16 +123,15 @@ bool World::parseScene(const char* filename)
 }
 
 void World::loadPlayer() {
-	/*
 	Texture* texture = Texture::Get("data/textures/texture.tga");
 	Shader* shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
-	Mesh* mesh = Mesh::Get("data/meshes/Ghost Character.obj");
-	Material* material;
+	Mesh* mesh = Mesh::Get("data/meshes/Alien/Alien.obj");
+	Material* material = new Material();
 	material->diffuse = texture;
 	material->shader = shader;
 	EntityPlayer* tmp = new EntityPlayer(mesh, material);
-	//Habría que ponerle en la posición inicial haciendo un set translation en la model
-	*/
+	this->player = tmp;
+	player->model.setTranslation(Vector3(0.0f, 1.0f, 0.0f));
 }
 
 void World::loadCubeMap() {
@@ -163,12 +162,12 @@ void World::renderAll(Camera* camera) {
 	landscape->render(camera);
 	glEnable(GL_DEPTH_TEST);
 
-	root->render(camera);
-	//player->render(camera);
+	//root->render(camera);
+	player->render(camera);
 }
 
 void World::updateAll(float delta_time) {
-	//player->update(delta_time);
+	player->update(delta_time);
 	root->update(delta_time);
 }
 

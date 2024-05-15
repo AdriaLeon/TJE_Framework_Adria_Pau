@@ -14,6 +14,7 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material* material){
 	this->material = material;
 	this->walkSpeed = 10.0f;
 	this->velocity = Vector3(0,0,0);
+	entityType = eEntityType::PLAYER;
 }
 
 void EntityPlayer::render(Camera* camera) {
