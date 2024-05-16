@@ -28,6 +28,7 @@ public:
     void removeEntity(Entity* entity);
     void removeAllEntities();
     void setCamerayaw(Camera* camera);
+
     // Method to redner all entities, this should be done calling just one function on entity since we will do the tree approach
     void renderAll(Camera* camera);
 

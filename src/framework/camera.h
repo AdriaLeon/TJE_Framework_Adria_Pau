@@ -40,6 +40,7 @@ public:
 	Matrix44 viewprojection_matrix;
 
 	bool first_person = false;
+	bool first_person_mode_front = false;
 	Camera();
 
 	//set as current

@@ -180,6 +180,7 @@ void World::setCamerayaw(Camera* camera) {
 	this->camera_yaw = camera->getYaw();
 }
 
+
 void World::renderEntities(Camera* camera) {
 	// Using entities container
 

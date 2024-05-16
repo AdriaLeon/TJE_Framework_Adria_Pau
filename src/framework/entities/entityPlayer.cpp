@@ -15,6 +15,7 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material* material){
 	this->walkSpeed = 10.0f;
 	this->velocity = Vector3(0,0,0);
 	entityType = eEntityType::PLAYER;
+
 }
 
 void EntityPlayer::render(Camera* camera) {
@@ -64,13 +65,15 @@ void EntityPlayer::update(float elapsed_time) {
 
 	Matrix44 mYaw;
 	mYaw.setRotation(camera_yaw, Vector3(0, 1, 0));
-	Vector3 front = Vector3(0, 0, -1);
-	Vector3 right = Vector3(1, 0, 0);
+	Vector3 front = Vector3(1, 0, 0);
 
-	//rotacion inicial para eliminar el desfase inicial
-	Matrix44 initial_rotation;
-	initial_rotation.rotate(DEG2RAD * 90.0f, Vector3(0, 1, 0));
-	model = initial_rotation * model;
+	// Rotate the front vector according to the camera yaw
+	front = mYaw * front;
+
+	// Calculate the right vector based on the rotated front vector
+	Vector3 right = front.cross(Vector3(0, 1, 0));
+	//Vector3 right = Vector3(1, 0, 0);
+
 
 	//Guardamos speed_mult a parte por si queremos hacer un botón de sprint
 	float speed_mult = this->walkSpeed; 

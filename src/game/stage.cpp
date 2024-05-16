@@ -10,7 +10,6 @@ void IntroStage::onEnter() {
     camera->lookAt(Vector3(0.f, 100.f, 100.f), Vector3(0.f, 0.f, 0.f), Vector3(0.f, 1.f, 0.f)); //position the camera and point to 0,0,0
     camera->setPerspective(70.f, Game::instance->window_width / (float)Game::instance->window_height, 0.1f, 10000.f); //set the projection, we want to be perspective
 
-
 	world = new World();
 
 	//Method 1
@@ -96,6 +95,11 @@ void IntroStage::update(float second_elapsed) {
         }
     }
 
+    if (Input::wasKeyPressed(SDL_SCANCODE_X))
+    {
+        camera->first_person_mode_front = !camera->first_person_mode_front;
+    }
+
     if (!camera->first_person)
     {
         if (Input::isKeyPressed(SDL_SCANCODE_LSHIFT)) speed *= 10; //move faster with left shift
@@ -117,9 +121,15 @@ void IntroStage::update(float second_elapsed) {
         Matrix44 final_rotation = yaw_matrix * pitch_matrix;
 
         // Update camera position to follow the player
-        Vector3 eye = world->player->model.getTranslation() + Vector3(0.0f, 3.0f, -1.0f); // Adjust height to player's eye level
         Vector3 front = final_rotation.frontVector().normalize();
         front = -front; // Reverse direction to face forward
+        Vector3 eye;
+        if (camera->first_person_mode_front) {
+            eye = world->player->model.getTranslation() + Vector3(0.0f, 3.0f, 0.0f) + front; // Adjust height to player's eye level
+        }
+        else {
+            eye = world->player->model.getTranslation() + Vector3(0.0f, 4.0f, 0.0f) - 15*front; // Adjust height to player's eye level
+        }
         Vector3 center = eye + front;
         camera->lookAt(eye, center, Vector3(0, 1, 0));
     }
@@ -128,7 +138,6 @@ void IntroStage::update(float second_elapsed) {
     world->updateAll(second_elapsed);
     world->updateCubemap(camera);
 }
-
 
 void PlayStage::onEnter() {};
 void PlayStage::onExit() {};
