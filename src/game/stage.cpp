@@ -73,6 +73,7 @@ void IntroStage::update(float second_elapsed) {
     // Mouse input to rotate the cam
     if (Input::isMousePressed(SDL_BUTTON_LEFT) || Game::instance->mouse_locked) //is left button pressed?
     {
+        //TODO: Ajustar la sensibilidad 
         yaw += Input::mouse_delta.x * 0.005f;
         pitch += Input::mouse_delta.y * 0.005f;
 
@@ -88,8 +89,12 @@ void IntroStage::update(float second_elapsed) {
     // Toggle between first person and third person view when 'C' is pressed
     if (Input::wasKeyPressed(SDL_SCANCODE_C))
     {
-        camera->first_person = !camera->first_person;
-        if (camera->first_person == false) {
+        Game::instance->mouse_locked = !Game::instance->mouse_locked;
+        SDL_ShowCursor(!Game::instance->mouse_locked);
+        SDL_SetRelativeMouseMode((SDL_bool)(Game::instance->mouse_locked));
+        camera->default_camera = !camera->default_camera;
+        if (camera->default_camera == true) {
+            //Set the default position of the camera
             camera->lookAt(Vector3(0.f, 100.f, 100.f), Vector3(0.f, 0.f, 0.f), Vector3(0.f, 1.f, 0.f));
             camera->setPerspective(70.f, Game::instance->window_width / (float)Game::instance->window_height, 0.1f, 10000.f);
         }
@@ -100,7 +105,7 @@ void IntroStage::update(float second_elapsed) {
         camera->first_person_mode_front = !camera->first_person_mode_front;
     }
 
-    if (!camera->first_person)
+    if (camera->default_camera)
     {
         if (Input::isKeyPressed(SDL_SCANCODE_LSHIFT)) speed *= 10; //move faster with left shift
         if (Input::isKeyPressed(SDL_SCANCODE_UP)) camera->move(Vector3(0.0f, 0.0f, 1.0f) * speed);
@@ -128,7 +133,7 @@ void IntroStage::update(float second_elapsed) {
             eye = world->player->model.getTranslation() + Vector3(0.0f, 3.0f, 0.0f) + front; // Adjust height to player's eye level
         }
         else {
-            eye = world->player->model.getTranslation() + Vector3(0.0f, 4.0f, 0.0f) - 15*front; // Adjust height to player's eye level
+            eye = world->player->model.getTranslation() + Vector3(0.0f, 4.0f, 0.0f) - 15*front;
         }
         Vector3 center = eye + front;
         camera->lookAt(eye, center, Vector3(0, 1, 0));

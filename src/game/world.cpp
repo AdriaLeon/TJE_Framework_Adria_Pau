@@ -132,7 +132,10 @@ void World::loadPlayer() {
 	material->shader = shader;
 	EntityPlayer* tmp = new EntityPlayer(mesh, material);
 	this->player = tmp;
-	player->model.setTranslation(Vector3(0.0f, 1.0f, 0.0f));
+	Vector3 init_position = Vector3(-41.927399, 1.000000, -282.417572);
+	this->player->model.setTranslation(init_position);
+	float offset = DEG2RAD * 180.0f;
+	this->player->model.rotate(offset, Vector3(0, 1, 0));
 }
 
 void World::loadCubeMap() {
@@ -163,7 +166,7 @@ void World::renderAll(Camera* camera) {
 	landscape->render(camera);
 	glEnable(GL_DEPTH_TEST);
 
-	//root->render(camera);
+	root->render(camera);
 	player->render(camera);
 }
 

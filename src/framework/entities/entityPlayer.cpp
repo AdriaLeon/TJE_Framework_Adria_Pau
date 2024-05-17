@@ -8,6 +8,8 @@
 #include "game/world.h"
 #include <string>
 
+Vector3 init_position = Vector3(-41.927399, 1.000000, -282.417572);
+
 EntityPlayer::EntityPlayer(Mesh* mesh, Material* material){
 	this->mesh = mesh;
 	this->onFloor = TRUE;
@@ -94,6 +96,9 @@ void EntityPlayer::update(float elapsed_time) {
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_D)) {// || Input::isKeyPressed(SDL_SCANCODE_RIGHT)) {
 		move_dir += right;
+	}
+	if (Input::wasKeyPressed(SDL_SCANCODE_O)) { //Debugging tool to know the players position
+		printf("%f %f %f", this->model.getTranslation().x, this->model.getTranslation().y, this->model.getTranslation().z);
 	}
 	//Añado un boton de correr por si hay que probar cosas, en teoria la version final no tendra
 	if (Input::isKeyPressed(SDL_SCANCODE_LSHIFT)) {
