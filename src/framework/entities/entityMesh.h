@@ -5,6 +5,17 @@
 #include "entity.h"
 #include "graphics/material.h"
 
+enum {
+	NONE = 0,
+	FLOOR = 1 << 0,
+	WALL = 1 << 1,
+	PLAYER = 1 << 2,
+	ENEMY = 1 << 3,
+	// Both WALL and FLOOR are considered SCENARIO
+	// using OR operator
+	SCENARIO = WALL | FLOOR,
+	ALL = 0xFF
+};
 
 
 class EntityMesh : public Entity {
@@ -20,6 +31,7 @@ class EntityMesh : public Entity {
 	Mesh* mesh = nullptr;
 	Material material;
 	bool isInstanced;
+	int layer = NONE;
 
 	std::vector<Matrix44> models_to_render;
 

@@ -127,9 +127,9 @@ void World::loadPlayer() {
 	Texture* texture = Texture::Get("data/Player/Alien.mtl");
 	Shader* shader = Shader::Get("data/shaders/basic.vs", "data/shaders/color.fs");
 	Mesh* mesh = Mesh::Get("data/Player/Alien.obj");
-	Material* material = new Material();
-	material->diffuse = texture;
-	material->shader = shader;
+	Material material;
+	material.diffuse = texture;
+	material.shader = shader;
 	EntityPlayer* tmp = new EntityPlayer(mesh, material);
 	this->player = tmp;
 	Vector3 init_position = Vector3(-41.927399, 1.000000, -282.417572);
@@ -223,18 +223,22 @@ World* World::get_instance() {
     return instance;
 }
 
+bool World::check_player_collisions(Vector3& target_pos, std::vector<sCollisionData> collisions) {
+	for (Entity* ent : root->children) {
+		EntityMesh* e = (EntityMesh*) ent;
 
+		Vector3 center_sphere = target_pos + Vector3(0.0, 1.5, 0.0); //Ajustar a la altura del perosnaje
+		float sphereRadius = 0.75f;
+		Vector3 colPoint, colNormal;
+
+		Mesh* mesh = e->mesh;
+		if (mesh->testSphereCollision(e->model, center_sphere, sphereRadius, colPoint, colNormal)) {
+			collisions.push_back({ colPoint, colNormal.normalize() });
+		}
+	}
+	return !collisions.empty();
+}
 /*Class EntityPlayer{
-	Movimiento
-		movement lo mismo que en 2d pero en 3 dimensiones
-
-		Matrix44 wYaw;
-		wYaw.setRotation(camera_yaw, Vectro(0,1,0));
-
-		Vector3 front = wYaw.frontVector;
-		Vectro3 right = WYaw.rightVector;
-
-		position += velocity * seconds_elapsed;
 
 	Collisiones
 		//////collisions with world

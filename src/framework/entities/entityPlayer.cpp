@@ -10,10 +10,8 @@
 
 Vector3 init_position = Vector3(-41.927399, 1.000000, -282.417572);
 
-EntityPlayer::EntityPlayer(Mesh* mesh, Material* material){
-	this->mesh = mesh;
+EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, material) {
 	this->onFloor = TRUE;
-	this->material = material;
 	this->walkSpeed = 10.0f;
 	this->velocity = Vector3(0,0,0);
 	entityType = eEntityType::PLAYER;
@@ -22,44 +20,27 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material* material){
 
 void EntityPlayer::render(Camera* camera) {
 
-	if (!mesh)		return;
+	EntityMesh::render(camera);
+	Mesh* mesh = Mesh::Get("data/meshes/sphere.obj");
+	Matrix44 m = model;
+	float sphere_radius = 1.0f;
+	material.shader->enable();
 
-	if (!material->shader) {
-		material->shader = Shader::Get("data/shaders/basic.vs", "data/shaders/flat.fs");
-	}
+	m.translate(0.0f, 1.5f, 0.0f);
+	m.scale(sphere_radius, sphere_radius, sphere_radius);
 
-	// Enable shader and pass uniforms 
-	material->shader->enable();
-	material->shader->setUniform("u_color", material->color);
-	material->shader->setUniform("u_camera_position", camera->eye);
-	material->shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
-	material->shader->setUniform("u_time", time);
+	material.shader->setUniform("u_color", Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+	material.shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
+	material.shader->setUniform("u_model", m);
 
+	mesh->render(GL_LINES);
 
-	if (material->diffuse) {
-		material->shader->setUniform("u_texture", material->diffuse, 0);
-	}
-	else {
-		material->shader->setUniform("u_texture", material->diffuse->getWhiteTexture(), 0);
-	}
-	const Matrix44& globalMatrix = getGlobalMatrix();
-
-	// Compute bounding sphere center in world coords
-	Vector3 sphere_center = globalMatrix * mesh->box.center;
-	Vector3 halfsize = globalMatrix * mesh->box.halfsize;
-
-	// Discard objects whose bounding sphere is not inside the camera frustum
-	if ((!camera->testBoxInFrustum(sphere_center, halfsize) ||
-		camera->eye.distance(sphere_center) > 5000.0f))
-		return;
-
-	material->shader->setUniform("u_model", globalMatrix);
-	// Render the mesh using the shader
-	mesh->render(GL_TRIANGLES);
-
-	// Disable shader after finishing rendering
-	material->shader->disable();
+	material.shader->disable();
 };
+
+
+
+
 
 void EntityPlayer::update(float elapsed_time) {
 
@@ -110,7 +91,15 @@ void EntityPlayer::update(float elapsed_time) {
 	new_velocity += move_dir;
 	if (abs(new_velocity.x) + abs(new_velocity.z) < 25)
 		velocity = new_velocity;
-	position += velocity * elapsed_time;
+
+	//No collision move
+	//position += velocity * elapsed_time;
+	Vector3 next_pos = position;
+	next_pos += velocity * elapsed_time;
+	if (!check_collision(next_pos)) {
+		position = next_pos;
+	}
+	
 
 	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
 	float velocity_x_reduction = velocity.x * 2.5f * elapsed_time;
@@ -126,6 +115,16 @@ void EntityPlayer::update(float elapsed_time) {
 	Entity::update(elapsed_time);
 }
 
-void EntityPlayer::setMaterial(Material* material) {
-	this->material = material;
+void EntityPlayer::setMaterial(Material material) {
+	EntityMesh::setMaterial(material);
 }
+
+bool EntityPlayer::check_collision(Vector3 next_position) {
+	World* world = World::get_instance();
+	if (world->check_player_collisions(next_position, world->collisions)) {
+		return true;
+	}
+	return false;
+}
+
+

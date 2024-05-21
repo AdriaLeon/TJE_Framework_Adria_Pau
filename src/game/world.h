@@ -9,6 +9,11 @@
 #include "game.h"
 #include <string>
 
+struct sCollisionData {
+    Vector3 colPoint;
+    Vector3 colNormal;
+};
+
 class World {
 public:
     static World* instance;
@@ -20,6 +25,7 @@ public:
     EntityMesh* landscape;
     EntityPlayer* player;
 
+    std::vector<sCollisionData> collisions;
 
     World();
 
@@ -41,4 +47,6 @@ public:
     void renderEntities(Camera* camera);
     void updateCubemap(Camera* camera);
     static World* get_instance();
+
+    bool check_player_collisions(Vector3& target_pos, std::vector<sCollisionData> collisions);
 };
