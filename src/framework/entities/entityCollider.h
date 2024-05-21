@@ -15,5 +15,10 @@ class EntityCollider : public EntityMesh {
 public:
 	bool is_dynamic = false;
 	int layer = NONE;
-
+	Vector3 col_point;
+	Vector3 col_normal;
+	
+	EntityCollider() {};
+	EntityCollider(Mesh* mesh, int lay);
+	bool is_colliding();
 };
