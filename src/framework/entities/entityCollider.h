@@ -1,5 +1,7 @@
 #include "entityMesh.h"
 
+//TODO: Remove this class
+
 enum {
 	NONE = 0,
 	FLOOR = 1 << 0,

@@ -11,6 +11,8 @@ void IntroStage::onEnter() {
     camera->setPerspective(70.f, Game::instance->window_width / (float)Game::instance->window_height, 0.1f, 10000.f); //set the projection, we want to be perspective
 
 	world = new World();
+
+    //We set the first person camera parameters
     Game::instance->mouse_locked = true;
     SDL_ShowCursor(!Game::instance->mouse_locked);
     SDL_SetRelativeMouseMode((SDL_bool)(Game::instance->mouse_locked));
