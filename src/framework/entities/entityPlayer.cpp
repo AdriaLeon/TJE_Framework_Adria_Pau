@@ -8,14 +8,11 @@
 #include "game/world.h"
 #include <string>
 
-Vector3 init_position = Vector3(-41.927399, 1.000000, -282.417572);
-
 EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, material) {
 	this->onFloor = TRUE;
 	this->walkSpeed = 10.0f;
 	this->velocity = Vector3(0,0,0);
 	entityType = eEntityType::PLAYER;
-
 }
 
 void EntityPlayer::render(Camera* camera) {
@@ -58,7 +55,7 @@ void EntityPlayer::update(float elapsed_time) {
 	//Vector3 right = Vector3(1, 0, 0);
 
 
-	//Guardamos speed_mult a parte por si queremos hacer un botÛn de sprint
+	//Guardamos speed_mult a parte por si queremos hacer un bot√≥n de sprint
 	float speed_mult = this->walkSpeed; 
 
 	Vector3 position = model.getTranslation();
@@ -81,7 +78,7 @@ void EntityPlayer::update(float elapsed_time) {
 	if (Input::wasKeyPressed(SDL_SCANCODE_O)) { //Debugging tool to know the players position
 		printf("%f %f %f", this->model.getTranslation().x, this->model.getTranslation().y, this->model.getTranslation().z);
 	}
-	//AÒado un boton de correr por si hay que probar cosas, en teoria la version final no tendra
+	//A√±ado un boton de correr por si hay que probar cosas, en teoria la version final no tendra
 	if (Input::isKeyPressed(SDL_SCANCODE_LSHIFT)) {
 		speed_mult *= 3.0f;
 	}
@@ -100,8 +97,9 @@ void EntityPlayer::update(float elapsed_time) {
 		position = next_pos;
 	}
 	
+	
 
-	//Reducimos velocity mientras no nos movemos (lentamente para que sea m·s smooth)
+	//Reducimos velocity mientras no nos movemos (lentamente para que sea m√°s smooth)
 	float velocity_x_reduction = velocity.x * 2.5f * elapsed_time;
 	float velocity_z_reduction = velocity.z * 2.5f * elapsed_time;
 	velocity.x -= velocity_x_reduction;
