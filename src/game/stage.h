@@ -27,7 +27,7 @@ public:
 	World* world;
 	Camera* camera;
 
-	float mouse_speed = 100.0f;
+	float mouse_speed = 1.0f;
 
 	Stage() { };
 

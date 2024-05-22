@@ -81,15 +81,15 @@ void IntroStage::update(float second_elapsed) {
     if (Input::isMousePressed(SDL_BUTTON_LEFT) || Game::instance->mouse_locked) //is left button pressed?
     {
         //TODO: Ajustar la sensibilidad 
-        yaw += Input::mouse_delta.x * 0.005f;
-        pitch += Input::mouse_delta.y * 0.005f;
+        yaw -= Input::mouse_delta.x * speed;
+        pitch -= Input::mouse_delta.y * speed;
 
         // Limit pitch to avoid flipping
-        if (pitch > 1.5f) pitch = 1.5f;
-        if (pitch < -1.5f) pitch = -1.5f;
+        pitch = clamp(pitch, -1.5f, 1.0f);
+
         
-        camera->rotate(Input::mouse_delta.x * 0.005f, Vector3(0.0f, -1.0f, 0.0f));
-        camera->rotate(Input::mouse_delta.y * 0.005f, camera->getLocalVector(Vector3(-1.0f, 0.0f, 0.0f)));
+        camera->rotate(yaw, Vector3(0.0f, 1.0f, 0.0f));
+        camera->rotate(pitch, camera->getLocalVector(Vector3(1.0f, 0.0f, 0.0f)));
     }
 
 
@@ -122,26 +122,28 @@ void IntroStage::update(float second_elapsed) {
     }
     else
     {
-        // Camera in first person view
+        // First and Third person view
         Matrix44 pitch_matrix;
-        pitch_matrix.setRotation(pitch, Vector3(1.0f, 0.0f, 0.0f)); // Pitch rotation
+        pitch_matrix.setRotation(pitch, Vector3(-1.0f, 0.0f, 0.0f)); // Pitch rotation
 
         Matrix44 yaw_matrix;
         yaw_matrix.setRotation(yaw, Vector3(0.0f, 1.0f, 0.0f)); // Yaw rotation
 
         // Combine pitch and yaw rotations
-        Matrix44 final_rotation = yaw_matrix * pitch_matrix;
+        Matrix44 final_rotation = pitch_matrix * yaw_matrix;
 
         // Update camera position to follow the player
         Vector3 front = final_rotation.frontVector().normalize();
-        front = -front; // Reverse direction to face forward
+
         Vector3 eye;
+        // First person view
         if (camera->first_person_mode_front) {
-            eye = world->player->model.getTranslation() + Vector3(0.0f, 3.0f, 0.0f) + front; // Adjust height to player's eye level
+            eye = world->player->model.getTranslation() + Vector3(0.0f, 2.5f, 0.0f) + front; // Adjust height to player's eye level
         }
-        else {
-            eye = world->player->model.getTranslation() + Vector3(0.0f, 4.0f, 0.0f) - 15*front;
+        else { // Third person view
+            eye = world->player->model.getTranslation() + Vector3(0.0f, 4.0f, 0.0f) - 10 * front;
         }
+        //Do ray tracing in case tha camera in third person enters a wall.
         Vector3 center = eye + front;
         camera->lookAt(eye, center, Vector3(0, 1, 0));
     }
