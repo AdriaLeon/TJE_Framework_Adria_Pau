@@ -31,7 +31,7 @@ void World::removeAllEntities() {
 	entities.clear();
 }
 
-//Revisar que fa i adaptar-lo al nostre codi, codi de parseScene proporcionat a l'aula global amb alguna petita modificació
+//Revisar que fa i adaptar-lo al nostre codi, codi de parseScene proporcionat a l'aula global amb alguna petita modificaciÃ³
 bool World::parseScene(const char* filename)
 {
 	std::cout << " + Scene loading: " << filename << "..." << std::endl;
@@ -132,10 +132,8 @@ void World::loadPlayer() {
 	material.shader = shader;
 	EntityPlayer* tmp = new EntityPlayer(mesh, material);
 	this->player = tmp;
-	Vector3 init_position = Vector3(-41.927399, 1.000000, -282.417572);
+	Vector3 init_position = Vector3(-41.927399, 0.000000, -282.417572);
 	this->player->model.setTranslation(init_position);
-	float offset = DEG2RAD * 180.0f;
-	this->player->model.rotate(offset, Vector3(0, 1, 0));
 }
 
 void World::loadCubeMap() {
@@ -227,13 +225,28 @@ bool World::check_player_collisions(Vector3& target_pos, std::vector<sCollisionD
 	for (Entity* ent : root->children) {
 		EntityMesh* e = (EntityMesh*) ent;
 
-		Vector3 center_sphere = target_pos + Vector3(0.0, 1.5, 0.0); //Ajustar a la altura del perosnaje
-		float sphereRadius = 0.75f;
+		Vector3 center_sphere = target_pos + Vector3(0.0, 1.5, 0.0);
+		Vector3 floor_center_sphere = target_pos + Vector3(0.0, 0.0, 0.0);
+		float sphereRadius = 0.025f;
+		float sphereRadiusFloor = 0.015f;
 		Vector3 colPoint, colNormal;
-
+		Matrix44 model = e->model;
 		Mesh* mesh = e->mesh;
-		if (mesh->testSphereCollision(e->model, center_sphere, sphereRadius, colPoint, colNormal)) {
+
+		// Manages collisions with floors
+		if (mesh->testSphereCollision(model, floor_center_sphere, sphereRadiusFloor, colPoint, colNormal)) {
+			this->player->onFloor = true;
+			printf("on floor\n");
+		}
+		else {
+			this->player->onFloor = false;
+		}
+		//Collisions with walls
+		model = e->model;
+		mesh = e->mesh;
+		if (mesh->testSphereCollision(model, center_sphere, sphereRadius, colPoint, colNormal)) {
 			collisions.push_back({ colPoint, colNormal.normalize() });
+			printf("on wall\n");
 		}
 	}
 	return !collisions.empty();
