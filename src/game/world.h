@@ -48,5 +48,5 @@ public:
     void updateCubemap(Camera* camera);
     static World* get_instance();
 
-    bool check_player_collisions(Vector3& target_pos, std::vector<sCollisionData> collisions);
+    bool check_player_collisions(Vector3& target_pos, std::vector<sCollisionData> &collisions);
 };

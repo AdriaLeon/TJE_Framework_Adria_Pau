@@ -132,7 +132,7 @@ void World::loadPlayer() {
 	material.shader = shader;
 	EntityPlayer* tmp = new EntityPlayer(mesh, material);
 	this->player = tmp;
-	Vector3 init_position = Vector3(-41.927399, 0.000000, -282.417572);
+	Vector3 init_position = Vector3(-41.927399, 0.000000, -242.417572);
 	this->player->model.setTranslation(init_position);
 }
 
@@ -221,20 +221,23 @@ World* World::get_instance() {
     return instance;
 }
 
-bool World::check_player_collisions(Vector3& target_pos, std::vector<sCollisionData> collisions) {
+bool World::check_player_collisions(Vector3& target_pos, std::vector<sCollisionData> &collisions) {
+
+	Vector3 ray_start = target_pos + Vector3(0.0, 0.2, 0.0); //this->player->height / 2, 0.0);
+	Vector3 ray_dir = Vector3(0.0, -1.0, 0.0);
+	float max_ray_dist = 0.2;// this->player->height / 2;
+	Vector3 colPoint, colNormal;
+
 	for (Entity* ent : root->children) {
 		EntityMesh* e = (EntityMesh*)ent;
 
-		Vector3 ray_start = target_pos + Vector3(0.0, this->player->height / 2, 0.0);
-		Vector3 ray_dir = Vector3(0.0, -1.0, 0.0);
-		float max_ray_dist = this->player->height/2;
-		Vector3 colPoint, colNormal;
 		Matrix44 model = e->model;
 		Mesh* mesh = e->mesh;
 
 		// Floor collisions
 		if (mesh->testRayCollision(model, ray_start, ray_dir, colPoint, colNormal, max_ray_dist, true)) {
 			this->player->onFloor = true;
+			collisions.push_back({ colPoint, colNormal.normalize() });
 			printf("on floor\n");
 		}
 		else {
