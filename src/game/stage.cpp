@@ -83,7 +83,6 @@ void IntroStage::update(float second_elapsed) {
         //TODO: Ajustar la sensibilidad 
         yaw -= Input::mouse_delta.x * speed;
         pitch -= Input::mouse_delta.y * speed;
-
         // Limit pitch to avoid flipping
         pitch = clamp(pitch, -1.5f, 1.0f);
 

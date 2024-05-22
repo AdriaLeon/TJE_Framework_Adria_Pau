@@ -12,6 +12,7 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, mat
 	this->onFloor = TRUE;
 	this->walkSpeed = 10.0f;
 	this->velocity = Vector3(0,0,0);
+	this->height = 3.0f;
 	entityType = eEntityType::PLAYER;
 }
 
@@ -89,8 +90,15 @@ void EntityPlayer::update(float elapsed_time) {
 	if (abs(new_velocity.x) + abs(new_velocity.z) < 25)
 		velocity = new_velocity;
 
-	//No collision move
-	//position += velocity * elapsed_time;
+	// Apply gravity if the player is not on the floor
+	if (!this->onFloor) {
+		float gravity = -9.8f;
+		velocity.y += gravity * elapsed_time; // Update velocity with gravity
+	}
+	else {
+		velocity.y = 0.0f; // Reset Y velocity if on the floor
+	}
+
 	Vector3 next_pos = position;
 	next_pos += velocity * elapsed_time;
 	if (!check_collision(next_pos)) {

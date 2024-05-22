@@ -223,27 +223,30 @@ World* World::get_instance() {
 
 bool World::check_player_collisions(Vector3& target_pos, std::vector<sCollisionData> collisions) {
 	for (Entity* ent : root->children) {
-		EntityMesh* e = (EntityMesh*) ent;
+		EntityMesh* e = (EntityMesh*)ent;
 
-		Vector3 center_sphere = target_pos + Vector3(0.0, 1.5, 0.0);
-		Vector3 floor_center_sphere = target_pos + Vector3(0.0, 0.0, 0.0);
-		float sphereRadius = 0.025f;
-		float sphereRadiusFloor = 0.015f;
+		Vector3 ray_start = target_pos + Vector3(0.0, this->player->height / 2, 0.0);
+		Vector3 ray_dir = Vector3(0.0, -1.0, 0.0);
+		float max_ray_dist = this->player->height/2;
 		Vector3 colPoint, colNormal;
 		Matrix44 model = e->model;
 		Mesh* mesh = e->mesh;
 
-		// Manages collisions with floors
-		if (mesh->testSphereCollision(model, floor_center_sphere, sphereRadiusFloor, colPoint, colNormal)) {
+		// Floor collisions
+		if (mesh->testRayCollision(model, ray_start, ray_dir, colPoint, colNormal, max_ray_dist, true)) {
 			this->player->onFloor = true;
 			printf("on floor\n");
 		}
 		else {
 			this->player->onFloor = false;
 		}
-		//Collisions with walls
+
+		// Wall collision
+		Vector3 center_sphere = target_pos + Vector3(0.0, this->player->height / 2, 0.0);
+		float sphereRadius = 0.025f;
 		model = e->model;
 		mesh = e->mesh;
+
 		if (mesh->testSphereCollision(model, center_sphere, sphereRadius, colPoint, colNormal)) {
 			collisions.push_back({ colPoint, colNormal.normalize() });
 			printf("on wall\n");
@@ -251,6 +254,7 @@ bool World::check_player_collisions(Vector3& target_pos, std::vector<sCollisionD
 	}
 	return !collisions.empty();
 }
+
 /*Class EntityPlayer{
 
 	Collisiones
