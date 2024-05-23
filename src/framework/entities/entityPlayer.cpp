@@ -13,6 +13,9 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, mat
 	this->walkSpeed = 10.0f;
 	this->velocity = Vector3(0,0,0);
 	this->height = 3.0f;
+	this->jumpSpeed = 15.0f;
+	this->onFloor = true;
+	this->is_jumping = false;
 	entityType = eEntityType::PLAYER;
 }
 
@@ -83,10 +86,18 @@ void EntityPlayer::update(float elapsed_time) {
 	if (Input::isKeyPressed(SDL_SCANCODE_LSHIFT)) {
 		speed_mult *= 3.0f;
 	}
+
+	if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && this->onFloor) {
+		position.y += this->jumpSpeed;
+		this->is_jumping = true;
+		this->onFloor = false;
+	}
+
 	move_dir.normalize();
 	move_dir *= speed_mult;
 	new_velocity = velocity;
 	new_velocity += move_dir;
+
 	if (abs(new_velocity.x) + abs(new_velocity.z) < 25)
 		velocity = new_velocity;
 	
@@ -117,14 +128,19 @@ void EntityPlayer::update(float elapsed_time) {
 	}
 
 	// Apply gravity if the player is not on the floor
-	float gravity = -30.8f;
+	float gravity = -9.8f;
 	if (!check_collision(Vector3(position.x, position.y - gravity * elapsed_time, position.z))) {//this->onFloor) {
-		velocity.y += gravity * elapsed_time; // Update velocity with gravity
+		this->onFloor = false;
 	}
 	else {
 		velocity.y = 0.0f; // Reset Y velocity if on the floor
+		this->is_jumping = false;
+		this->onFloor = true;
 	}
 	
+	if (!this->onFloor) {
+		velocity.y += gravity * elapsed_time; // Update velocity with gravity
+	}
 
 	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
 	float velocity_x_reduction = velocity.x * 2.5f * elapsed_time;

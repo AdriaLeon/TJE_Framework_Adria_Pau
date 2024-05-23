@@ -227,6 +227,8 @@ bool World::check_player_collisions(Vector3& target_pos, std::vector<sCollisionD
 	Vector3 ray_dir = Vector3(0.0, -1.0, 0.0);
 	float max_ray_dist = this->player->height / 2;
 	Vector3 colPoint, colNormal;
+	//Movido fuera porque si no, al ponerlo en un else, a la mínima que no hay suelo lo quita
+	this->player->onFloor = false;
 
 	for (Entity* ent : root->children) {
 		EntityMesh* e = (EntityMesh*)ent;
@@ -240,9 +242,6 @@ bool World::check_player_collisions(Vector3& target_pos, std::vector<sCollisionD
 			target_pos.y = colPoint.y;
 			collisions.push_back({ colPoint, colNormal.normalize() });
 			//printf("on floor\n");
-		}
-		else {
-			this->player->onFloor = false;
 		}
 
 		// Wall collision

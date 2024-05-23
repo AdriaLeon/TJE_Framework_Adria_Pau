@@ -16,6 +16,8 @@ public:
 	float walkSpeed;
 	Vector3 velocity;
 	bool is_colliding = false;
+	bool is_jumping;
+	float jumpSpeed;
 
 	//Parameters to perform collisions
 	float height;
