@@ -89,17 +89,6 @@ void EntityPlayer::update(float elapsed_time) {
 	new_velocity += move_dir;
 	if (abs(new_velocity.x) + abs(new_velocity.z) < 25)
 		velocity = new_velocity;
-
-	// Apply gravity if the player is not on the floor
-	//float gravity = -9.8f;
-	//velocity.y += gravity * elapsed_time; // Update velocity with gravity
-	if (!check_collision(Vector3(position.x, position.y - 9.8 * elapsed_time, position.z))) {//this->onFloor) {
-		float gravity = -9.8f;
-		velocity.y += gravity * elapsed_time; // Update velocity with gravity
-	}
-	else {
-		velocity.y = 0.0f; // Reset Y velocity if on the floor
-	}
 	
 	Vector3 next_pos = position + velocity * elapsed_time;
 	if (!check_collision(next_pos)) {
@@ -109,20 +98,31 @@ void EntityPlayer::update(float elapsed_time) {
 
 		for (const sCollisionData& collision : World::get_instance()->collisions) {
 
+			Vector3 newDir = velocity.dot(collision.colNormal) * collision.colNormal;
 			// If normal is pointing upwards, it means it's a floor collision
 			float up_factor = collision.colNormal.dot(Vector3::UP);
-			if (up_factor > 0.8) {
+			if (up_factor > 0.7) {
 				continue;
 			}
-
 			// Move along wall when colliding
-			Vector3 newDir = velocity.dot(collision.colNormal) * collision.colNormal;
 			velocity.x -= newDir.x;
-			velocity.y -= newDir.y;
-			velocity.z -= newDir.z;
+			//velocity.z -= newDir.z;
+			velocity.y += abs(newDir.y);
+
+			//printf("%f %f %f \n", newDir.x, newDir.y, newDir.z);
+			
 		}
 
 		position += velocity * elapsed_time;
+	}
+
+	// Apply gravity if the player is not on the floor
+	float gravity = -30.8f;
+	if (!check_collision(Vector3(position.x, position.y - gravity * elapsed_time, position.z))) {//this->onFloor) {
+		velocity.y += gravity * elapsed_time; // Update velocity with gravity
+	}
+	else {
+		velocity.y = 0.0f; // Reset Y velocity if on the floor
 	}
 	
 

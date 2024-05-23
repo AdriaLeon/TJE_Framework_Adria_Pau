@@ -223,9 +223,9 @@ World* World::get_instance() {
 
 bool World::check_player_collisions(Vector3& target_pos, std::vector<sCollisionData> &collisions) {
 
-	Vector3 ray_start = target_pos + Vector3(0.0, 0.2, 0.0); //this->player->height / 2, 0.0);
+	Vector3 ray_start = target_pos + Vector3(0.0, this->player->height / 2, 0.0);
 	Vector3 ray_dir = Vector3(0.0, -1.0, 0.0);
-	float max_ray_dist = 0.2;// this->player->height / 2;
+	float max_ray_dist = this->player->height / 2;
 	Vector3 colPoint, colNormal;
 
 	for (Entity* ent : root->children) {
@@ -237,8 +237,9 @@ bool World::check_player_collisions(Vector3& target_pos, std::vector<sCollisionD
 		// Floor collisions
 		if (mesh->testRayCollision(model, ray_start, ray_dir, colPoint, colNormal, max_ray_dist, true)) {
 			this->player->onFloor = true;
+			target_pos.y = colPoint.y;
 			collisions.push_back({ colPoint, colNormal.normalize() });
-			printf("on floor\n");
+			//printf("on floor\n");
 		}
 		else {
 			this->player->onFloor = false;
@@ -252,7 +253,7 @@ bool World::check_player_collisions(Vector3& target_pos, std::vector<sCollisionD
 
 		if (mesh->testSphereCollision(model, center_sphere, sphereRadius, colPoint, colNormal)) {
 			collisions.push_back({ colPoint, colNormal.normalize() });
-			printf("on wall\n");
+			//printf("on wall\n");
 		}
 	}
 	return !collisions.empty();
