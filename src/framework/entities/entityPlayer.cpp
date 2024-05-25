@@ -86,20 +86,35 @@ void EntityPlayer::update(float elapsed_time) {
 		speed_mult *= 3.0f;
 	}
 
+	//Jump code
 	if (Input::wasKeyPressed(SDL_SCANCODE_SPACE) && this->onFloor) {
 		velocity.y += this->jumpSpeed;
 		this->is_jumping = true;
 		this->onFloor = false;
 	}
-
+	//Ground pound
+	if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && !this->onFloor && velocity.y < jumpSpeed - 5.0 && !this->ground_pound) {
+		this->ground_pound = true;
+		printf("groundpound\n");
+		this->gravity -= 2.0f;
+	}
+	//Dash
+	if (Input::isKeyPressed(SDL_BUTTON_LEFT) && !this->is_dashing) {
+		this->is_dashing = true;
+		velocity += 5.0f * move_dir;
+		//Tenemos que hacer un contador de 1 o 2 segundos que empiece al pulsar el dash y que cuando acabe le reste 5 a la velocidad y devuelva el bool a false
+	}
+	//printf("%f\n", gravity);
 	move_dir.normalize();
 	move_dir *= speed_mult;
 	new_velocity = velocity;
 	new_velocity += move_dir;
 
+	//We make sure that we don't pass a maximum speed
 	if (abs(new_velocity.x) + abs(new_velocity.z) < 25)
 		velocity = new_velocity;
 	
+	//If player is not colliding then we allow it to move
 	Vector3 next_pos = position + velocity * elapsed_time;
 	if (!check_collision(next_pos)) {
 		position = next_pos;
@@ -118,30 +133,31 @@ void EntityPlayer::update(float elapsed_time) {
 			// Move along wall when colliding
 			velocity.x -= newDir.x;
 			//velocity.z -= newDir.z;
-			velocity.y += abs(newDir.y);
+			velocity.y += abs(newDir.y) * 1.5;
 
 			//printf("%f %f %f \n", newDir.x, newDir.y, newDir.z);
 			
 		}
-
 		position += velocity * elapsed_time;
 	}
 
 	// Apply gravity if the player is not on the floor
-	if (!check_collision(Vector3(position.x, position.y - gravity * elapsed_time, position.z))) {//this->onFloor) {
+	if (!check_collision(Vector3(position.x, position.y + gravity * elapsed_time, position.z))) {//this->onFloor) {
 		this->onFloor = false;
 	}
 	else {
 		velocity.y = 0.0f; // Reset Y velocity if on the floor
 		this->is_jumping = false;
+		this->ground_pound = false;
 		this->onFloor = true;
 		this->gravity = 0;
 	}
 	
 	if (!this->onFloor) {
-		this->gravity -= 0.1 * elapsed_time;
 		velocity.y += gravity; // Update velocity with gravity
+		this->gravity -= 0.1 * elapsed_time;
 	}
+
 
 	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
 	float velocity_x_reduction = velocity.x * 2.5f * elapsed_time;

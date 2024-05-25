@@ -19,6 +19,8 @@ public:
 	bool is_jumping;
 	float jumpSpeed;
 	float gravity = 0;
+	bool ground_pound = false;
+	bool is_dashing = false;
 
 	//Parameters to perform collisions
 	float height;
