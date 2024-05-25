@@ -239,7 +239,6 @@ bool World::check_player_collisions(Vector3& target_pos, std::vector<sCollisionD
 		// Floor collisions
 		if (mesh->testRayCollision(model, ray_start, ray_dir, colPoint, colNormal, max_ray_dist, true)) {
 			this->player->onFloor = true;
-			target_pos.y = colPoint.y;
 			collisions.push_back({ colPoint, colNormal.normalize() });
 			//printf("on floor\n");
 		}

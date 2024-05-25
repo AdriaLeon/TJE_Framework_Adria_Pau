@@ -18,6 +18,7 @@ public:
 	bool is_colliding = false;
 	bool is_jumping;
 	float jumpSpeed;
+	float gravity = 0;
 
 	//Parameters to perform collisions
 	float height;

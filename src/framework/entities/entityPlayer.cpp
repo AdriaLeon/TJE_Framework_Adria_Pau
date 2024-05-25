@@ -46,7 +46,6 @@ void EntityPlayer::render(Camera* camera) {
 void EntityPlayer::update(float elapsed_time) {
 
 	float camera_yaw = World::get_instance()->camera_yaw;
-
 	Matrix44 mYaw;
 	mYaw.setRotation(camera_yaw, Vector3(0, 1, 0));
 	Vector3 front = Vector3(1, 0, 0);
@@ -87,8 +86,8 @@ void EntityPlayer::update(float elapsed_time) {
 		speed_mult *= 3.0f;
 	}
 
-	if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && this->onFloor) {
-		position.y += this->jumpSpeed;
+	if (Input::wasKeyPressed(SDL_SCANCODE_SPACE) && this->onFloor) {
+		velocity.y += this->jumpSpeed;
 		this->is_jumping = true;
 		this->onFloor = false;
 	}
@@ -113,6 +112,7 @@ void EntityPlayer::update(float elapsed_time) {
 			// If normal is pointing upwards, it means it's a floor collision
 			float up_factor = collision.colNormal.dot(Vector3::UP);
 			if (up_factor > 0.7) {
+				//position.y = collision.colPoint.y+2.0;
 				continue;
 			}
 			// Move along wall when colliding
@@ -128,7 +128,6 @@ void EntityPlayer::update(float elapsed_time) {
 	}
 
 	// Apply gravity if the player is not on the floor
-	float gravity = -9.8f;
 	if (!check_collision(Vector3(position.x, position.y - gravity * elapsed_time, position.z))) {//this->onFloor) {
 		this->onFloor = false;
 	}
@@ -136,10 +135,12 @@ void EntityPlayer::update(float elapsed_time) {
 		velocity.y = 0.0f; // Reset Y velocity if on the floor
 		this->is_jumping = false;
 		this->onFloor = true;
+		this->gravity = 0;
 	}
 	
 	if (!this->onFloor) {
-		velocity.y += gravity * elapsed_time; // Update velocity with gravity
+		this->gravity -= 0.1 * elapsed_time;
+		velocity.y += gravity; // Update velocity with gravity
 	}
 
 	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
