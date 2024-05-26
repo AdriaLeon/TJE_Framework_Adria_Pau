@@ -82,7 +82,7 @@ bool World::parseScene(const char* filename)
 
 
 		Material mat = render_data.material;
-		EntityMesh* new_entity = nullptr;
+		EntityCollider* new_entity = nullptr;
 
 		size_t tag = data.first.find("@tag");
 
@@ -93,7 +93,7 @@ bool World::parseScene(const char* filename)
 		}
 		else { //mesh has to have the same name as the entity
 			Mesh* mesh = Mesh::Get(mesh_name.c_str());
-			new_entity = new EntityMesh(mesh, mat);
+			new_entity = new EntityCollider(mesh, mat);
 		}
 
 		if (!new_entity) {
@@ -132,7 +132,7 @@ void World::loadPlayer() {
 	material.shader = shader;
 	EntityPlayer* tmp = new EntityPlayer(mesh, material);
 	this->player = tmp;
-	Vector3 init_position = Vector3(-41.927399, 5.000000, -242.417572);
+	Vector3 init_position = Vector3(-240.0, 15.000000, -40.0);
 	this->player->model.setTranslation(init_position);
 }
 
@@ -221,7 +221,7 @@ World* World::get_instance() {
     return instance;
 }
 
-bool World::check_player_collisions(Vector3& target_pos) {
+/*bool World::check_player_collisions(Vector3& target_pos) {
 
 	Vector3 ray_start = target_pos + Vector3(0.0, this->player->height / 2, 0.0);
 	Vector3 ray_dir = Vector3(0.0, -1.0, 0.0);
@@ -282,7 +282,7 @@ bool World::check_player_collisions(Vector3& target_pos) {
 		}
 	}
 	return !collisions.empty();
-}
+}*/
 
 /*Class EntityPlayer{
 

@@ -5,15 +5,12 @@
 #include "framework/entities/entity.h"
 #include "framework/entities/entityMesh.h"
 #include "framework/entities/entityPlayer.h"
+#include "framework/entities/entityCollider.h"
 #include "framework/camera.h"
 #include "game.h"
 #include <string>
 
-struct sCollisionData {
-    Vector3 colPoint;
-    Vector3 colNormal;
-    bool ground_collision;
-};
+
 
 class World {
 public:
@@ -26,8 +23,7 @@ public:
     EntityMesh* landscape;
     EntityPlayer* player;
 
-    std::vector<sCollisionData> collisions;
-
+    //Constructor
     World();
 
     // Method to add or delete entities
@@ -49,5 +45,5 @@ public:
     void updateCubemap(Camera* camera);
     static World* get_instance();
 
-    bool check_player_collisions(Vector3& target_pos);
+    //bool check_player_collisions(Vector3& target_pos);
 };

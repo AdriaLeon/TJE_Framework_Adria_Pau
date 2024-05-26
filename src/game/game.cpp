@@ -7,6 +7,7 @@
 #include "framework/input.h"
 #include "stage.h"
 
+
 #include <cmath>
 
 //some globals

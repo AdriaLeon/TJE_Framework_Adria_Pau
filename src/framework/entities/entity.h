@@ -10,6 +10,11 @@ enum class eEntityType {
 	PLAYER
 };
 
+struct sCollisionData {
+	Vector3 colPoint;
+	Vector3 colNormal;
+};
+
 class Entity {
 
 public:

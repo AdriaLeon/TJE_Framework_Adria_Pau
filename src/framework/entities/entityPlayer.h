@@ -33,5 +33,5 @@ public:
 	void render(Camera* camera);
 	void update(float elapsed_time);
 	void setMaterial(Material material);
-	bool check_collision(Vector3 next_position);
+	void check_collision(Vector3 next_position, std::vector<sCollisionData>& collisions, std::vector<sCollisionData>& GroundCollisions);
 };

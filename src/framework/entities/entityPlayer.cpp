@@ -3,9 +3,9 @@
 #include "framework/input.h"
 #include "framework/entities/entity.h"
 #include "framework/entities/entityMesh.h"
+#include "framework/entities/entityCollider.h"
 #include "framework/camera.h"
 #include "game/game.h"
-#include "game/world.h"
 #include <string>
 
 EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, material) {
@@ -60,7 +60,7 @@ void EntityPlayer::update(float elapsed_time) {
 
 
 	//Guardamos speed_mult a parte por si queremos hacer un botón de sprint
-	float speed_mult = this->walkSpeed; 
+	float speed_mult = this->walkSpeed;
 
 	Vector3 position = model.getTranslation();
 
@@ -118,36 +118,41 @@ void EntityPlayer::update(float elapsed_time) {
 	//We make sure that we don't pass a maximum speed
 	if (abs(new_velocity.x) + abs(new_velocity.z) < 25)
 		velocity = new_velocity;
-	
+
 	//If player is not colliding then we allow it to move
 	Vector3 next_pos = position + velocity * elapsed_time;
-	if (!check_collision(next_pos)) {
+
+	std::vector<sCollisionData> WallsCollisions;
+	std::vector<sCollisionData> GroundCollisions;
+
+	check_collision(next_pos, WallsCollisions, GroundCollisions);
+
+	if (WallsCollisions.empty()) {
 		position = next_pos;
 	}
 	else {
-		bool update_y = true;
-		for (const sCollisionData& collision : World::get_instance()->collisions) {
+		this->onFloor = false;
+		for (const sCollisionData& collision : WallsCollisions) {
 
 			Vector3 newDir = velocity.dot(collision.colNormal) * collision.colNormal;
 			// If normal is pointing upwards, it means it's a floor collision
-			float up_factor = collision.colNormal.dot(Vector3::UP);
-			if (up_factor > 0.7f && collision.ground_collision) {
-				if (collision.colPoint.y > (position.y + velocity.y * elapsed_time)) {
-					position.y = collision.colPoint.y;
-					update_y = false;
-				}
-				continue;
-			}
 			velocity.x -= newDir.x;
 			velocity.y -= newDir.y;
 			velocity.z -= newDir.z;
 			//printf("%f %f %f \n", newDir.x, newDir.y, newDir.z);
-			
+
 		}
-		position.x += velocity.x * elapsed_time;
-		position.z += velocity.z * elapsed_time;
-		if(update_y)
-			position.y += velocity.y * elapsed_time;
+	}
+	if (!GroundCollisions.empty()){
+		for (const sCollisionData& collision : GroundCollisions) {
+			float up_factor = collision.colNormal.dot(Vector3::UP);
+			if (up_factor > 0.8f) {
+				this->onFloor = true;
+				if (collision.colPoint.y > (position.y + velocity.y * elapsed_time)) {
+					position.y = collision.colPoint.y;
+				}
+			}
+		}
 	}
 
 	// Apply gravity if the player is not on the floor
@@ -155,9 +160,9 @@ void EntityPlayer::update(float elapsed_time) {
 		velocity.y = 0.0f; // Reset Y velocity if on the floor
 		this->is_jumping = false;
 		this->ground_pound = false;
-	}
-	
-	if (!this->onFloor) {
+	}	
+	else 
+	{
 		this->time_for_groundpound -= elapsed_time;
 		if (this->ground_pound) {
 			velocity.y = -100.0f;
@@ -167,6 +172,7 @@ void EntityPlayer::update(float elapsed_time) {
 		}
 	}
 
+	position += velocity * elapsed_time;
 
 	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
 	if (move_dir.length() == 0) {
@@ -186,13 +192,13 @@ void EntityPlayer::setMaterial(Material material) {
 	EntityMesh::setMaterial(material);
 }
 
-bool EntityPlayer::check_collision(Vector3 next_position) {
-	World* world = World::get_instance();
-	world->collisions.clear();
-	if (world->check_player_collisions(next_position)) {
-		return true;
+void EntityPlayer::check_collision(Vector3 next_position, std::vector<sCollisionData>& WallsCollisions, std::vector<sCollisionData>& GroundCollisions) {
+	for (Entity* ent : World::get_instance()->root->children) {
+		EntityCollider* e = dynamic_cast<EntityCollider*>(ent);
+		if (e != nullptr) {
+			e->getCollisions(next_position, WallsCollisions, GroundCollisions);
+		}
 	}
-	return false;
 }
 
 

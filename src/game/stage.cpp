@@ -71,6 +71,8 @@ void IntroStage::update(float second_elapsed) {
 
     float speed = second_elapsed * mouse_speed; //the speed is defined by the seconds_elapsed so it goes constant
 
+    world->updateAll(second_elapsed);
+
     // Example
     angle += (float)second_elapsed * 10.0f;
 
@@ -148,7 +150,6 @@ void IntroStage::update(float second_elapsed) {
     }
 
     world->setCamerayaw(camera);
-    world->updateAll(second_elapsed);
     world->updateCubemap(camera);
 }
 
