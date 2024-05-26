@@ -21,6 +21,7 @@ public:
 	float gravity = 0;
 	bool ground_pound = false;
 	bool is_dashing = false;
+	float time_for_groundpound = 0.0;
 
 	//Parameters to perform collisions
 	float height;

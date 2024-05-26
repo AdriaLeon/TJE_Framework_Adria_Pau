@@ -221,7 +221,7 @@ World* World::get_instance() {
     return instance;
 }
 
-bool World::check_player_collisions(Vector3& target_pos, std::vector<sCollisionData> &collisions) {
+bool World::check_player_collisions(Vector3& target_pos) {
 
 	Vector3 ray_start = target_pos + Vector3(0.0, this->player->height / 2, 0.0);
 	Vector3 ray_dir = Vector3(0.0, -1.0, 0.0);
@@ -231,27 +231,54 @@ bool World::check_player_collisions(Vector3& target_pos, std::vector<sCollisionD
 	this->player->onFloor = false;
 
 	for (Entity* ent : root->children) {
-		EntityMesh* e = (EntityMesh*)ent;
+		EntityMesh* e = dynamic_cast<EntityMesh*>(ent);
+		if (!e) continue;
 
-		Matrix44 model = e->model;
-		Mesh* mesh = e->mesh;
+		if (e->isInstanced == true) {
+			for (Matrix44 emodel : e->models) {
+				Matrix44 model = emodel;
+				Mesh* mesh = e->mesh;
 
-		// Floor collisions
-		if (mesh->testRayCollision(model, ray_start, ray_dir, colPoint, colNormal, max_ray_dist, true)) {
-			this->player->onFloor = true;
-			collisions.push_back({ colPoint, colNormal.normalize() });
-			//printf("on floor\n");
+				// Floor collisions
+				if (mesh->testRayCollision(model, ray_start, ray_dir, colPoint, colNormal, max_ray_dist + 0.01f, true)) {
+					this->player->onFloor = true;
+					collisions.push_back({ colPoint, colNormal.normalize() });
+					//printf("on floor\n");
+				}
+
+				// Wall collision
+				Vector3 center_sphere = target_pos + Vector3(0.0, this->player->height / 2, 0.0);
+				float sphereRadius = 0.025f;
+				model = e->model;
+				mesh = e->mesh;
+
+				if (mesh->testSphereCollision(model, center_sphere, sphereRadius, colPoint, colNormal)) {
+					collisions.push_back({ colPoint, colNormal.normalize() });
+					//printf("on wall\n");
+				}
+			}
 		}
+		else {
+			Matrix44 model = e->model;
+			Mesh* mesh = e->mesh;
 
-		// Wall collision
-		Vector3 center_sphere = target_pos + Vector3(0.0, this->player->height / 2, 0.0);
-		float sphereRadius = 0.025f;
-		model = e->model;
-		mesh = e->mesh;
+			// Floor collisions
+			if (mesh->testRayCollision(model, ray_start, ray_dir, colPoint, colNormal, max_ray_dist + 0.01f, true)) {
+				this->player->onFloor = true;
+				collisions.push_back({ colPoint, colNormal.normalize() });
+				//printf("on floor\n");
+			}
 
-		if (mesh->testSphereCollision(model, center_sphere, sphereRadius, colPoint, colNormal)) {
-			collisions.push_back({ colPoint, colNormal.normalize() });
-			//printf("on wall\n");
+			// Wall collision
+			Vector3 center_sphere = target_pos + Vector3(0.0, this->player->height / 2, 0.0);
+			float sphereRadius = 0.025f;
+			model = e->model;
+			mesh = e->mesh;
+
+			if (mesh->testSphereCollision(model, center_sphere, sphereRadius, colPoint, colNormal)) {
+				collisions.push_back({ colPoint, colNormal.normalize() });
+				//printf("on wall\n");
+			}
 		}
 	}
 	return !collisions.empty();

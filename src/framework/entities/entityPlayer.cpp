@@ -13,7 +13,8 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, mat
 	this->walkSpeed = 10.0f;
 	this->velocity = Vector3(0,0,0);
 	this->height = 3.0f;
-	this->jumpSpeed = 15.0f;
+	this->jumpSpeed = 25.0f;
+	this->gravity = -9.81f * 2.0f;
 	this->onFloor = true;
 	this->is_jumping = false;
 	entityType = eEntityType::PLAYER;
@@ -63,8 +64,8 @@ void EntityPlayer::update(float elapsed_time) {
 
 	Vector3 position = model.getTranslation();
 
-	Vector3 new_velocity;
-	Vector3 move_dir;
+	Vector3 new_velocity = Vector3(0, 0, 0);
+	Vector3 move_dir = Vector3(0, 0, 0);
 
 	if (Input::isKeyPressed(SDL_SCANCODE_W)) {// || Input::isKeyPressed(SDL_SCANCODE_UP)) {
 		move_dir += front;
@@ -91,12 +92,14 @@ void EntityPlayer::update(float elapsed_time) {
 		velocity.y += this->jumpSpeed;
 		this->is_jumping = true;
 		this->onFloor = false;
+		this->gravity = -9.81f * 2.0f;
+		this->time_for_groundpound = 0.3f;
 	}
 	//Ground pound
-	if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && !this->onFloor && velocity.y < jumpSpeed - 5.0 && !this->ground_pound) {
+	if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && !this->onFloor && velocity.y < jumpSpeed - 5.0 && !this->ground_pound && this->time_for_groundpound < 0.0) {
 		this->ground_pound = true;
+		this->time_for_groundpound = 0.0;
 		printf("groundpound\n");
-		this->gravity -= 2.0f;
 	}
 	//Dash
 	if (Input::isKeyPressed(SDL_BUTTON_LEFT) && !this->is_dashing) {
@@ -105,7 +108,9 @@ void EntityPlayer::update(float elapsed_time) {
 		//Tenemos que hacer un contador de 1 o 2 segundos que empiece al pulsar el dash y que cuando acabe le reste 5 a la velocidad y devuelva el bool a false
 	}
 	//printf("%f\n", gravity);
-	move_dir.normalize();
+	if (move_dir.length() > 0) {
+		move_dir.normalize();
+	}
 	move_dir *= speed_mult;
 	new_velocity = velocity;
 	new_velocity += move_dir;
@@ -127,13 +132,17 @@ void EntityPlayer::update(float elapsed_time) {
 			// If normal is pointing upwards, it means it's a floor collision
 			float up_factor = collision.colNormal.dot(Vector3::UP);
 			if (up_factor > 0.7) {
-				//position.y = collision.colPoint.y+2.0;
-				continue;
+				// Floor collision
+				velocity.y -= newDir.y;
+				//this->onFloor = true;
 			}
-			// Move along wall when colliding
-			velocity.x -= newDir.x;
-			//velocity.z -= newDir.z;
-			velocity.y += abs(newDir.y) * 1.5;
+			else {
+				// Wall collision
+				velocity.x -= newDir.x;
+				//velocity.z -= newDir.z;
+				velocity.y -= newDir.y;
+			}
+			//velocity.y += abs(newDir.y) * 1.5;
 
 			//printf("%f %f %f \n", newDir.x, newDir.y, newDir.z);
 			
@@ -142,28 +151,28 @@ void EntityPlayer::update(float elapsed_time) {
 	}
 
 	// Apply gravity if the player is not on the floor
-	if (!check_collision(Vector3(position.x, position.y + gravity * elapsed_time, position.z))) {//this->onFloor) {
-		this->onFloor = false;
-	}
-	else {
+	if(this->onFloor) {
 		velocity.y = 0.0f; // Reset Y velocity if on the floor
 		this->is_jumping = false;
 		this->ground_pound = false;
-		this->onFloor = true;
-		this->gravity = 0;
 	}
 	
 	if (!this->onFloor) {
-		velocity.y += gravity; // Update velocity with gravity
-		this->gravity -= 0.1 * elapsed_time;
+		this->time_for_groundpound -= elapsed_time;
+		if (this->ground_pound) {
+			velocity.y = -100.0f;
+		}
+		else {
+			velocity.y += gravity * elapsed_time;
+		}
 	}
 
 
 	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
-	float velocity_x_reduction = velocity.x * 2.5f * elapsed_time;
-	float velocity_z_reduction = velocity.z * 2.5f * elapsed_time;
-	velocity.x -= velocity_x_reduction;
-	velocity.z -= velocity_z_reduction;
+	if (move_dir.length() == 0) {
+		velocity.x -= velocity.x * 2.5f * elapsed_time;
+		velocity.z -= velocity.z * 2.5f * elapsed_time;
+	}
 
 	float offset = DEG2RAD * 90.0f;
 
@@ -180,7 +189,7 @@ void EntityPlayer::setMaterial(Material material) {
 bool EntityPlayer::check_collision(Vector3 next_position) {
 	World* world = World::get_instance();
 	world->collisions.clear();
-	if (world->check_player_collisions(next_position, world->collisions)) {
+	if (world->check_player_collisions(next_position)) {
 		return true;
 	}
 	return false;
