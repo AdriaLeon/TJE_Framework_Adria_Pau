@@ -132,7 +132,7 @@ void World::loadPlayer() {
 	material.shader = shader;
 	EntityPlayer* tmp = new EntityPlayer(mesh, material);
 	this->player = tmp;
-	Vector3 init_position = Vector3(-41.927399, 0.000000, -242.417572);
+	Vector3 init_position = Vector3(-41.927399, 5.000000, -242.417572);
 	this->player->model.setTranslation(init_position);
 }
 
@@ -225,7 +225,7 @@ bool World::check_player_collisions(Vector3& target_pos) {
 
 	Vector3 ray_start = target_pos + Vector3(0.0, this->player->height / 2, 0.0);
 	Vector3 ray_dir = Vector3(0.0, -1.0, 0.0);
-	float max_ray_dist = this->player->height / 2;
+	float max_ray_dist = (this->player->height / 2) + 0.01f;
 	Vector3 colPoint, colNormal;
 	//Movido fuera porque si no, al ponerlo en un else, a la mínima que no hay suelo lo quita
 	this->player->onFloor = false;
@@ -235,14 +235,14 @@ bool World::check_player_collisions(Vector3& target_pos) {
 		if (!e) continue;
 
 		if (e->isInstanced == true) {
-			for (Matrix44 emodel : e->models) {
+			for (const Matrix44& emodel : e->models) {
 				Matrix44 model = emodel;
 				Mesh* mesh = e->mesh;
 
 				// Floor collisions
-				if (mesh->testRayCollision(model, ray_start, ray_dir, colPoint, colNormal, max_ray_dist + 0.01f, true)) {
+				if (mesh->testRayCollision(model, ray_start, ray_dir, colPoint, colNormal, max_ray_dist)){//}, true)) {
 					this->player->onFloor = true;
-					collisions.push_back({ colPoint, colNormal.normalize() });
+					collisions.push_back({ colPoint, colNormal.normalize() , true});
 					//printf("on floor\n");
 				}
 
@@ -253,7 +253,7 @@ bool World::check_player_collisions(Vector3& target_pos) {
 				mesh = e->mesh;
 
 				if (mesh->testSphereCollision(model, center_sphere, sphereRadius, colPoint, colNormal)) {
-					collisions.push_back({ colPoint, colNormal.normalize() });
+					collisions.push_back({ colPoint, colNormal.normalize(), false });
 					//printf("on wall\n");
 				}
 			}
@@ -263,7 +263,7 @@ bool World::check_player_collisions(Vector3& target_pos) {
 			Mesh* mesh = e->mesh;
 
 			// Floor collisions
-			if (mesh->testRayCollision(model, ray_start, ray_dir, colPoint, colNormal, max_ray_dist + 0.01f, true)) {
+			if (mesh->testRayCollision(model, ray_start, ray_dir, colPoint, colNormal, max_ray_dist, true)) {
 				this->player->onFloor = true;
 				collisions.push_back({ colPoint, colNormal.normalize() });
 				//printf("on floor\n");

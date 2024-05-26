@@ -125,29 +125,29 @@ void EntityPlayer::update(float elapsed_time) {
 		position = next_pos;
 	}
 	else {
-
+		bool update_y = true;
 		for (const sCollisionData& collision : World::get_instance()->collisions) {
 
 			Vector3 newDir = velocity.dot(collision.colNormal) * collision.colNormal;
 			// If normal is pointing upwards, it means it's a floor collision
 			float up_factor = collision.colNormal.dot(Vector3::UP);
-			if (up_factor > 0.7) {
-				// Floor collision
-				velocity.y -= newDir.y;
-				//this->onFloor = true;
+			if (up_factor > 0.7f && collision.ground_collision) {
+				if (collision.colPoint.y > (position.y + velocity.y * elapsed_time)) {
+					position.y = collision.colPoint.y;
+					update_y = false;
+				}
+				continue;
 			}
-			else {
-				// Wall collision
-				velocity.x -= newDir.x;
-				//velocity.z -= newDir.z;
-				velocity.y -= newDir.y;
-			}
-			//velocity.y += abs(newDir.y) * 1.5;
-
+			velocity.x -= newDir.x;
+			velocity.y -= newDir.y;
+			velocity.z -= newDir.z;
 			//printf("%f %f %f \n", newDir.x, newDir.y, newDir.z);
 			
 		}
-		position += velocity * elapsed_time;
+		position.x += velocity.x * elapsed_time;
+		position.z += velocity.z * elapsed_time;
+		if(update_y)
+			position.y += velocity.y * elapsed_time;
 	}
 
 	// Apply gravity if the player is not on the floor

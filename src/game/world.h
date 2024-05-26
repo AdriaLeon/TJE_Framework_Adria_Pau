@@ -12,6 +12,7 @@
 struct sCollisionData {
     Vector3 colPoint;
     Vector3 colNormal;
+    bool ground_collision;
 };
 
 class World {
