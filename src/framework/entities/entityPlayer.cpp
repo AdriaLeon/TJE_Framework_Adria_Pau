@@ -93,18 +93,17 @@ void EntityPlayer::update(float elapsed_time) {
 		this->is_jumping = true;
 		this->onFloor = false;
 		this->gravity = -9.81f * 2.0f;
-		this->time_for_groundpound = 0.3f;
+		this->time_for_groundpound = 0.5f;
 	}
 	//Ground pound
 	if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && !this->onFloor && velocity.y < jumpSpeed - 5.0 && !this->ground_pound && this->time_for_groundpound < 0.0) {
 		this->ground_pound = true;
 		this->time_for_groundpound = 0.0;
-		printf("groundpound\n");
 	}
 	//Dash
-	if (Input::isKeyPressed(SDL_BUTTON_LEFT) && !this->is_dashing) {
+	if (!this->is_dashing && Input::isKeyPressed(SDL_SCANCODE_E)) { //Input::isKeyPressed(SDL_BUTTON_LEFT)) {
 		this->is_dashing = true;
-		velocity += 5.0f * move_dir;
+		this->dash_timer = 0.1;
 		//Tenemos que hacer un contador de 1 o 2 segundos que empiece al pulsar el dash y que cuando acabe le reste 5 a la velocidad y devuelva el bool a false
 	}
 	//printf("%f\n", gravity);
@@ -116,8 +115,20 @@ void EntityPlayer::update(float elapsed_time) {
 	new_velocity += move_dir;
 
 	//We make sure that we don't pass a maximum speed
-	if (abs(new_velocity.x) + abs(new_velocity.z) < 25)
+	if ((abs(new_velocity.x) + abs(new_velocity.z) < 25))
 		velocity = new_velocity;
+
+	if (this->is_dashing) {
+		if (this->dash_timer > 0.0){
+			velocity = move_dir * 30.0f;
+			this->dash_timer -= elapsed_time;
+		}
+		else {
+			this->is_dashing = false;
+			this->dash_timer = 0.0;
+			velocity = velocity / 5.0f;
+		}
+	}
 
 	//If player is not colliding then we allow it to move
 	Vector3 next_pos = position + velocity * elapsed_time;
@@ -127,10 +138,7 @@ void EntityPlayer::update(float elapsed_time) {
 
 	check_collision(next_pos, WallsCollisions, GroundCollisions);
 
-	if (WallsCollisions.empty()) {
-		position = next_pos;
-	}
-	else {
+	if (!WallsCollisions.empty()){
 		for (const sCollisionData& collision : WallsCollisions) {
 
 			Vector3 newDir = velocity.dot(collision.colNormal) * collision.colNormal;
@@ -148,7 +156,7 @@ void EntityPlayer::update(float elapsed_time) {
 		for (const sCollisionData& collision : GroundCollisions) {
 			float up_factor = collision.colNormal.dot(Vector3::UP);
 			this->onFloor = true;
-			if (up_factor > 0.8f) {
+			if (up_factor > 0.7f) {
 				if (collision.colPoint.y > (position.y + velocity.y * elapsed_time)) {
 					position.y = collision.colPoint.y;
 				}
@@ -177,8 +185,8 @@ void EntityPlayer::update(float elapsed_time) {
 
 	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
 	if (move_dir.length() == 0) {
-		velocity.x -= velocity.x * 2.5f * elapsed_time;
-		velocity.z -= velocity.z * 2.5f * elapsed_time;
+		velocity.x -= velocity.x * 5.0f * elapsed_time;
+		velocity.z -= velocity.z * 5.0f * elapsed_time;
 	}
 
 	float offset = DEG2RAD * 90.0f;
