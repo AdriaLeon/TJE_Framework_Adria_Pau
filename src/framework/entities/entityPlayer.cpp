@@ -131,7 +131,6 @@ void EntityPlayer::update(float elapsed_time) {
 		position = next_pos;
 	}
 	else {
-		this->onFloor = false;
 		for (const sCollisionData& collision : WallsCollisions) {
 
 			Vector3 newDir = velocity.dot(collision.colNormal) * collision.colNormal;
@@ -143,11 +142,13 @@ void EntityPlayer::update(float elapsed_time) {
 
 		}
 	}
+
+	this->onFloor = false;
 	if (!GroundCollisions.empty()){
 		for (const sCollisionData& collision : GroundCollisions) {
 			float up_factor = collision.colNormal.dot(Vector3::UP);
+			this->onFloor = true;
 			if (up_factor > 0.8f) {
-				this->onFloor = true;
 				if (collision.colPoint.y > (position.y + velocity.y * elapsed_time)) {
 					position.y = collision.colPoint.y;
 				}
