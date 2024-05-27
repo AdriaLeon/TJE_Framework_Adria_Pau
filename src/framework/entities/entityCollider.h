@@ -17,6 +17,9 @@ public:
 	// New methods
 	void testCollision(Matrix44 model, Vector3 character_center, std::vector<sCollisionData>& WallCollisions, std::vector<sCollisionData>& GroundCollisions);
 	void getCollisions(const Vector3& target_position, std::vector<sCollisionData>& WallCollisions, std::vector<sCollisionData>& GroundCollisions);
+
+	void testCollisionHightVelocity(Matrix44 model, Vector3 previous_center, Vector3 next_center, std::vector<sCollisionData>& Collisions);
+	void getCollisionsHightVelocity(const Vector3& position, const Vector3& target_position, std::vector<sCollisionData>& Collisions);
 };
 
 #endif // ENTITY_COLLIDER_H

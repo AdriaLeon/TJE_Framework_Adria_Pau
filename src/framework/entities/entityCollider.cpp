@@ -37,3 +37,40 @@ void EntityCollider::getCollisions(const Vector3& target_position, std::vector<s
 		}
 	}
 }
+
+
+void EntityCollider::testCollisionHightVelocity(Matrix44 model, Vector3 current_center, Vector3 next_center, std::vector<sCollisionData>& Collisions) {
+
+
+	Vector3 colPoint, colNormal;
+
+	// Calculate the direction and length of the movement
+	Vector3 direction = (next_center - current_center).normalize();
+	float distance = (next_center - current_center).length() + 0.05f;
+
+	// Floor collisions
+	if (mesh->testRayCollision(model, current_center, direction, colPoint, colNormal, distance)) {
+		Collisions.push_back({ colPoint, colNormal.normalize() });
+		//printf("on floor\n");
+	}
+
+}
+
+void EntityCollider::getCollisionsHightVelocity(const Vector3& position, const Vector3& target_position, std::vector<sCollisionData>& Collisions)
+{
+	Vector3 current_center = position + Vector3(0.0f, player_height, 0.0f);
+	Vector3 next_center = target_position + Vector3(0.0f, player_height, 0.0f);
+
+	if (!isInstanced)
+	{
+		testCollisionHightVelocity(model, current_center, next_center, Collisions);
+	}
+	else
+	{
+		for (int i = 0; i < models.size(); ++i)
+		{
+			testCollisionHightVelocity(models[i], current_center, next_center, Collisions);
+		}
+	}
+}
+

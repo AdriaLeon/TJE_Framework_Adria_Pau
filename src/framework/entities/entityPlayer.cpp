@@ -133,15 +133,92 @@ void EntityPlayer::update(float elapsed_time) {
 		}
 	}
 
+	// Apply gravity if the player is not on the floor
+	if (!this->onFloor) {
+		this->time_for_groundpound -= elapsed_time;
+		if (this->ground_pound) {
+			velocity.y = -100.0f;
+		}
+		else {
+			velocity.y += gravity * elapsed_time;
+		}
+	}
+	else {
+		velocity.y = -2.0f;
+	}
+
 	//If player is not colliding then we allow it to move
 	Vector3 next_pos = position + velocity * elapsed_time;
 
 	std::vector<sCollisionData> WallsCollisions;
 	std::vector<sCollisionData> GroundCollisions;
+	std::vector<sCollisionData> FastCollisions;
 
 	check_collision(next_pos, WallsCollisions, GroundCollisions);
+	if (velocity.length() > 25) {
+		check_collisionHightVelocity(position, next_pos, FastCollisions);
+	}
+	handle_collisions(FastCollisions, WallsCollisions, GroundCollisions, position, elapsed_time);
 
-	if (!WallsCollisions.empty()){
+	position += velocity * elapsed_time;
+
+	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
+	if (move_dir.length() == 0 && this->onFloor) {
+		velocity.x -= velocity.x * 15.0f * elapsed_time;
+		velocity.z -= velocity.z * 15.0f * elapsed_time;
+	}
+
+	float offset = DEG2RAD * 90.0f;
+
+	this->model.setTranslation(position);
+	this->model.rotate(camera_yaw-offset, Vector3(0, 1, 0));
+
+	std::cout << "onFloor: " << this->onFloor << std::endl;
+
+	Entity::update(elapsed_time);
+}
+
+void EntityPlayer::check_collision(Vector3 next_position, std::vector<sCollisionData>& WallsCollisions, std::vector<sCollisionData>& GroundCollisions) {
+	for (Entity* ent : World::get_instance()->root->children) {
+		EntityCollider* e = dynamic_cast<EntityCollider*>(ent);
+		if (e != nullptr) {
+			e->getCollisions(next_position, WallsCollisions, GroundCollisions);
+		}
+	}
+}
+
+void EntityPlayer::check_collisionHightVelocity(Vector3 position, Vector3 next_position, std::vector<sCollisionData>& Collisions) {
+	for (Entity* ent : World::get_instance()->root->children) {
+		EntityCollider* e = dynamic_cast<EntityCollider*>(ent);
+		if (e != nullptr) {
+			e->getCollisionsHightVelocity(position, next_position, Collisions);
+		}
+	}
+}
+
+void EntityPlayer::handle_collisions(std::vector<sCollisionData> FastCollisions, std::vector<sCollisionData> WallsCollisions, std::vector<sCollisionData> GroundCollisions, Vector3 &position, float elapsed_time) {
+	
+	if (!FastCollisions.empty()) {
+		for (const sCollisionData& collision : FastCollisions) {
+
+			Vector3 newDir = velocity.dot(collision.colNormal) * collision.colNormal;
+			float up_factor = collision.colNormal.dot(Vector3::UP);
+			if (up_factor > 0.7f) {
+				this->onFloor = true;
+				if (collision.colPoint.y > (position.y + velocity.y * elapsed_time)) {
+					position.y = collision.colPoint.y;
+				}
+			}
+			// If normal is pointing upwards, it means it's a floor collision
+			velocity.x -= newDir.x;
+			velocity.y -= newDir.y;
+			velocity.z -= newDir.z;
+			//printf("%f %f %f \n", newDir.x, newDir.y, newDir.z);
+
+		}
+	}
+
+	if (!WallsCollisions.empty()) {
 		for (const sCollisionData& collision : WallsCollisions) {
 
 			Vector3 newDir = velocity.dot(collision.colNormal) * collision.colNormal;
@@ -154,7 +231,7 @@ void EntityPlayer::update(float elapsed_time) {
 		}
 	}
 
-	if (!GroundCollisions.empty()){
+	if (!GroundCollisions.empty()) {
 		for (const sCollisionData& collision : GroundCollisions) {
 			float up_factor = collision.colNormal.dot(Vector3::UP);
 			this->onFloor = true;
@@ -171,45 +248,8 @@ void EntityPlayer::update(float elapsed_time) {
 	else {
 		this->onFloor = false;
 	}
-
-	// Apply gravity if the player is not on the floor
-	if(!this->onFloor) {
-		this->time_for_groundpound -= elapsed_time;
-		if (this->ground_pound) {
-			velocity.y = -100.0f;
-		}
-		else {
-			velocity.y += gravity * elapsed_time;
-		}
-	}
-
-	position += velocity * elapsed_time;
-
-	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
-	if (move_dir.length() == 0) {
-		velocity.x -= velocity.x * 15.0f * elapsed_time;
-		velocity.z -= velocity.z * 15.0f * elapsed_time;
-	}
-
-	float offset = DEG2RAD * 90.0f;
-
-	this->model.setTranslation(position);
-	this->model.rotate(camera_yaw-offset, Vector3(0, 1, 0));
-
-	Entity::update(elapsed_time);
 }
 
 void EntityPlayer::setMaterial(Material material) {
 	EntityMesh::setMaterial(material);
 }
-
-void EntityPlayer::check_collision(Vector3 next_position, std::vector<sCollisionData>& WallsCollisions, std::vector<sCollisionData>& GroundCollisions) {
-	for (Entity* ent : World::get_instance()->root->children) {
-		EntityCollider* e = dynamic_cast<EntityCollider*>(ent);
-		if (e != nullptr) {
-			e->getCollisions(next_position, WallsCollisions, GroundCollisions);
-		}
-	}
-}
-
-
