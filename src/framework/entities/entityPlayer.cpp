@@ -17,6 +17,7 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, mat
 	this->gravity = -9.81f * 2.0f;
 	this->onFloor = true;
 	this->is_jumping = false;
+	this->ground_pound = false;
 	entityType = eEntityType::PLAYER;
 }
 
@@ -91,14 +92,17 @@ void EntityPlayer::update(float elapsed_time) {
 	if (Input::wasKeyPressed(SDL_SCANCODE_SPACE) && this->onFloor) {
 		velocity.y += this->jumpSpeed;
 		this->is_jumping = true;
+		position.y += 0.5f;
 		this->onFloor = false;
 		this->gravity = -9.81f * 2.0f;
 		this->time_for_groundpound = 0.5f;
+		//printf("jumping\n");
 	}
 	//Ground pound
-	if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && !this->onFloor && velocity.y < jumpSpeed - 5.0 && !this->ground_pound && this->time_for_groundpound < 0.0) {
+	if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && !this->onFloor && !this->ground_pound && this->time_for_groundpound < 0.0) {
 		this->ground_pound = true;
 		this->time_for_groundpound = 0.0;
+		//printf("ground pound\n");
 	}
 	//Dash
 	if (!this->is_dashing && Input::isKeyPressed(SDL_SCANCODE_E)) { //Input::isKeyPressed(SDL_BUTTON_LEFT)) {
@@ -115,7 +119,7 @@ void EntityPlayer::update(float elapsed_time) {
 	new_velocity += move_dir;
 
 	//We make sure that we don't pass a maximum speed
-	if ((abs(new_velocity.x) + abs(new_velocity.z) < 25))
+	if ((abs(new_velocity.x) + abs(new_velocity.z) < 30))
 		velocity = new_velocity;
 
 	if (this->is_dashing) {
@@ -151,11 +155,13 @@ void EntityPlayer::update(float elapsed_time) {
 		}
 	}
 
-	this->onFloor = false;
 	if (!GroundCollisions.empty()){
 		for (const sCollisionData& collision : GroundCollisions) {
 			float up_factor = collision.colNormal.dot(Vector3::UP);
 			this->onFloor = true;
+			this->ground_pound = false;
+			this->is_jumping = false;
+			velocity.y = 0.0f;
 			if (up_factor > 0.7f) {
 				if (collision.colPoint.y > (position.y + velocity.y * elapsed_time)) {
 					position.y = collision.colPoint.y;
@@ -163,15 +169,12 @@ void EntityPlayer::update(float elapsed_time) {
 			}
 		}
 	}
+	else {
+		this->onFloor = false;
+	}
 
 	// Apply gravity if the player is not on the floor
-	if(this->onFloor) {
-		velocity.y = 0.0f; // Reset Y velocity if on the floor
-		this->is_jumping = false;
-		this->ground_pound = false;
-	}	
-	else 
-	{
+	if(!this->onFloor) {
 		this->time_for_groundpound -= elapsed_time;
 		if (this->ground_pound) {
 			velocity.y = -100.0f;
