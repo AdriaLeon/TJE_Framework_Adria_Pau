@@ -13,7 +13,7 @@ void EntityCollider::testCollision(Matrix44 model, Vector3 center, std::vector<s
 	}
 
 	// Wall collision
-	float sphereRadius = 0.025f;
+	float sphereRadius = 0.05f;
 
 	if (mesh->testSphereCollision(model, center, sphereRadius, colPoint, colNormal)) {
 		WallCollisions.push_back({ colPoint, colNormal.normalize()});

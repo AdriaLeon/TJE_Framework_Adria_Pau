@@ -92,7 +92,6 @@ void EntityPlayer::update(float elapsed_time) {
 	if (Input::wasKeyPressed(SDL_SCANCODE_SPACE) && this->onFloor) {
 		velocity.y += this->jumpSpeed;
 		this->is_jumping = true;
-		position.y += 0.5f;
 		this->onFloor = false;
 		this->gravity = -9.81f * 2.0f;
 		this->time_for_groundpound = 0.5f;
@@ -188,8 +187,8 @@ void EntityPlayer::update(float elapsed_time) {
 
 	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
 	if (move_dir.length() == 0) {
-		velocity.x -= velocity.x * 5.0f * elapsed_time;
-		velocity.z -= velocity.z * 5.0f * elapsed_time;
+		velocity.x -= velocity.x * 15.0f * elapsed_time;
+		velocity.z -= velocity.z * 15.0f * elapsed_time;
 	}
 
 	float offset = DEG2RAD * 90.0f;
