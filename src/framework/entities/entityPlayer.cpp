@@ -122,12 +122,22 @@ void EntityPlayer::update(float elapsed_time) {
 		move_dir.normalize();
 	}
 	move_dir *= speed_mult;
-	new_velocity = velocity;
-	new_velocity += move_dir;
+	new_velocity = velocity + move_dir;
 
-	//We make sure that we don't pass a maximum speed
-	if ((abs(new_velocity.x) + abs(new_velocity.z) < 30))
+	// Maximum speed allowed for the player
+	const float max_speed = 30.0f;
+
+	// Calculate the horizontal speed (consider only x and z components)
+	float horizontal_speed = sqrt(new_velocity.x * new_velocity.x + new_velocity.z * new_velocity.z);
+
+	if (horizontal_speed < max_speed) {
 		velocity = new_velocity;
+	}
+	else {
+		float vertical_component = new_velocity.y;
+		Vector3 horizontal_velocity = Vector3(new_velocity.x, 0.0f, new_velocity.z).normalize() * max_speed;
+		velocity = Vector3(horizontal_velocity.x, vertical_component, horizontal_velocity.z);
+	}
 
 	if (this->is_dashing) {
 		if (this->dash_timer > 0.0){
