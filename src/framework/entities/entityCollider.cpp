@@ -15,7 +15,7 @@ void EntityCollider::testCollision(Matrix44 model, Vector3 center, std::vector<s
 
 	// Wall collision
 	float sphereRadius = 0.05f;
-	float distance = 2.0f * sphereRadius; // Distance between the centers of touching spheres
+	float distance = sphereRadius; //2.0f * sphereRadius; // Distance between the centers of touching spheres
 
 	// Generate directions using sin and cos
 	std::vector<Vector3> directions;

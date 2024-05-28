@@ -13,8 +13,8 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, mat
 	this->walkSpeed = 10.0f;
 	this->velocity = Vector3(0,0,0);
 	this->height = 3.0f;
-	this->jumpSpeed = 25.0f;
-	this->gravity = -9.81f * 2.0f;
+	this->jumpSpeed = 30.0f;
+	this->gravity = -20.0f;
 	this->onFloor = true;
 	this->is_jumping = false;
 	this->ground_pound = false;
@@ -27,11 +27,46 @@ void EntityPlayer::render(Camera* camera) {
 
 	EntityMesh::render(camera);
 	Mesh* mesh = Mesh::Get("data/meshes/sphere.obj");
-	Matrix44 m = model;
+
+	float sphere_radius = 0.2f;
+	float distance = 2.0f * sphere_radius; // Distance between the centers of touching spheres
+	Vector3 center = Vector3(0.0f, height - 0.2f, 0.0f);
+
+	// Generate directions using sin and cos
+	std::vector<Vector3> directions;
+	for (int i = 0; i < 8; ++i) {
+		float angle = i * (M_PI / 4.0f); // Increment angle by 45 degrees (π/4 radians)
+		directions.push_back(Vector3(cos(angle), 0, sin(angle)));
+	}
+
+	// Loop through each direction vector in directions
+	for (const auto& dir : directions) {
+		// Calculate the sphere center using the direction vector and the distance
+		Vector3 sphereCenter = center + dir * distance;
+
+		// Translate and scale the model matrix
+		Matrix44 m = model;
+		m.translate(sphereCenter.x, sphereCenter.y, sphereCenter.z);
+		m.scale(sphere_radius, sphere_radius, sphere_radius);
+
+		// Set up material properties and shader uniforms
+		material.shader->enable();
+		material.shader->setUniform("u_color", Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+		material.shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
+		material.shader->setUniform("u_model", m);
+
+		// Render the sphere mesh
+		mesh->render(GL_LINES);
+
+		// Disable the shader
+		material.shader->disable();
+	}
+
+	/*Matrix44 m = model;
 	float sphere_radius = 1.0f;
 	material.shader->enable();
 
-	m.translate(0.0f, 1.5f, 0.0f);
+	m.translate(0.0f, 2.5f, 0.0f);
 	m.scale(sphere_radius, sphere_radius, sphere_radius);
 
 	material.shader->setUniform("u_color", Vector4(0.0f, 1.0f, 0.0f, 1.0f));
@@ -40,7 +75,7 @@ void EntityPlayer::render(Camera* camera) {
 
 	mesh->render(GL_LINES);
 
-	material.shader->disable();
+	material.shader->disable();*/
 };
 
 
@@ -123,6 +158,8 @@ void EntityPlayer::update(float elapsed_time) {
 	//printf("%f\n", gravity);
 	if (move_dir.length() > 0) {
 		move_dir.normalize();
+		if (!this->onFloor) //When in the air its hareder to turn around
+			move_dir = move_dir / 2.0f;
 	}
 
 	move_dir *= speed_mult;
@@ -177,11 +214,13 @@ void EntityPlayer::update(float elapsed_time) {
 	}
 
 	Vector3 final_vel = velocity;
-	if (this->sprinting)
-		final_vel *= 2.0f;
+	if (this->sprinting) //When sprinting x and z velocity double  (Do it so that you maintain sprinting when you started sprinting in the ground but 
+		//you cannot start sprinting in the air)
+		final_vel.x *= 2.0f;
+		final_vel.z *= 2.0f;
 
 	//If player is not colliding then we allow it to move
-	Vector3 next_pos = position + velocity * elapsed_time;
+	Vector3 next_pos = position + final_vel * elapsed_time;
 
 	std::vector<sCollisionData> WallsCollisions;
 	std::vector<sCollisionData> GroundCollisions;
@@ -191,9 +230,9 @@ void EntityPlayer::update(float elapsed_time) {
 	if (velocity.length() > 25) {
 		check_collisionHightVelocity(position, next_pos, FastCollisions);
 	}
-	handle_collisions(FastCollisions, WallsCollisions, GroundCollisions, position, elapsed_time);
+	handle_collisions(FastCollisions, WallsCollisions, GroundCollisions, position, elapsed_time, final_vel);
 
-	position += velocity * elapsed_time;
+	position += final_vel * elapsed_time;
 
 	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
 	if (move_dir.length() == 0 && this->onFloor) {
@@ -229,7 +268,7 @@ void EntityPlayer::check_collisionHightVelocity(Vector3 position, Vector3 next_p
 	}
 }
 
-void EntityPlayer::handle_collisions(std::vector<sCollisionData> FastCollisions, std::vector<sCollisionData> WallsCollisions, std::vector<sCollisionData> GroundCollisions, Vector3 &position, float elapsed_time) {
+void EntityPlayer::handle_collisions(std::vector<sCollisionData> FastCollisions, std::vector<sCollisionData> WallsCollisions, std::vector<sCollisionData> GroundCollisions, Vector3 &position, float elapsed_time, Vector3& final_vel) {
 	
 	if (!FastCollisions.empty()) {
 		for (const sCollisionData& collision : FastCollisions) {
@@ -238,29 +277,32 @@ void EntityPlayer::handle_collisions(std::vector<sCollisionData> FastCollisions,
 			if(!this->ground_pound)
 				this->is_dashing = false;
 
-			Vector3 newDir = velocity.dot(collision.colNormal) * collision.colNormal;
+			Vector3 newDir = final_vel.dot(collision.colNormal) * collision.colNormal;
 			// If normal is pointing upwards, it means it's a floor collision
-			velocity.x -= newDir.x;
-			velocity.y -= newDir.y;
-			velocity.z -= newDir.z;
+			final_vel.x -= newDir.x;
+			final_vel.y -= newDir.y;
+			final_vel.z -= newDir.z;
 			//printf("%f %f %f \n", newDir.x, newDir.y, newDir.z);
-			velocity.x /= 2.0f;
-			velocity.z /= 2.0f;
+			final_vel.x /= 2.0f;
+			final_vel.z /= 2.0f;
 
 			//If othere doesn't work
-			/*velocity.x = 0.0f;
-			velocity.z = 0.0f;*/
+			/*final_vel.x = 0.0f;
+			final_vel.z = 0.0f;*/
 		}
 	}
 
 	if (!WallsCollisions.empty()) {
 		for (const sCollisionData& collision : WallsCollisions) {
 
-			Vector3 newDir = velocity.dot(collision.colNormal) * collision.colNormal;
+			Vector3 newDir = final_vel.dot(collision.colNormal) * collision.colNormal;
 			// If normal is pointing upwards, it means it's a floor collision
-			velocity.x -= newDir.x;
-			//velocity.y -= newDir.y;
-			velocity.z -= newDir.z;
+			final_vel.x -= newDir.x;
+			final_vel.z -= newDir.z;
+			float up_factor = collision.colNormal.dot(Vector3::UP);
+			//Check collision with ceiling
+			if (up_factor < -0.7f)
+				final_vel.y -= newDir.y;
 			//printf("%f %f %f \n", newDir.x, newDir.y, newDir.z);
 		}
 	}
@@ -271,9 +313,9 @@ void EntityPlayer::handle_collisions(std::vector<sCollisionData> FastCollisions,
 			this->onFloor = true;
 			this->ground_pound = false;
 			this->is_jumping = false;
-			velocity.y = 0.0f;
+			final_vel.y = 0.0f;
 			if (up_factor > 0.7f) {
-				if (collision.colPoint.y > (position.y + velocity.y * elapsed_time)) {
+				if (collision.colPoint.y > (position.y + final_vel.y * elapsed_time)) {
 					position.y = collision.colPoint.y;
 				}
 			}
@@ -282,6 +324,11 @@ void EntityPlayer::handle_collisions(std::vector<sCollisionData> FastCollisions,
 	else {
 		this->onFloor = false;
 	}
+
+	velocity = final_vel;
+	if (this->sprinting)
+		velocity.x = final_vel.x / 2.0f;
+		velocity.z = final_vel.z / 2.0f;
 }
 
 void EntityPlayer::setMaterial(Material material) {
