@@ -87,13 +87,6 @@ void EntityPlayer::update(float elapsed_time) {
 	float camera_yaw = World::get_instance()->camera_yaw;
 	Matrix44 mYaw;
 	mYaw.setRotation(camera_yaw, Vector3(0, 1, 0));
-	Vector3 front = Vector3(1, 0, 0);
-
-	// Rotate the front vector according to the camera yaw
-	front = mYaw * front;
-
-	// Calculate the right vector based on the rotated front vector
-	Vector3 right = front.cross(Vector3(0, 1, 0));
 
 	bool in_the_air = !this->onFloor;
 
@@ -105,56 +98,8 @@ void EntityPlayer::update(float elapsed_time) {
 	Vector3 new_velocity = Vector3(0, 0, 0);
 	Vector3 move_dir = Vector3(0, 0, 0);
 
-	if (!this->ground_pound) {
-		if (Input::isKeyPressed(SDL_SCANCODE_W)) {// || Input::isKeyPressed(SDL_SCANCODE_UP)) {
-			move_dir += front;
-		}
-		if (Input::isKeyPressed(SDL_SCANCODE_S)) {// || Input::isKeyPressed(SDL_SCANCODE_DOWN)) {
-			move_dir -= front;
-		}
-		if (Input::isKeyPressed(SDL_SCANCODE_A)) {// || Input::isKeyPressed(SDL_SCANCODE_LEFT)) {
-			move_dir -= right;
-		}
-		if (Input::isKeyPressed(SDL_SCANCODE_D)) {// || Input::isKeyPressed(SDL_SCANCODE_RIGHT)) {
-			move_dir += right;
-		}
-	}
-	if (Input::wasKeyPressed(SDL_SCANCODE_O)) { //Debugging tool to know the players position
-		printf("%f %f %f", this->model.getTranslation().x, this->model.getTranslation().y, this->model.getTranslation().z);
-	}
+	handle_inputs(move_dir, mYaw);
 
-	//Añado un boton de correr por si hay que probar cosas, en teoria la version final no tendra
-	if (Input::isKeyPressed(SDL_SCANCODE_LSHIFT)) {
-		this->sprinting = true;
-	}
-	else {
-		this->sprinting = false;
-	}
-
-	//Jump code
-	if (Input::wasKeyPressed(SDL_SCANCODE_SPACE) && this->onFloor) {
-		velocity.y += this->jumpSpeed;
-		this->is_jumping = true;
-		this->onFloor = false;
-		this->gravity = -9.81f * 2.0f;
-		this->time_for_groundpound = 0.5f;
-		//printf("jumping\n");
-	}
-	//Ground pound
-	if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && !this->onFloor && !this->ground_pound && this->time_for_groundpound < 0.0) {
-		this->ground_pound = true;
-		this->time_for_groundpound = 0.0;
-		velocity.x = 0.0f;
-		velocity.z = 0.0f;
-		//printf("ground pound\n");
-	}
-	//Dash
-	if (!this->is_dashing && Input::isMousePressed(SDL_BUTTON_LEFT) && this->dash_cooldown <= 0.0f && !this->ground_pound) { //Input::isKeyPressed(SDL_BUTTON_LEFT)) {
-		this->is_dashing = true;
-		this->dash_timer = 0.1;
-		this->dash_cooldown = 1.0;
-		//Tenemos que hacer un contador de 1 o 2 segundos que empiece al pulsar el dash y que cuando acabe le reste 5 a la velocidad y devuelva el bool a false
-	}
 	//printf("%f\n", gravity);
 	if (move_dir.length() > 0) {
 		move_dir.normalize();
@@ -333,4 +278,66 @@ void EntityPlayer::handle_collisions(std::vector<sCollisionData> FastCollisions,
 
 void EntityPlayer::setMaterial(Material material) {
 	EntityMesh::setMaterial(material);
+}
+
+void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw) {
+
+	Vector3 front = Vector3(1, 0, 0);
+
+	// Rotate the front vector according to the camera yaw
+	front = mYaw * front;
+
+	// Calculate the right vector based on the rotated front vector
+	Vector3 right = front.cross(Vector3(0, 1, 0));
+
+	if (!this->ground_pound) {
+		if (Input::isKeyPressed(SDL_SCANCODE_W)) {// || Input::isKeyPressed(SDL_SCANCODE_UP)) {
+			move_dir += front;
+		}
+		if (Input::isKeyPressed(SDL_SCANCODE_S)) {// || Input::isKeyPressed(SDL_SCANCODE_DOWN)) {
+			move_dir -= front;
+		}
+		if (Input::isKeyPressed(SDL_SCANCODE_A)) {// || Input::isKeyPressed(SDL_SCANCODE_LEFT)) {
+			move_dir -= right;
+		}
+		if (Input::isKeyPressed(SDL_SCANCODE_D)) {// || Input::isKeyPressed(SDL_SCANCODE_RIGHT)) {
+			move_dir += right;
+		}
+	}
+	if (Input::wasKeyPressed(SDL_SCANCODE_O)) { //Debugging tool to know the players position
+		printf("%f %f %f", this->model.getTranslation().x, this->model.getTranslation().y, this->model.getTranslation().z);
+	}
+
+	//Añado un boton de correr por si hay que probar cosas, en teoria la version final no tendra
+	if (Input::isKeyPressed(SDL_SCANCODE_LSHIFT)) {
+		this->sprinting = true;
+	}
+	else {
+		this->sprinting = false;
+	}
+
+	//Jump code
+	if (Input::wasKeyPressed(SDL_SCANCODE_SPACE) && this->onFloor) {
+		velocity.y += this->jumpSpeed;
+		this->is_jumping = true;
+		this->onFloor = false;
+		this->gravity = -9.81f * 2.0f;
+		this->time_for_groundpound = 0.5f;
+		//printf("jumping\n");
+	}
+	//Ground pound
+	if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && !this->onFloor && !this->ground_pound && this->time_for_groundpound < 0.0) {
+		this->ground_pound = true;
+		this->time_for_groundpound = 0.0;
+		velocity.x = 0.0f;
+		velocity.z = 0.0f;
+		//printf("ground pound\n");
+	}
+	//Dash
+	if (!this->is_dashing && Input::isMousePressed(SDL_BUTTON_LEFT) && this->dash_cooldown <= 0.0f && !this->ground_pound) { //Input::isKeyPressed(SDL_BUTTON_LEFT)) {
+		this->is_dashing = true;
+		this->dash_timer = 0.1;
+		this->dash_cooldown = 1.0;
+		//Tenemos que hacer un contador de 1 o 2 segundos que empiece al pulsar el dash y que cuando acabe le reste 5 a la velocidad y devuelva el bool a false
+	}
 }
