@@ -59,7 +59,6 @@ void EntityPlayer::update(float elapsed_time) {
 
 	// Calculate the right vector based on the rotated front vector
 	Vector3 right = front.cross(Vector3(0, 1, 0));
-	//Vector3 right = Vector3(1, 0, 0);
 
 	bool in_the_air = !this->onFloor;
 
@@ -84,10 +83,11 @@ void EntityPlayer::update(float elapsed_time) {
 		if (Input::isKeyPressed(SDL_SCANCODE_D)) {// || Input::isKeyPressed(SDL_SCANCODE_RIGHT)) {
 			move_dir += right;
 		}
-		if (Input::wasKeyPressed(SDL_SCANCODE_O)) { //Debugging tool to know the players position
-			printf("%f %f %f", this->model.getTranslation().x, this->model.getTranslation().y, this->model.getTranslation().z);
-		}
 	}
+	if (Input::wasKeyPressed(SDL_SCANCODE_O)) { //Debugging tool to know the players position
+		printf("%f %f %f", this->model.getTranslation().x, this->model.getTranslation().y, this->model.getTranslation().z);
+	}
+
 	//Añado un boton de correr por si hay que probar cosas, en teoria la version final no tendra
 	if (Input::isKeyPressed(SDL_SCANCODE_LSHIFT)) {
 		speed_mult *= 3.0f;
@@ -111,7 +111,7 @@ void EntityPlayer::update(float elapsed_time) {
 		//printf("ground pound\n");
 	}
 	//Dash
-	if (!this->is_dashing && Input::isKeyPressed(SDL_SCANCODE_E) && this->dash_cooldown <= 0.0f && !this->ground_pound) { //Input::isKeyPressed(SDL_BUTTON_LEFT)) {
+	if (!this->is_dashing && Input::isMousePressed(SDL_BUTTON_LEFT) && this->dash_cooldown <= 0.0f && !this->ground_pound) { //Input::isKeyPressed(SDL_BUTTON_LEFT)) {
 		this->is_dashing = true;
 		this->dash_timer = 0.1;
 		this->dash_cooldown = 1.0;
@@ -179,8 +179,8 @@ void EntityPlayer::update(float elapsed_time) {
 
 	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
 	if (move_dir.length() == 0 && this->onFloor) {
-		velocity.x -= velocity.x * 15.0f * elapsed_time;
-		velocity.z -= velocity.z * 15.0f * elapsed_time;
+		velocity.x -= velocity.x * 10.0f * elapsed_time;
+		velocity.z -= velocity.z * 10.0f * elapsed_time;
 	}
 
 	float offset = DEG2RAD * 90.0f;
