@@ -23,6 +23,8 @@ public:
 	bool is_dashing = false;
 	float dash_timer = 0.0;
 	float time_for_groundpound = 0.0;
+	bool move_xz;
+	float dash_cooldown;
 
 	//Parameters to perform collisions
 	float height;

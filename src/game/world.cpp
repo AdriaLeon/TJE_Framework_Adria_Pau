@@ -132,7 +132,7 @@ void World::loadPlayer() {
 	material.shader = shader;
 	EntityPlayer* tmp = new EntityPlayer(mesh, material);
 	this->player = tmp;
-	Vector3 init_position = Vector3(-160.0, 15.000000, -20.0);
+	Vector3 init_position = Vector3(0.0, 40.000000, -20.0);
 	this->player->model.setTranslation(init_position);
 }
 

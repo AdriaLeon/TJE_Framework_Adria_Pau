@@ -1,5 +1,6 @@
-#include "entityCollider.h"
+﻿#include "entityCollider.h"
 #include "graphics/mesh.h"
+#include <cmath>
 
 void EntityCollider::testCollision(Matrix44 model, Vector3 center, std::vector<sCollisionData>& WallCollisions, std::vector<sCollisionData>& GroundCollisions) {
 
@@ -14,10 +15,20 @@ void EntityCollider::testCollision(Matrix44 model, Vector3 center, std::vector<s
 
 	// Wall collision
 	float sphereRadius = 0.05f;
+	float distance = 2.0f * sphereRadius; // Distance between the centers of touching spheres
 
-	if (mesh->testSphereCollision(model, center, sphereRadius, colPoint, colNormal)) {
-		WallCollisions.push_back({ colPoint, colNormal.normalize()});
-		//printf("on wall\n");
+	// Generate directions using sin and cos
+	std::vector<Vector3> directions;
+	for (int i = 0; i < 8; ++i) {
+		float angle = i * (M_PI / 4.0f); // Increment angle by 45 degrees (π/4 radians)
+		directions.push_back(Vector3(cos(angle), 0, sin(angle)));
+	}
+
+	for (const auto& dir : directions) {
+		Vector3 sphereCenter = center + dir * distance;
+		if (mesh->testSphereCollision(model, sphereCenter, sphereRadius, colPoint, colNormal)) {
+			WallCollisions.push_back({ colPoint, colNormal.normalize() });
+		}
 	}
 }
 
@@ -50,7 +61,7 @@ void EntityCollider::testCollisionHightVelocity(Matrix44 model, Vector3 current_
 
 	// Floor collisions
 	if (mesh->testRayCollision(model, current_center, direction, colPoint, colNormal, distance)) {
-		Collisions.push_back({ colPoint, colNormal.normalize() });
+		Collisions.push_back({ colPoint - (direction * 0.05f) - Vector3(0.0f, player_height, 0.0f) , colNormal.normalize()});
 		//printf("on floor\n");
 	}
 
