@@ -181,7 +181,7 @@ void EntityPlayer::update(float elapsed_time) {
 		final_vel *= 2.0f;
 
 	//If player is not colliding then we allow it to move
-	Vector3 next_pos = position + final_vel * elapsed_time;
+	Vector3 next_pos = position + velocity * elapsed_time;
 
 	std::vector<sCollisionData> WallsCollisions;
 	std::vector<sCollisionData> GroundCollisions;
@@ -193,7 +193,7 @@ void EntityPlayer::update(float elapsed_time) {
 	}
 	handle_collisions(FastCollisions, WallsCollisions, GroundCollisions, position, elapsed_time);
 
-	position += final_vel * elapsed_time;
+	position += velocity * elapsed_time;
 
 	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
 	if (move_dir.length() == 0 && this->onFloor) {
@@ -259,7 +259,7 @@ void EntityPlayer::handle_collisions(std::vector<sCollisionData> FastCollisions,
 			Vector3 newDir = velocity.dot(collision.colNormal) * collision.colNormal;
 			// If normal is pointing upwards, it means it's a floor collision
 			velocity.x -= newDir.x;
-			velocity.y -= newDir.y;
+			//velocity.y -= newDir.y;
 			velocity.z -= newDir.z;
 			//printf("%f %f %f \n", newDir.x, newDir.y, newDir.z);
 		}
