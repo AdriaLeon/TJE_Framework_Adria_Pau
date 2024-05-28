@@ -27,7 +27,13 @@ void EntityCollider::testCollision(Matrix44 model, Vector3 center, std::vector<s
 	for (const auto& dir : directions) {
 		Vector3 sphereCenter = center + dir * distance;
 		if (mesh->testSphereCollision(model, sphereCenter, sphereRadius, colPoint, colNormal)) {
-			WallCollisions.push_back({ colPoint, colNormal.normalize() });
+			// Normalize the collision normal
+			Vector3 normalizedColNormal = colNormal.normalize();
+
+			// Check if this collision normal has already been detected
+			if (!collisionAlreadyDetected(normalizedColNormal, WallCollisions)) {
+				WallCollisions.push_back({ colPoint, normalizedColNormal });
+			}
 		}
 	}
 }
@@ -59,7 +65,7 @@ void EntityCollider::testCollisionHightVelocity(Matrix44 model, Vector3 current_
 	Vector3 direction = (next_center - current_center).normalize();
 	float distance = (next_center - current_center).length() + 0.05f;
 
-	// Floor collisions
+	// Fast collisions
 	if (mesh->testRayCollision(model, current_center, direction, colPoint, colNormal, distance)) {
 		Collisions.push_back({ colPoint - (direction * 0.05f) - Vector3(0.0f, player_height, 0.0f) , colNormal.normalize()});
 		//printf("on floor\n");
@@ -83,5 +89,15 @@ void EntityCollider::getCollisionsHightVelocity(const Vector3& position, const V
 			testCollisionHightVelocity(models[i], current_center, next_center, Collisions);
 		}
 	}
+}
+
+
+bool EntityCollider::collisionAlreadyDetected(Vector3 colNormal, const std::vector<sCollisionData> collisions) {
+	for (auto& collision : collisions) {
+		if (collision.colNormal.x == colNormal.x && collision.colNormal.y == colNormal.y && collision.colNormal.z == colNormal.z) {
+			return true;
+		}
+	}
+	return false;
 }
 

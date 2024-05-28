@@ -20,6 +20,8 @@ public:
 
 	void testCollisionHightVelocity(Matrix44 model, Vector3 previous_center, Vector3 next_center, std::vector<sCollisionData>& Collisions);
 	void getCollisionsHightVelocity(const Vector3& position, const Vector3& target_position, std::vector<sCollisionData>& Collisions);
+
+	bool collisionAlreadyDetected(Vector3 colNormal, const std::vector<sCollisionData> collisions);
 };
 
 #endif // ENTITY_COLLIDER_H
