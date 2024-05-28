@@ -90,7 +90,10 @@ void EntityPlayer::update(float elapsed_time) {
 
 	//Añado un boton de correr por si hay que probar cosas, en teoria la version final no tendra
 	if (Input::isKeyPressed(SDL_SCANCODE_LSHIFT)) {
-		speed_mult *= 3.0f;
+		this->sprinting = true;
+	}
+	else {
+		this->sprinting = false;
 	}
 
 	//Jump code
@@ -121,6 +124,7 @@ void EntityPlayer::update(float elapsed_time) {
 	if (move_dir.length() > 0) {
 		move_dir.normalize();
 	}
+
 	move_dir *= speed_mult;
 	new_velocity = velocity + move_dir;
 
@@ -172,8 +176,12 @@ void EntityPlayer::update(float elapsed_time) {
 		velocity.y = -2.0f;
 	}
 
+	Vector3 final_vel = velocity;
+	if (this->sprinting)
+		final_vel *= 2.0f;
+
 	//If player is not colliding then we allow it to move
-	Vector3 next_pos = position + velocity * elapsed_time;
+	Vector3 next_pos = position + final_vel * elapsed_time;
 
 	std::vector<sCollisionData> WallsCollisions;
 	std::vector<sCollisionData> GroundCollisions;
@@ -185,7 +193,7 @@ void EntityPlayer::update(float elapsed_time) {
 	}
 	handle_collisions(FastCollisions, WallsCollisions, GroundCollisions, position, elapsed_time);
 
-	position += velocity * elapsed_time;
+	position += final_vel * elapsed_time;
 
 	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
 	if (move_dir.length() == 0 && this->onFloor) {

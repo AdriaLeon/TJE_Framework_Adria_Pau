@@ -25,6 +25,7 @@ public:
 	float time_for_groundpound = 0.0;
 	bool move_xz;
 	float dash_cooldown;
+	bool sprinting;
 
 	//Parameters to perform collisions
 	float height;
