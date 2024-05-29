@@ -40,5 +40,5 @@ public:
 	void check_collision(Vector3 next_position, std::vector<sCollisionData>& collisions, std::vector<sCollisionData>& GroundCollisions);
 	void check_collisionHightVelocity(Vector3 position, Vector3 next_position, std::vector<sCollisionData>& Collisions);
 	void handle_collisions(std::vector<sCollisionData> FastCollisions, std::vector<sCollisionData> WallsCollisions, std::vector<sCollisionData> GroundCollisions, Vector3& position, float elapsed_time, Vector3& final_vel);
-	void handle_inputs(Vector3& move_dir, Matrix44 mYaw);
+	void handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3& position);
 };

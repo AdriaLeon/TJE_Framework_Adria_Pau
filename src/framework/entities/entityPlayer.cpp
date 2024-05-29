@@ -99,7 +99,7 @@ void EntityPlayer::update(float elapsed_time) {
 	Vector3 new_velocity = Vector3(0, 0, 0);
 	Vector3 move_dir = Vector3(0, 0, 0);
 
-	handle_inputs(move_dir, mYaw);
+	handle_inputs(move_dir, mYaw, position);
 
 	//printf("%f\n", gravity);
 	if (move_dir.length() > 0) {
@@ -281,7 +281,7 @@ void EntityPlayer::setMaterial(Material material) {
 	EntityMesh::setMaterial(material);
 }
 
-void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw) {
+void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&position) {
 
 	Vector3 front = Vector3(1, 0, 0);
 
@@ -324,6 +324,7 @@ void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw) {
 		this->onFloor = false;
 		this->gravity = -9.81f * 2.0f;
 		this->time_for_groundpound = 0.5f;
+		position.y += 0.1f;
 		//printf("jumping\n");
 	}
 	//Ground pound
