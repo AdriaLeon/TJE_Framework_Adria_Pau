@@ -26,6 +26,7 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, mat
 void EntityPlayer::render(Camera* camera) {
 
 	EntityMesh::render(camera);
+	/*
 	Mesh* mesh = Mesh::Get("data/meshes/sphere.obj");
 	Matrix44 m = model;
 	float sphere_radius = 1.0f;
@@ -41,6 +42,7 @@ void EntityPlayer::render(Camera* camera) {
 	mesh->render(GL_LINES);
 
 	material.shader->disable();
+	*/
 };
 
 
@@ -103,6 +105,7 @@ void EntityPlayer::update(float elapsed_time) {
 		this->onFloor = false;
 		this->gravity = -9.81f * 2.0f;
 		this->time_for_groundpound = 0.5f;
+		position.y += 0.2f;
 		//printf("jumping\n");
 	}
 	//Ground pound
@@ -118,7 +121,6 @@ void EntityPlayer::update(float elapsed_time) {
 		this->is_dashing = true;
 		this->dash_timer = 0.1;
 		this->dash_cooldown = 1.0;
-		//Tenemos que hacer un contador de 1 o 2 segundos que empiece al pulsar el dash y que cuando acabe le reste 5 a la velocidad y devuelva el bool a false
 	}
 	//printf("%f\n", gravity);
 	if (move_dir.length() > 0) {

@@ -151,3 +151,18 @@ void EntityMesh::addInstance(const Matrix44& model)
 	models.push_back(model);
 }
 */
+
+/*
+Clase de shaders:
+
+material.shader->setUniform(u_time/u_camera_position_u_light_position/u_fog_factor, parámetro): Rellenamos el shader con valores arbitrarios de los parametros a utilizar.
+modificación a material.h si hacer falta.
+
+Vector2 maps = {0.0f, 0.0f}: Vector usado como bools para indicar cuales usamos y cuales no
+if (material.normal)
+	maps.x = 1.0
+	material.shader->setUniform(u_normal_texture, material.normal, 1)
+
+
+En el shader recibimos estos parámetros, está explicando el de phong, se supone que el código está en el aula global.
+*/
