@@ -11,7 +11,8 @@ World::World() {
 	player = nullptr;
 	loadCubeMap();
 
-	parseScene("data/myscene.scene");
+	//parseScene("data/myscene.scene");
+	parseScene("data/level.scene");
 	loadPlayer();
 }
 
@@ -31,7 +32,6 @@ void World::removeAllEntities() {
 	entities.clear();
 }
 
-//Revisar que fa i adaptar-lo al nostre codi, codi de parseScene proporcionat a l'aula global amb alguna petita modificació
 bool World::parseScene(const char* filename)
 {
 	std::cout << " + Scene loading: " << filename << "..." << std::endl;
@@ -132,7 +132,7 @@ void World::loadPlayer() {
 	material.shader = shader;
 	EntityPlayer* tmp = new EntityPlayer(mesh, material);
 	this->player = tmp;
-	Vector3 init_position = Vector3(0.0, 40.000000, -20.0);
+	Vector3 init_position = Vector3(0.0, 40.000000, 0.0);
 	this->player->model.setTranslation(init_position);
 }
 
