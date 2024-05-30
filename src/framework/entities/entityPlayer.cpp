@@ -10,10 +10,10 @@
 
 EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, material) {
 	this->onFloor = TRUE;
-	this->walkSpeed = 10.0f;
+	this->walkSpeed = 8.0f;
 	this->velocity = Vector3(0,0,0);
 	this->height = 3.0f;
-	this->jumpSpeed = 30.0f;
+	this->jumpSpeed = 20.0f;
 	this->gravity = -20.0f;
 	this->onFloor = true;
 	this->is_jumping = false;
@@ -112,7 +112,7 @@ void EntityPlayer::update(float elapsed_time) {
 	new_velocity = velocity + move_dir;
 
 	// Maximum speed allowed for the player
-	const float max_speed = 30.0f;
+	const float max_speed = 20.0f;
 
 	// Calculate the horizontal speed (consider only x and z components)
 	float horizontal_speed = sqrt(new_velocity.x * new_velocity.x + new_velocity.z * new_velocity.z);
@@ -324,7 +324,7 @@ void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&posit
 		this->onFloor = false;
 		this->gravity = -9.81f * 2.0f;
 		this->time_for_groundpound = 0.5f;
-		position.y += 0.1f;
+		position.y += 0.3f;
 		//printf("jumping\n");
 	}
 	//Ground pound
@@ -338,7 +338,7 @@ void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&posit
 	//Dash
 	if (!this->is_dashing && Input::isMousePressed(SDL_BUTTON_LEFT) && this->dash_cooldown <= 0.0f && !this->ground_pound) { //Input::isKeyPressed(SDL_BUTTON_LEFT)) {
 		this->is_dashing = true;
-		this->dash_timer = 0.1;
+		this->dash_timer = 0.2;
 		this->dash_cooldown = 1.0;
 		//Tenemos que hacer un contador de 1 o 2 segundos que empiece al pulsar el dash y que cuando acabe le reste 5 a la velocidad y devuelva el bool a false
 	}
