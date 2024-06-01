@@ -20,6 +20,8 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, mat
 	this->ground_pound = false;
 	this->move_xz = true;
 	this->dash_cooldown = 0.0;
+	this->coyoteTime = 0.3f;
+	this->timeSinceGrounded = 0.0f;
 	entityType = eEntityType::PLAYER;
 }
 
@@ -104,7 +106,7 @@ void EntityPlayer::update(float elapsed_time) {
 	//printf("%f\n", gravity);
 	if (move_dir.length() > 0) {
 		move_dir.normalize();
-		if (!this->onFloor) //When in the air its hareder to turn around
+		if (!this->onFloor) //When in the air its harder to turn around
 			move_dir = move_dir / 2.0f;
 	}
 
@@ -143,6 +145,13 @@ void EntityPlayer::update(float elapsed_time) {
 	}
 	else if (this->onFloor) {
 		this->dash_cooldown -= elapsed_time;
+	}
+
+	if (this->onFloor) {
+		this->timeSinceGrounded = 0.0f;
+	}
+	else {
+		this->timeSinceGrounded += elapsed_time;
 	}
 
 	// Apply gravity if the player is not on the floor
@@ -318,7 +327,7 @@ void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&posit
 	}
 
 	//Jump code
-	if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && this->onFloor) {
+	if (Input::wasKeyPressed(SDL_SCANCODE_SPACE) && (this->onFloor || this->timeSinceGrounded <= this->coyoteTime) && !this->is_jumping) {
 		velocity.y += this->jumpSpeed;
 		this->is_jumping = true;
 		this->onFloor = false;

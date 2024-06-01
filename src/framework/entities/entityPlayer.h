@@ -30,6 +30,10 @@ public:
 	//Parameters to perform collisions
 	float height;
 
+	//Parameters of coyote time
+	float coyoteTime;
+	float timeSinceGrounded;
+
 	EntityPlayer() {};  //Create empty entityPlayer
 	EntityPlayer(Mesh* mesh, Material material); //Create entityPlayer
 
