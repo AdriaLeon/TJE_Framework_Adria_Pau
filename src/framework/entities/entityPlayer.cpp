@@ -318,7 +318,7 @@ void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&posit
 	}
 
 	//Jump code
-	if (Input::wasKeyPressed(SDL_SCANCODE_SPACE) && this->onFloor) {
+	if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && this->onFloor) {
 		velocity.y += this->jumpSpeed;
 		this->is_jumping = true;
 		this->onFloor = false;
