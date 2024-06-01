@@ -333,7 +333,7 @@ void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&posit
 		this->onFloor = false;
 		this->gravity = -9.81f * 2.0f;
 		this->time_for_groundpound = 0.5f;
-		position.y += 0.3f;
+		position.y += 0.4f;
 		//printf("jumping\n");
 	}
 	//Ground pound
