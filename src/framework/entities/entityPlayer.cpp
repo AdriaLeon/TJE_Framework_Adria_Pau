@@ -191,8 +191,8 @@ void EntityPlayer::update(float elapsed_time) {
 
 	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
 	if (move_dir.length() == 0 && this->onFloor) {
-		velocity.x -= velocity.x * 10.0f * elapsed_time;
-		velocity.z -= velocity.z * 10.0f * elapsed_time;
+		velocity.x -= velocity.x * 15.0f * elapsed_time;
+		velocity.z -= velocity.z * 15.0f * elapsed_time;
 	}
 
 	float offset = DEG2RAD * 90.0f;
