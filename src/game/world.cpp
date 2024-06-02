@@ -224,15 +224,13 @@ World* World::get_instance() {
 
 void World::check_chekpoints() {
 	Vector3 position = this->player->model.getTranslation();
-	if (position.y <= -170) {
-		if (position.x > 522) {
-			this->player->model.setTranslation(522.0f, 28.0f, 8.0f);
+		if (position.x > 522 && position.y >28 && this->current_check_point == 1) {
+			this->current_check_point++;
 		}
-		else if (position.x > 242) {
-			this->player->model.setTranslation(242.0f, -4.0f, 3.5f);
+		else if (position.x > 242 && position.y > -4 && this->current_check_point == 0) {
+			this->current_check_point++;
 		}
-		else {
-			this->player->model.setTranslation(0.0f, - 3.4f, 0.0f); //initial position
+		if (position.y <= -170) {
+			this->player->model.setTranslation(this->checkpoints[this->current_check_point]);
 		}
-	}
 }
