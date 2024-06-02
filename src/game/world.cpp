@@ -224,10 +224,7 @@ World* World::get_instance() {
 
 void World::check_chekpoints() {
 	Vector3 position = this->player->model.getTranslation();
-		if (position.x > 522 && position.y >28 && this->current_check_point == 1) {
-			this->current_check_point++;
-		}
-		else if (position.x > 242 && position.y > -4 && this->current_check_point == 0) {
+		if ((position.x > 522 && position.y >28 && this->current_check_point == 1) || (position.x > 242 && position.y > -4 && this->current_check_point == 0) || (position.x > 870 && position.y > -110 && this->current_check_point == 2)) {
 			this->current_check_point++;
 		}
 		if (position.y <= -170) {
