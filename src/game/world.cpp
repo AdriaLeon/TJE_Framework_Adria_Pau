@@ -171,6 +171,7 @@ void World::renderAll(Camera* camera) {
 void World::updateAll(float delta_time) {
 	player->update(delta_time);
 	root->update(delta_time);
+	check_chekpoints();
 }
 
 void World::updateCubemap(Camera* camera) {
@@ -221,133 +222,17 @@ World* World::get_instance() {
     return instance;
 }
 
-/*bool World::check_player_collisions(Vector3& target_pos) {
-
-	Vector3 ray_start = target_pos + Vector3(0.0, this->player->height / 2, 0.0);
-	Vector3 ray_dir = Vector3(0.0, -1.0, 0.0);
-	float max_ray_dist = (this->player->height / 2) + 0.01f;
-	Vector3 colPoint, colNormal;
-	//Movido fuera porque si no, al ponerlo en un else, a la mínima que no hay suelo lo quita
-	this->player->onFloor = false;
-
-	for (Entity* ent : root->children) {
-		EntityMesh* e = dynamic_cast<EntityMesh*>(ent);
-		if (!e) continue;
-
-		if (e->isInstanced == true) {
-			for (const Matrix44& emodel : e->models) {
-				Matrix44 model = emodel;
-				Mesh* mesh = e->mesh;
-
-				// Floor collisions
-				if (mesh->testRayCollision(model, ray_start, ray_dir, colPoint, colNormal, max_ray_dist)){//}, true)) {
-					this->player->onFloor = true;
-					collisions.push_back({ colPoint, colNormal.normalize() , true});
-					//printf("on floor\n");
-				}
-
-				// Wall collision
-				Vector3 center_sphere = target_pos + Vector3(0.0, this->player->height / 2, 0.0);
-				float sphereRadius = 0.025f;
-				model = e->model;
-				mesh = e->mesh;
-
-				if (mesh->testSphereCollision(model, center_sphere, sphereRadius, colPoint, colNormal)) {
-					collisions.push_back({ colPoint, colNormal.normalize(), false });
-					//printf("on wall\n");
-				}
-			}
+void World::check_chekpoints() {
+	Vector3 position = this->player->model.getTranslation();
+	if (position.y <= -170) {
+		if (position.x > 522) {
+			this->player->model.setTranslation(522.0f, 28.0f, 8.0f);
+		}
+		else if (position.x > 242) {
+			this->player->model.setTranslation(242.0f, -4.0f, 3.5f);
 		}
 		else {
-			Matrix44 model = e->model;
-			Mesh* mesh = e->mesh;
-
-			// Floor collisions
-			if (mesh->testRayCollision(model, ray_start, ray_dir, colPoint, colNormal, max_ray_dist, true)) {
-				this->player->onFloor = true;
-				collisions.push_back({ colPoint, colNormal.normalize() });
-				//printf("on floor\n");
-			}
-
-			// Wall collision
-			Vector3 center_sphere = target_pos + Vector3(0.0, this->player->height / 2, 0.0);
-			float sphereRadius = 0.025f;
-			model = e->model;
-			mesh = e->mesh;
-
-			if (mesh->testSphereCollision(model, center_sphere, sphereRadius, colPoint, colNormal)) {
-				collisions.push_back({ colPoint, colNormal.normalize() });
-				//printf("on wall\n");
-			}
+			this->player->model.setTranslation(0.0f, - 3.4f, 0.0f); //initial position
 		}
 	}
-	return !collisions.empty();
-}*/
-
-/*Class EntityPlayer{
-
-	Collisiones
-		//////collisions with world
-		#Get instances from world
-		sphere_radius
-		sphere_ground_radious
-		player_height
-
-		Shader, Mesh #get them
-		Matrix44 m = model;
-
-		shader->enable();
-
-		//first spher
-		{
-			m.translate(0,player_height,0);
-			m.scale(sphere_radious, sphere_ground_radious);
-
-			....
-		}
-
-		//second sphere
-		{
-			m = model;
-			m.translate(0,player_height,0);
-			m.scale(sphere_radious, sphere_ground_radious);
-
-			....
-		}
-
-		//Check collision with floor then with wall and last if plater its on the floor
-		if(mesh->(testSphereCollision(m, floor_sphere_center, sphere_radious, collision_ point, collision_normal)
-			collision.push_back({collision_point, collision_normal.normalize(), floor....)
-
-
-		///////sends a ray whith the mouse and check where it collisions
-		Needs an EntityCollider class
-		eCollisionFilter type of colliders (do an enum)
-
-		for (entities)
-			get collider entities if not collider skip
-
-			Vector3 col_point;  //te lo rellena la funcion
-			Vector3 col_normal;  //te lo rellena la funcion
-			if(collider->mesh->testRayCollision(collider->model, ray_origin, ray_direction,col_point,col_normal))  //tambien se pude usar max_dist (6 param para saber si esta tocando el suelo distancia entre suelo i centro de personaje)
-				collisions.push_back(col_point);
-		}
-
-		//Generate entities
-
-		for(auto& col_point : colisions)
-		{
-			Mesh* mesh = Mesh::Get()
-			EntityMesh* new_entity = new EntityMesh(mesh, material);
-			new:entity->model.setTranslation(col_point);
-			World::get:instance()->addEntity(new_entity);
-
-		
-}*/
-
-/*getCollision(....) {
-	if (!(layer & filter)) { Check if collitions needs to be checked
-		return;
-	}
-
-*/
+}

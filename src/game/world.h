@@ -44,6 +44,7 @@ public:
     void renderEntities(Camera* camera);
     void updateCubemap(Camera* camera);
     static World* get_instance();
+    void check_chekpoints();
 
     //bool check_player_collisions(Vector3& target_pos);
 };

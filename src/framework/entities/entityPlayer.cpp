@@ -200,7 +200,7 @@ void EntityPlayer::update(float elapsed_time) {
 	this->model.setTranslation(position);
 	this->model.rotate(camera_yaw-offset, Vector3(0, 1, 0));
 
-	std::cout << "onFloor: " << this->onFloor << std::endl;
+	//std::cout << "onFloor: " << this->onFloor << std::endl;
 
 	Entity::update(elapsed_time);
 }
@@ -315,7 +315,7 @@ void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&posit
 		}
 	}
 	if (Input::wasKeyPressed(SDL_SCANCODE_O)) { //Debugging tool to know the players position
-		printf("%f %f %f", this->model.getTranslation().x, this->model.getTranslation().y, this->model.getTranslation().z);
+		printf("%f %f %f\n", this->model.getTranslation().x, this->model.getTranslation().y, this->model.getTranslation().z);
 	}
 
 	//Añado un boton de correr por si hay que probar cosas, en teoria la version final no tendra
