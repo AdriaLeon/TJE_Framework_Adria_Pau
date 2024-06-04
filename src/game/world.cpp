@@ -224,7 +224,7 @@ World* World::get_instance() {
 
 void World::check_chekpoints() {
 	Vector3 position = this->player->model.getTranslation();
-		if ((position.x > 522 && position.y >28 && this->current_check_point == 1) || (position.x > 242 && position.y > -4 && this->current_check_point == 0) || (position.x > 870 && position.y > -110 && this->current_check_point == 2) || (position.x > 1411 && position.y > -70 && this->current_check_point == 3)) {
+		if ((position.x > 522 && position.y >28 && this->current_check_point == 1) || (position.x > 242 && position.y > -4 && this->current_check_point == 0) || (position.x > 870 && position.y > -110 && this->current_check_point == 2) || (position.x > 1411 && position.y > -70 && this->current_check_point == 3) || (position.x > 1896.71 && position.y > -77.92f && this->current_check_point == 4)) {
 			this->current_check_point++;
 		}
 		if (position.y <= -170) {

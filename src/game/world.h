@@ -20,7 +20,7 @@ public:
     float camera_yaw;
     float camera_pitch;
     int current_check_point = 0;
-    std::vector<Vector3> checkpoints = { Vector3(0.0f, -3.4f, 0.0f), Vector3(242.0f, -4.0f, 3.5f), Vector3(522.0f, 28.0f, 8.0f), Vector3(870.0f, -109.7f, 7.0f), Vector3(1411.67f, - 71.9f, 32.1f)};
+    std::vector<Vector3> checkpoints = { Vector3(0.0f, -3.4f, 0.0f), Vector3(242.0f, -4.0f, 3.5f), Vector3(522.0f, 28.0f, 8.0f), Vector3(870.0f, -109.7f, 7.0f), Vector3(1411.67f, - 71.9f, 32.1f), Vector3(1896.71f, - 77.92f, - 25.55f)};
 
     EntityMesh* landscape;
     EntityPlayer* player;
