@@ -1,6 +1,7 @@
 #include "world.h"
 #include <iostream> // For input/output streams
 #include <fstream>  // For file input/output streams
+#include "framework/audio.h"
 
 World* World::instance = nullptr;
 
@@ -14,6 +15,9 @@ World::World() {
 	//parseScene("data/myscene.scene");
 	parseScene("data/level.scene");
 	loadPlayer();
+	loadAudios();
+	channelBG = Audio::Play("data/sounds/Bgm.wav", 0.4, BASS_SAMPLE_LOOP);
+	
 }
 
 void World::addEntity(Entity* entity) {
@@ -229,5 +233,18 @@ void World::check_chekpoints() {
 		}
 		if (position.y <= -170) {
 			this->player->model.setTranslation(this->checkpoints[this->current_check_point]);
+			Audio::Play("data/sounds/ReviveSound.wav");
 		}
+}
+
+void World::loadAudios(){
+	Audio::Init();
+	Audio::Get("data/sounds/Bgm.wav");
+	Audio::Get("data/sounds/ReviveSound.wav");
+	Audio::Get("data/sounds/Jump.wav");
+	Audio::Get("data/sounds/GroundPound.wav");
+	Audio::Get("data/sounds/Dash.wav");
+	Audio::Get("data/sounds/OnGround.wav");
+	
+	//Audio::Play("data/sounds/bgm2.wav");
 }

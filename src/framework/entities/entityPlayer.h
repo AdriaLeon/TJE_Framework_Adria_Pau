@@ -4,6 +4,7 @@
 #include "graphics/shader.h"
 #include "entity.h";
 #include "graphics/material.h"
+#include "framework/audio.h"
 #include "entityMesh.h"
 
 
@@ -34,6 +35,11 @@ public:
 	float coyoteTime;
 	float timeSinceGrounded;
 
+	//Parameters for handling sound effects
+	HCHANNEL groundPoundChannel;
+	bool hasLanded;
+
+	//Channels stored
 	EntityPlayer() {};  //Create empty entityPlayer
 	EntityPlayer(Mesh* mesh, Material material); //Create entityPlayer
 

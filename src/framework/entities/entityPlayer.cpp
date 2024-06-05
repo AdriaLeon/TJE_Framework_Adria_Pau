@@ -6,6 +6,7 @@
 #include "framework/entities/entityCollider.h"
 #include "framework/camera.h"
 #include "game/game.h"
+#include "framework/audio.h"
 #include <string>
 
 EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, material) {
@@ -22,63 +23,14 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, mat
 	this->dash_cooldown = 0.0;
 	this->coyoteTime = 0.3f;
 	this->timeSinceGrounded = 0.0f;
+	this->groundPoundChannel = 0;
+	this->hasLanded = false;
 	entityType = eEntityType::PLAYER;
 }
 
 void EntityPlayer::render(Camera* camera) {
 
 	EntityMesh::render(camera);
-	/*
-	Mesh* mesh = Mesh::Get("data/meshes/sphere.obj");
-
-	float sphere_radius = 0.2f;
-	float distance = 2.0f * sphere_radius; // Distance between the centers of touching spheres
-	Vector3 center = Vector3(0.0f, height - 0.2f, 0.0f);
-
-	// Generate directions using sin and cos
-	std::vector<Vector3> directions;
-	for (int i = 0; i < 8; ++i) {
-		float angle = i * (M_PI / 4.0f); // Increment angle by 45 degrees (π/4 radians)
-		directions.push_back(Vector3(cos(angle), 0, sin(angle)));
-	}
-
-	// Loop through each direction vector in directions
-	for (const auto& dir : directions) {
-		// Calculate the sphere center using the direction vector and the distance
-		Vector3 sphereCenter = center + dir * distance;
-
-		// Translate and scale the model matrix
-		Matrix44 m = model;
-		m.translate(sphereCenter.x, sphereCenter.y, sphereCenter.z);
-		m.scale(sphere_radius, sphere_radius, sphere_radius);
-
-		// Set up material properties and shader uniforms
-		material.shader->enable();
-		material.shader->setUniform("u_color", Vector4(0.0f, 1.0f, 0.0f, 1.0f));
-		material.shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
-		material.shader->setUniform("u_model", m);
-
-		// Render the sphere mesh
-		mesh->render(GL_LINES);
-
-		// Disable the shader
-		material.shader->disable();
-	}
-
-	/*Matrix44 m = model;
-	float sphere_radius = 1.0f;
-	material.shader->enable();
-
-	m.translate(0.0f, 2.5f, 0.0f);
-	m.scale(sphere_radius, sphere_radius, sphere_radius);
-
-	material.shader->setUniform("u_color", Vector4(0.0f, 1.0f, 0.0f, 1.0f));
-	material.shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
-	material.shader->setUniform("u_model", m);
-
-	mesh->render(GL_LINES);
-
-	material.shader->disable();*/
 };
 
 
@@ -228,7 +180,6 @@ void EntityPlayer::handle_collisions(std::vector<sCollisionData> FastCollisions,
 	if (!FastCollisions.empty()) {
 		for (const sCollisionData& collision : FastCollisions) {
 
-			//position = collision.colPoint;
 			if(!this->ground_pound)
 				this->is_dashing = false;
 
@@ -237,13 +188,8 @@ void EntityPlayer::handle_collisions(std::vector<sCollisionData> FastCollisions,
 			final_vel.x -= newDir.x;
 			final_vel.y -= newDir.y;
 			final_vel.z -= newDir.z;
-			//printf("%f %f %f \n", newDir.x, newDir.y, newDir.z);
 			final_vel.x /= 2.0f;
 			final_vel.z /= 2.0f;
-
-			//If othere doesn't work
-			/*final_vel.x = 0.0f;
-			final_vel.z = 0.0f;*/
 		}
 	}
 
@@ -274,10 +220,15 @@ void EntityPlayer::handle_collisions(std::vector<sCollisionData> FastCollisions,
 					position.y = collision.colPoint.y;
 				}
 			}
+			if (!hasLanded) {
+				Audio::Play("data/sounds/OnGround.wav", 0.1);
+				this->hasLanded = true;
+			}
 		}
 	}
 	else {
 		this->onFloor = false;
+		this->hasLanded = false;
 	}
 
 	velocity = final_vel;
@@ -334,7 +285,7 @@ void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&posit
 		this->gravity = -9.81f * 2.0f;
 		this->time_for_groundpound = 0.5f;
 		position.y += 0.4f;
-		//printf("jumping\n");
+		Audio::Play("data/sounds/Jump.wav", 0.4);
 	}
 	//Ground pound
 	if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && !this->onFloor && !this->ground_pound && this->time_for_groundpound < 0.0) {
@@ -342,13 +293,18 @@ void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&posit
 		this->time_for_groundpound = 0.0;
 		velocity.x = 0.0f;
 		velocity.z = 0.0f;
-		//printf("ground pound\n");
+		if (groundPoundChannel != 0) {
+			Audio::Stop(groundPoundChannel);
+			groundPoundChannel = 0;
+		}
+		groundPoundChannel = Audio::Play("data/sounds/GroundPound.wav");
 	}
 	//Dash
 	if (!this->is_dashing && Input::isMousePressed(SDL_BUTTON_LEFT) && this->dash_cooldown <= 0.0f && !this->ground_pound) { //Input::isKeyPressed(SDL_BUTTON_LEFT)) {
 		this->is_dashing = true;
 		this->dash_timer = 0.2;
-		this->dash_cooldown = 0.4;
+		this->dash_cooldown = 0.2;
+		Audio::Play("data/sounds/Dash.wav");
 		//Tenemos que hacer un contador de 1 o 2 segundos que empiece al pulsar el dash y que cuando acabe le reste 5 a la velocidad y devuelva el bool a false
 	}
 }

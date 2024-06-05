@@ -7,6 +7,7 @@
 #include "framework/entities/entityPlayer.h"
 #include "framework/entities/entityCollider.h"
 #include "framework/camera.h"
+#include "framework/audio.h"
 #include "game.h"
 #include <string>
 
@@ -24,6 +25,7 @@ public:
 
     EntityMesh* landscape;
     EntityPlayer* player;
+    HCHANNEL channelBG;
 
     //Constructor
     World();
@@ -47,6 +49,7 @@ public:
     void updateCubemap(Camera* camera);
     static World* get_instance();
     void check_chekpoints();
+    void loadAudios();
 
     //bool check_player_collisions(Vector3& target_pos);
 };
