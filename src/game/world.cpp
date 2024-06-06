@@ -16,7 +16,7 @@ World::World() {
 	parseScene("data/level.scene");
 	loadPlayer();
 	loadAudios();
-	channelBG = Audio::Play("data/sounds/Bgm.wav", 0.4, BASS_SAMPLE_LOOP);
+	channelBG = Audio::Play("data/sounds/Bgm.wav", 0.3, BASS_SAMPLE_LOOP);
 	
 }
 

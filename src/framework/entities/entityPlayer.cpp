@@ -285,7 +285,7 @@ void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&posit
 		this->gravity = -9.81f * 2.0f;
 		this->time_for_groundpound = 0.5f;
 		position.y += 0.4f;
-		Audio::Play("data/sounds/Jump.wav", 0.4);
+		Audio::Play("data/sounds/Jump.wav", 0.2);
 	}
 	//Ground pound
 	if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && !this->onFloor && !this->ground_pound && this->time_for_groundpound < 0.0) {
@@ -297,14 +297,14 @@ void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&posit
 			Audio::Stop(groundPoundChannel);
 			groundPoundChannel = 0;
 		}
-		groundPoundChannel = Audio::Play("data/sounds/GroundPound.wav");
+		groundPoundChannel = Audio::Play("data/sounds/GroundPound.wav", 0.3);
 	}
 	//Dash
 	if (!this->is_dashing && Input::isMousePressed(SDL_BUTTON_LEFT) && this->dash_cooldown <= 0.0f && !this->ground_pound) { //Input::isKeyPressed(SDL_BUTTON_LEFT)) {
 		this->is_dashing = true;
 		this->dash_timer = 0.2;
 		this->dash_cooldown = 0.2;
-		Audio::Play("data/sounds/Dash.wav");
+		Audio::Play("data/sounds/Dash.wav", 0.3);
 		//Tenemos que hacer un contador de 1 o 2 segundos que empiece al pulsar el dash y que cuando acabe le reste 5 a la velocidad y devuelva el bool a false
 	}
 }
