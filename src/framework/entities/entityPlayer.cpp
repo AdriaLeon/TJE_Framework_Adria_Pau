@@ -93,22 +93,6 @@ void EntityPlayer::render(Camera* camera) {
 		// Disable the shader
 		material.shader->disable();
 	}
-
-	/*
-	Matrix44 m = model;
-	float sphere_radius = 2.5f;
-	material.shader->enable();
-
-	m.translate(0.0f, 2.5f, 0.0f);
-	m.scale(sphere_radius, sphere_radius, sphere_radius);
-
-	material.shader->setUniform("u_color", Vector4(0.0f, 1.0f, 0.0f, 1.0f));
-	material.shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
-	material.shader->setUniform("u_model", m);
-
-	mesh->render(GL_LINES);
-
-	material.shader->disable();*/
 };
 
 
