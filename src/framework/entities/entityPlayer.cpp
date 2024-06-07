@@ -13,7 +13,7 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, mat
 	this->onFloor = TRUE;
 	this->walkSpeed = 8.0f;
 	this->velocity = Vector3(0,0,0);
-	this->height = 3.0f;
+	this->height = 5.0f;
 	this->jumpSpeed = 20.0f;
 	this->gravity = -20.0f;
 	this->onFloor = true;
@@ -21,7 +21,7 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, mat
 	this->ground_pound = false;
 	this->move_xz = true;
 	this->dash_cooldown = 0.0;
-	this->coyoteTime = 0.3f;
+	this->coyoteTime = 0.2f;
 	this->timeSinceGrounded = 0.0f;
 	this->groundPoundChannel = 0;
 	this->hasLanded = false;
@@ -31,6 +31,63 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, mat
 void EntityPlayer::render(Camera* camera) {
 
 	EntityMesh::render(camera);
+<<<<<<< Updated upstream
+=======
+	
+	Mesh* mesh = Mesh::Get("data/meshes/sphere.obj");
+
+	float sphere_radius = 0.4f;
+	float distance = sphere_radius; // Distance between the centers of touching spheres
+	Vector3 center = Vector3(0.0f, height / 2.0f, 0.0f);
+
+	// Generate directions using sin and cos
+	/*std::vector<Vector3> directions;
+	for (int i = 0; i < 5; ++i) {
+		float angle = i * (M_PI / (2.0f / 5.0f)); // Increment angle by 45 degrees (π/4 radians)
+		directions.push_back(Vector3(cos(angle), 0, sin(angle)));
+	}*/
+
+	for (int i = 0; i < 2; ++i) {
+		// Loop through each direction vector in directions
+		//for (const auto& dir : directions) {
+			// Calculate the sphere center using the direction vector and the distance
+		Vector3 sphereCenter = center;// +dir * distance;
+
+			// Translate and scale the model matrix
+			Matrix44 m = model;
+			m.translate(sphereCenter.x, sphereCenter.y, sphereCenter.z);
+			m.scale(sphere_radius, sphere_radius, sphere_radius);
+
+			// Set up material properties and shader uniforms
+			material.shader->enable();
+			material.shader->setUniform("u_color", Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+			material.shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
+			material.shader->setUniform("u_model", m);
+
+			// Render the sphere mesh
+			mesh->render(GL_LINES);
+
+			// Disable the shader
+			material.shader->disable();
+		//}
+		center += Vector3(0.0f, height / 2.0f, 0.0f);
+	}
+	/*
+	Matrix44 m = model;
+	float sphere_radius = 2.5f;
+	material.shader->enable();
+
+	m.translate(0.0f, 2.5f, 0.0f);
+	m.scale(sphere_radius, sphere_radius, sphere_radius);
+
+	material.shader->setUniform("u_color", Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+	material.shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
+	material.shader->setUniform("u_model", m);
+
+	mesh->render(GL_LINES);
+
+	material.shader->disable();*/
+>>>>>>> Stashed changes
 };
 
 
@@ -202,7 +259,7 @@ void EntityPlayer::handle_collisions(std::vector<sCollisionData> FastCollisions,
 			final_vel.z -= newDir.z;
 			float up_factor = collision.colNormal.dot(Vector3::UP);
 			//Check collision with ceiling
-			if (up_factor < -0.7f)
+			if (up_factor < -0.7f && newDir.y > 0.0)
 				final_vel.y -= newDir.y;
 			//printf("%f %f %f \n", newDir.x, newDir.y, newDir.z);
 		}
