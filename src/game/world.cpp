@@ -128,9 +128,9 @@ bool World::parseScene(const char* filename)
 }
 
 void World::loadPlayer() {
-	Texture* texture = Texture::Get("data/Player/Astronaut.mtl");
+	Texture* texture = Texture::Get("data/Player/Astronaut_.mtl");
 	Shader* shader = Shader::Get("data/shaders/basic.vs", "data/shaders/color.fs");
-	Mesh* mesh = Mesh::Get("data/Player/Astronaut.obj");
+	Mesh* mesh = Mesh::Get("data/Player/Astronaut_.obj");
 	Material material;
 	material.diffuse = texture;
 	material.shader = shader;

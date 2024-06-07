@@ -27,6 +27,7 @@ public:
 	bool move_xz;
 	float dash_cooldown;
 	bool sprinting;
+	const float max_speed = 20.0f;
 
 	//Parameters to perform collisions
 	float height;

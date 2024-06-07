@@ -13,7 +13,7 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, mat
 	this->onFloor = TRUE;
 	this->walkSpeed = 8.0f;
 	this->velocity = Vector3(0,0,0);
-	this->height = 4.0f;
+	this->height = 3.5f;
 	this->jumpSpeed = 20.0f;
 	this->gravity = -20.0f;
 	this->onFloor = true;
@@ -34,22 +34,18 @@ void EntityPlayer::render(Camera* camera) {
 	
 	Mesh* mesh = Mesh::Get("data/meshes/sphere.obj");
 
-	float sphere_radius = 0.4f;
-	float distance = sphere_radius; // Distance between the centers of touching spheres
-	Vector3 center = Vector3(0.0f, height / 2.0f, 0.0f);
+	float sphere_radius = 0.3f;
+	Vector3 center = Vector3(0.0f, height - 2.0f, 0.0f);
 
 	// Generate directions using sin and cos
-	/*std::vector<Vector3> directions;
+	std::vector<Vector3> directions;
 	for (int i = 0; i < 5; ++i) {
 		float angle = i * (M_PI / (2.0f / 5.0f)); // Increment angle by 45 degrees (π/4 radians)
 		directions.push_back(Vector3(cos(angle), 0, sin(angle)));
-	}*/
+	}
 
-	for (int i = 0; i < 2; ++i) {
-		// Loop through each direction vector in directions
-		//for (const auto& dir : directions) {
-			// Calculate the sphere center using the direction vector and the distance
-		Vector3 sphereCenter = center;// +dir * distance;
+	for (int i = 0; i < 3; ++i) {
+		Vector3 sphereCenter = center;
 
 			// Translate and scale the model matrix
 			Matrix44 m = model;
@@ -67,9 +63,37 @@ void EntityPlayer::render(Camera* camera) {
 
 			// Disable the shader
 			material.shader->disable();
-		//}
-		center += Vector3(0.0f, height / 2.0f, 0.0f);
+
+		center += Vector3(0.0f, 0.6f, 0.0f);
 	}
+
+	center -= Vector3(0.0f, 0.3f, 0.0f);
+	sphere_radius = 0.2f;
+	float distance = sphere_radius; // Distance between the centers of touching spheres
+
+	// Loop through each direction vector in directions
+	for (const auto& dir : directions) {
+		// Calculate the sphere center using the direction vector and the distance
+		Vector3 sphereCenter = center + dir * distance;
+
+		// Translate and scale the model matrix
+		Matrix44 m = model;
+		m.translate(sphereCenter.x, sphereCenter.y, sphereCenter.z);
+		m.scale(sphere_radius, sphere_radius, sphere_radius);
+
+		// Set up material properties and shader uniforms
+		material.shader->enable();
+		material.shader->setUniform("u_color", Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+		material.shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
+		material.shader->setUniform("u_model", m);
+
+		// Render the sphere mesh
+		mesh->render(GL_LINES);
+
+		// Disable the shader
+		material.shader->disable();
+	}
+
 	/*
 	Matrix44 m = model;
 	float sphere_radius = 2.5f;
@@ -119,13 +143,10 @@ void EntityPlayer::update(float elapsed_time) {
 	move_dir *= speed_mult;
 	new_velocity = velocity + move_dir;
 
-	// Maximum speed allowed for the player
-	const float max_speed = 20.0f;
-
 	// Calculate the horizontal speed (consider only x and z components)
 	float horizontal_speed = sqrt(new_velocity.x * new_velocity.x + new_velocity.z * new_velocity.z);
 
-	if (horizontal_speed < max_speed) {
+	if (horizontal_speed < this->max_speed) {
 		velocity = new_velocity;
 	}
 	else {
@@ -240,10 +261,13 @@ void EntityPlayer::handle_collisions(std::vector<sCollisionData> FastCollisions,
 			Vector3 newDir = final_vel.dot(collision.colNormal) * collision.colNormal;
 			// If normal is pointing upwards, it means it's a floor collision
 			final_vel.x -= newDir.x;
-			final_vel.y -= newDir.y;
 			final_vel.z -= newDir.z;
-			final_vel.x /= 2.0f;
-			final_vel.z /= 2.0f;
+
+			this->is_dashing = false;
+
+			float up_factor = collision.colNormal.dot(Vector3::UP);
+			if (up_factor < -0.7f && newDir.y > 0.0)
+				final_vel.y -= newDir.y;
 		}
 	}
 
@@ -254,11 +278,25 @@ void EntityPlayer::handle_collisions(std::vector<sCollisionData> FastCollisions,
 			// If normal is pointing upwards, it means it's a floor collision
 			final_vel.x -= newDir.x;
 			final_vel.z -= newDir.z;
+
+			// Project the velocity onto the plane formed by the collision normal and the ground plane
+			Vector3 planeNormal = collision.colNormal.cross(Vector3::UP).normalize();
+			Vector3 projectedVel = final_vel - planeNormal * final_vel.dot(planeNormal);
+
+			// Apply the projected velocity to the position
+			Vector3 next_pos = position + projectedVel * elapsed_time;
+			Vector3 toCollisionPointXZ = Vector3(collision.colPoint.x - next_pos.x, 0.0f, collision.colPoint.z - next_pos.z);
+			float distanceXZ = toCollisionPointXZ.dot(Vector3(collision.colNormal.x, 0.0f, collision.colNormal.z));
+			if (distanceXZ < 0) { // Character is penetrating the collision surface along x and z
+				Vector3 adjustment = collision.colNormal * distanceXZ * 0.1;
+				position.x -= adjustment.x;
+				position.z -= adjustment.z;
+			}
+
 			float up_factor = collision.colNormal.dot(Vector3::UP);
 			//Check collision with ceiling
 			if (up_factor < -0.7f && newDir.y > 0.0)
 				final_vel.y -= newDir.y;
-			//printf("%f %f %f \n", newDir.x, newDir.y, newDir.z);
 		}
 	}
 
