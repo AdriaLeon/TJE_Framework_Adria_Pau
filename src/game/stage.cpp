@@ -139,18 +139,43 @@ void IntroStage::update(float second_elapsed) {
         Vector3 eye;
         // First person view
         if (camera->first_person_mode_front) {
-            eye = world->player->model.getTranslation() + Vector3(0.0f, 2.5f, 0.0f) + front; // Adjust height to player's eye level
+            eye = world->player->model.getTranslation() + Vector3(0.0f, 3.5f, 0.0f) + front; // Adjust height to player's eye level
         }
         else { // Third person view
-            eye = world->player->model.getTranslation() + Vector3(0.0f, 4.0f, 0.0f) - 10 * front;
+            eye = world->player->model.getTranslation() + Vector3(0.0f, 4.5f, 0.0f) - 10 * front;
         }
+
+
+        float smoothingFactor = 0.5f; // Adjust this factor for smoother transitions (between 0 and 1)
+
+        // Interpolate current position towards the target position
+        eye = lerp(eye, camera->eye, smoothingFactor * second_elapsed);
+
         //Do ray tracing in case tha camera in third person enters a wall.
         Vector3 center = eye + front;
+
+        center = lerp(center, camera->center, smoothingFactor * second_elapsed);
+
+        // Update the camera position
         camera->lookAt(eye, center, Vector3(0, 1, 0));
     }
 
     world->setCamerayaw(camera);
     world->updateCubemap(camera);
+}
+
+void updateCameraPosition(Camera* camera, Vector3 targetEye, Vector3 targetCenter, float deltaTime) {
+    static Vector3 currentEye = targetEye; // Initialize with the target position
+    static Vector3 currentCenter = targetCenter; // Initialize with the target position
+
+    float smoothingFactor = 0.1f; // Adjust this factor for smoother transitions (between 0 and 1)
+
+    // Interpolate current position towards the target position
+    currentEye = lerp(currentEye, targetEye, smoothingFactor * deltaTime);
+    currentCenter = lerp(currentCenter, targetCenter, smoothingFactor * deltaTime);
+
+    // Update the camera position
+    camera->lookAt(currentEye, currentCenter, Vector3(0, 1, 0));
 }
 
 void PlayStage::onEnter() {};

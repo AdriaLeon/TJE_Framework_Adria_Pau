@@ -39,8 +39,8 @@ void EntityPlayer::render(Camera* camera) {
 
 	// Generate directions using sin and cos
 	std::vector<Vector3> directions;
-	for (int i = 0; i < 5; ++i) {
-		float angle = i * (M_PI / (2.0f / 5.0f)); // Increment angle by 45 degrees (π/4 radians)
+	for (int i = 0; i < 4; ++i) {
+		float angle = i * (M_PI / (2.0f)) + (M_PI / 4.0f); // Increment angle by 45 degrees (π/4 radians)
 		directions.push_back(Vector3(cos(angle), 0, sin(angle)));
 	}
 
