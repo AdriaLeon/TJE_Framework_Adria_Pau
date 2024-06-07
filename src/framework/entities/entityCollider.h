@@ -9,7 +9,7 @@ class EntityCollider : public EntityMesh {
 
 public:
 
-	float player_height = 5.0f;
+	float player_height = 4.0f;
 
 	EntityCollider(Mesh* mesh, Material material) : EntityMesh(mesh, material) {};
 	~EntityCollider() {};

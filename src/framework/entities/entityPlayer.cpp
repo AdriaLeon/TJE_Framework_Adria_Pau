@@ -13,7 +13,7 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, mat
 	this->onFloor = TRUE;
 	this->walkSpeed = 8.0f;
 	this->velocity = Vector3(0,0,0);
-	this->height = 5.0f;
+	this->height = 4.0f;
 	this->jumpSpeed = 20.0f;
 	this->gravity = -20.0f;
 	this->onFloor = true;
@@ -31,8 +31,6 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, mat
 void EntityPlayer::render(Camera* camera) {
 
 	EntityMesh::render(camera);
-<<<<<<< Updated upstream
-=======
 	
 	Mesh* mesh = Mesh::Get("data/meshes/sphere.obj");
 
@@ -87,7 +85,6 @@ void EntityPlayer::render(Camera* camera) {
 	mesh->render(GL_LINES);
 
 	material.shader->disable();*/
->>>>>>> Stashed changes
 };
 
 
