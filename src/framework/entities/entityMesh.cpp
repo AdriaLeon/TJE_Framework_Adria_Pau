@@ -51,9 +51,13 @@ void EntityMesh::render(Camera* camera) {
 
 	if (!mesh)		return;
 
-	if (!material.shader) {
+	if (Animation_appplied()) {
+		material.shader = Shader::Get("data/shaders/skinning.vs", "data/shaders/color.fs");
+	}
+	else if (!material.shader) {
 		material.shader = Shader::Get(isInstanced ? ("data/shaders/basic.vs", "data/shaders/texture.fs") : ("data/shaders/basic.vs", "data/shaders/flat.fs"));
 	}
+
 
 	// Enable shader and pass uniforms 
 	material.shader->enable();
@@ -125,6 +129,20 @@ void EntityMesh::setMaterial(Material material) {
 	this->material = material;
 }
 
+void EntityMesh::addAnimation(Animation* animation, const std::string& name) {
+	Animations.push_back(StructAnimation{ animation , name});
+}
+
+bool EntityMesh::Animation_appplied() {
+	if (!Animations.empty()) {
+		return std::any_of(Animations.begin(), Animations.end(), [&](const StructAnimation& animation) {
+			return animation.name == animation_in_use; 
+			});
+	}
+	else {
+		return false;
+	}
+}
 
 ///Powerpoint 9 implementar si se necessita
 //TO DO

@@ -32,6 +32,7 @@ void EntityPlayer::render(Camera* camera) {
 
 	EntityMesh::render(camera);
 	
+	//Rendering colliders spheres
 	Mesh* mesh = Mesh::Get("data/meshes/sphere.obj");
 
 	float sphere_radius = 0.3f;
@@ -213,7 +214,7 @@ void EntityPlayer::update(float elapsed_time) {
 
 	//std::cout << "onFloor: " << this->onFloor << std::endl;
 
-	Entity::update(elapsed_time);
+	EntityMesh::update(elapsed_time);
 }
 
 void EntityPlayer::check_collision(Vector3 next_position, std::vector<sCollisionData>& WallsCollisions, std::vector<sCollisionData>& GroundCollisions) {

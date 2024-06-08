@@ -4,6 +4,7 @@
 #include "graphics/shader.h"
 #include "entity.h"
 #include "graphics/material.h"
+#include "framework/animation.h"
 
 enum {
 	NONE = 0,
@@ -17,6 +18,11 @@ enum {
 	ALL = 0xFF
 };
 
+struct StructAnimation{
+	Animation* animation;
+	std::string name;
+};
+
 
 class EntityMesh : public Entity {
 
@@ -27,15 +33,20 @@ class EntityMesh : public Entity {
 	EntityMesh(char* Smesh, char* shaderVs, char* shaderFs, char* Stexture, const std::string& name); //Create entityMesh
 	~EntityMesh(); //desproy entityMesh
 
-	// Attributes of the derived class  a
+	// Attributes of the derived class
 	Mesh* mesh = nullptr;
 	Material material;
 	bool isInstanced;
 	int layer = NONE;
+	std::string animation_in_use = "";
+
+	std::vector <StructAnimation> Animations;
 
 	std::vector<Matrix44> models_to_render;
 
 	bool IsInstanciated();
+	void addAnimation(Animation* animation, const std::string& name);
+	bool Animation_appplied();
 
 	// Methods overwritten from base class
 	void render(Camera* camera);
