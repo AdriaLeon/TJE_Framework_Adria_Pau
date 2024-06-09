@@ -18,12 +18,6 @@ enum {
 	ALL = 0xFF
 };
 
-struct StructAnimation{
-	Animation* animation;
-	Mesh* animation_mesh;
-	float anim_time;
-	std::string name;
-};
 
 
 class EntityMesh : public Entity {
@@ -31,6 +25,7 @@ class EntityMesh : public Entity {
 	public:
 	EntityMesh() {};  //Create empty entityMesh
 	EntityMesh(Mesh* mesh, Material material); //Create entityMesh
+	EntityMesh(Mesh* mesh, Material material, const std::string& initial_animation); //Create an entityMesh for an animated
 	EntityMesh(Mesh* mesh, Shader* shader, Texture* texture, const std::string& name); //Create entityMesh
 	EntityMesh(char* Smesh, char* shaderVs, char* shaderFs, char* Stexture, const std::string& name); //Create entityMesh
 	~EntityMesh(); //desproy entityMesh
@@ -40,16 +35,17 @@ class EntityMesh : public Entity {
 	Material material;
 	bool isInstanced;
 	int layer = NONE;
-	std::string animation_in_use = "";
+	bool animated = false;
 
-	std::vector <StructAnimation> Animations;
+	Animator* animator;
 
 	std::vector<Matrix44> models_to_render;
 
 	bool IsInstanciated();
+
 	//Mesh and animation must have the same file name (excluding format)
-	void addAnimation(const std::string& name, float anim_time);
-	StructAnimation* Find_Animation_appplied();
+	void PlayAnimation(const std::string& name, bool loop = true);
+	void ItsAnimated();
 
 	// Methods overwritten from base class
 	void render(Camera* camera);

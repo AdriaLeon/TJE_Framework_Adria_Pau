@@ -9,7 +9,7 @@
 #include "framework/audio.h"
 #include <string>
 
-EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, material) {
+EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, material, "Idle") {
 	this->onFloor = TRUE;
 	this->walkSpeed = 8.0f;
 	this->velocity = Vector3(0,0,0);
@@ -26,9 +26,6 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, mat
 	this->groundPoundChannel = 0;
 	this->hasLanded = false;
 	entityType = eEntityType::PLAYER;
-
-	//Animations
-	addAnimation("Idle", 1.0f);
 }
 
 void EntityPlayer::render(Camera* camera) {
@@ -36,7 +33,7 @@ void EntityPlayer::render(Camera* camera) {
 	EntityMesh::render(camera);
 	
 	//Rendering colliders spheres
-	Mesh* mesh = Mesh::Get("data/meshes/sphere.obj");
+	/*Mesh* mesh = Mesh::Get("data/meshes/sphere.obj");
 
 	float sphere_radius = 0.3f;
 	Vector3 center = Vector3(0.0f, height - 2.0f, 0.0f);
@@ -96,7 +93,7 @@ void EntityPlayer::render(Camera* camera) {
 
 		// Disable the shader
 		material.shader->disable();
-	}
+	}*/
 };
 
 

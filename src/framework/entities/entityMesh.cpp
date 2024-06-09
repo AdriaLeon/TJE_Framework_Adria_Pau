@@ -8,7 +8,22 @@ EntityMesh::EntityMesh(Mesh* mesh, Material material)
 
 	this->material = material;
 	this->isInstanced = false;
+	this->animator = nullptr;
 }
+
+EntityMesh::EntityMesh(Mesh* mesh, Material material, const std::string& initial_animation)
+{
+	this->mesh = mesh;
+	entityType = eEntityType::MESH;
+
+	this->material = material;
+	this->isInstanced = false;
+	this->animated = true;
+
+	ItsAnimated();
+	PlayAnimation(initial_animation);
+}
+
 EntityMesh::EntityMesh(Mesh* mesh, Shader* shader, Texture* texture, const std::string& name)
 {
 	this->mesh = mesh;
@@ -17,6 +32,7 @@ EntityMesh::EntityMesh(Mesh* mesh, Shader* shader, Texture* texture, const std::
 	this->material.shader = shader;
 	this->name = name;
 	this->isInstanced = false;
+	this->animator = nullptr;
 }
 
 EntityMesh::EntityMesh(char* Smesh, char* shaderVs, char* shaderFs, char* Stexture, const std::string& name)
@@ -37,6 +53,7 @@ EntityMesh::EntityMesh(char* Smesh, char* shaderVs, char* shaderFs, char* Stextu
 	this->material.shader = shader;
 	this->name = name;
 	this->isInstanced = false;
+	this->animator = nullptr;
 }
 
 
@@ -54,14 +71,13 @@ void EntityMesh::render(Camera* camera) {
 
 	if (!mesh)		return;
 
-	StructAnimation* anim_info = Find_Animation_appplied();
-	if (anim_info) {
-		anim_info->animation->assignTime(anim_info->anim_time);
-
-		material.shader = Shader::Get("data/shaders/skinning.vs", "data/shaders/color.fs");
-	}
-	else if (!material.shader) {
-		material.shader = Shader::Get(isInstanced ? ("data/shaders/basic.vs", "data/shaders/texture.fs") : ("data/shaders/basic.vs", "data/shaders/flat.fs"));
+	if (!material.shader) {
+		if (animated) {
+			material.shader = Shader::Get("data/shaders/skinning.vs", "data/shaders/color.fs");
+		}
+		else {
+			material.shader = Shader::Get(isInstanced ? ("data/shaders/basic.vs", "data/shaders/texture.fs") : ("data/shaders/basic.vs", "data/shaders/flat.fs"));
+		}
 	}
 
 
@@ -96,8 +112,8 @@ void EntityMesh::render(Camera* camera) {
 
 		material.shader->setUniform("u_model", globalMatrix);
 
-		if (anim_info) {
-			anim_info->animation_mesh->renderAnimated(GL_TRIANGLES, &anim_info->animation->skeleton);
+		if (animated) {
+			mesh->renderAnimated(GL_TRIANGLES, &animator->getCurrentSkeleton());
 		}
 		else {
 			// Render the mesh using the shader
@@ -134,6 +150,9 @@ void EntityMesh::render(Camera* camera) {
 };
 
 void EntityMesh::update(float elapsed_time) {
+	if (animated) {
+		animator->update(elapsed_time);
+	}
 	Entity::update(elapsed_time);
 }
 
@@ -141,29 +160,16 @@ void EntityMesh::setMaterial(Material material) {
 	this->material = material;
 }
 
-void EntityMesh::addAnimation(const std::string& name, float anim_time) {
-	std::string filename_animation_str ="data/Animations/" + std::string(name) + ".skanim";
+void EntityMesh::PlayAnimation(const std::string& name, bool loop) {
+	std::string filename_animation_str = "data/Animations/" + name + ".skanim";
 	const char* filename_animation = filename_animation_str.c_str();
-	Animation* animation = Animation::Get(filename_animation);
 
-	std::string filename_skinned_mesh_str = "data/Animations/" + std::string(name) + ".mesh";
-	const char* filename_skinned_mesh = filename_skinned_mesh_str.c_str();
-	Mesh* mesh_anim = Mesh::Get(filename_skinned_mesh);
-
-	Animations.push_back(StructAnimation{animation, mesh_anim, anim_time, name});
+	animator->playAnimation(filename_animation);// , loop);
 }
 
-StructAnimation* EntityMesh::Find_Animation_appplied() {
-	if (!Animations.empty()) {
-		auto it = std::find_if(Animations.begin(), Animations.end(), [&](const StructAnimation& animation) {
-			return animation.name == animation_in_use;
-			});
-
-		if (it != Animations.end()) {
-			return &(*it);
-		}
-	}
-	return nullptr;
+void EntityMesh::ItsAnimated() {
+	animated = true;
+	animator = new Animator();
 }
 
 ///Powerpoint 9 implementar si se necessita
