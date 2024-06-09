@@ -49,9 +49,15 @@ bool EntityMesh::IsInstanciated() {
 
 void EntityMesh::render(Camera* camera) {
 
+	Animation* anim = nullptr;
+	Mesh* mesh_anim = nullptr;
+
 	if (!mesh)		return;
 
-	if (Animation_appplied()) {
+	StructAnimation* anim_info = Find_Animation_appplied();
+	if (anim_info) {
+		anim_info->animation->assignTime(anim_info->anim_time);
+
 		material.shader = Shader::Get("data/shaders/skinning.vs", "data/shaders/color.fs");
 	}
 	else if (!material.shader) {
@@ -71,7 +77,7 @@ void EntityMesh::render(Camera* camera) {
 		material.shader->setUniform("u_texture", material.diffuse, 0);
 	}
 	else {
-		material.shader->setUniform("u_texture", material.diffuse->getWhiteTexture(), 0);
+		material.shader->setUniform("u_texture", Texture::getWhiteTexture(), 0);
 	}
 
 
@@ -89,8 +95,14 @@ void EntityMesh::render(Camera* camera) {
 			return;
 
 		material.shader->setUniform("u_model", globalMatrix);
-		// Render the mesh using the shader
-		mesh->render(GL_TRIANGLES);
+
+		if (anim_info) {
+			anim_info->animation_mesh->renderAnimated(GL_TRIANGLES, &anim_info->animation->skeleton);
+		}
+		else {
+			// Render the mesh using the shader
+			mesh->render(GL_TRIANGLES);
+		}
 	} 
 	else {
 
@@ -129,19 +141,29 @@ void EntityMesh::setMaterial(Material material) {
 	this->material = material;
 }
 
-void EntityMesh::addAnimation(Animation* animation, const std::string& name) {
-	Animations.push_back(StructAnimation{ animation , name});
+void EntityMesh::addAnimation(const std::string& name, float anim_time) {
+	std::string filename_animation_str ="data/Animations/" + std::string(name) + ".skanim";
+	const char* filename_animation = filename_animation_str.c_str();
+	Animation* animation = Animation::Get(filename_animation);
+
+	std::string filename_skinned_mesh_str = "data/Animations/" + std::string(name) + ".mesh";
+	const char* filename_skinned_mesh = filename_skinned_mesh_str.c_str();
+	Mesh* mesh_anim = Mesh::Get(filename_skinned_mesh);
+
+	Animations.push_back(StructAnimation{animation, mesh_anim, anim_time, name});
 }
 
-bool EntityMesh::Animation_appplied() {
+StructAnimation* EntityMesh::Find_Animation_appplied() {
 	if (!Animations.empty()) {
-		return std::any_of(Animations.begin(), Animations.end(), [&](const StructAnimation& animation) {
-			return animation.name == animation_in_use; 
+		auto it = std::find_if(Animations.begin(), Animations.end(), [&](const StructAnimation& animation) {
+			return animation.name == animation_in_use;
 			});
+
+		if (it != Animations.end()) {
+			return &(*it);
+		}
 	}
-	else {
-		return false;
-	}
+	return nullptr;
 }
 
 ///Powerpoint 9 implementar si se necessita

@@ -20,6 +20,8 @@ enum {
 
 struct StructAnimation{
 	Animation* animation;
+	Mesh* animation_mesh;
+	float anim_time;
 	std::string name;
 };
 
@@ -45,8 +47,9 @@ class EntityMesh : public Entity {
 	std::vector<Matrix44> models_to_render;
 
 	bool IsInstanciated();
-	void addAnimation(Animation* animation, const std::string& name);
-	bool Animation_appplied();
+	//Mesh and animation must have the same file name (excluding format)
+	void addAnimation(const std::string& name, float anim_time);
+	StructAnimation* Find_Animation_appplied();
 
 	// Methods overwritten from base class
 	void render(Camera* camera);

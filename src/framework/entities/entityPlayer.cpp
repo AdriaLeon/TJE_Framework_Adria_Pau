@@ -26,6 +26,9 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, mat
 	this->groundPoundChannel = 0;
 	this->hasLanded = false;
 	entityType = eEntityType::PLAYER;
+
+	//Animations
+	addAnimation("Idle", 1.0f);
 }
 
 void EntityPlayer::render(Camera* camera) {
