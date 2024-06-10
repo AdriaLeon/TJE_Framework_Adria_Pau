@@ -9,7 +9,7 @@
 #include "framework/audio.h"
 #include <string>
 
-EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, material, "Idle") {
+EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, material){//, "Idle") {
 	this->onFloor = TRUE;
 	this->walkSpeed = 8.0f;
 	this->velocity = Vector3(0,0,0);

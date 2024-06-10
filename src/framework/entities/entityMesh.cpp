@@ -83,16 +83,17 @@ void EntityMesh::render(Camera* camera) {
 
 	// Enable shader and pass uniforms 
 	material.shader->enable();
-	material.shader->setUniform("u_color", material.color);
 	material.shader->setUniform("u_camera_position", camera->eye);
 	material.shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
 	material.shader->setUniform("u_time", time);
 
 
 	if (material.diffuse) {
+		material.shader->setUniform("u_color", Vector4(1, 1, 1, 1));
 		material.shader->setUniform("u_texture", material.diffuse, 0);
 	}
 	else {
+		material.shader->setUniform("u_color", material.color);
 		material.shader->setUniform("u_texture", Texture::getWhiteTexture(), 0);
 	}
 
