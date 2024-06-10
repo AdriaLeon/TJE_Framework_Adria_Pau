@@ -46,6 +46,7 @@ class EntityMesh : public Entity {
 	//Mesh and animation must have the same file name (excluding format)
 	void PlayAnimation(const std::string& name, bool loop = true);
 	void ItsAnimated();
+	std::string GetAnimationPath(const std::string& name);
 
 	// Methods overwritten from base class
 	void render(Camera* camera);

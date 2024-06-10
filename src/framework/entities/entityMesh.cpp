@@ -164,7 +164,11 @@ void EntityMesh::PlayAnimation(const std::string& name, bool loop) {
 	std::string filename_animation_str = "data/Animations/" + name + ".skanim";
 	const char* filename_animation = filename_animation_str.c_str();
 
-	animator->playAnimation(filename_animation);// , loop);
+	animator->playAnimation(filename_animation, loop);
+}
+
+std::string EntityMesh::GetAnimationPath(const std::string& name) {
+	return "data/Animations/" + name + ".skanim";
 }
 
 void EntityMesh::ItsAnimated() {

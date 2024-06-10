@@ -30,7 +30,12 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, mat
 
 void EntityPlayer::render(Camera* camera) {
 
+
+
+
+	//Change orientation
 	EntityMesh::render(camera);
+	//Return it to normal
 	
 	//Rendering colliders spheres
 	/*Mesh* mesh = Mesh::Get("data/meshes/sphere.obj");
@@ -128,12 +133,32 @@ void EntityPlayer::update(float elapsed_time) {
 	move_dir *= speed_mult;
 	new_velocity = velocity + move_dir;
 
+	if (this->onFloor) {
+		if (new_velocity.length() <= 5.0f) {
+			if (animator->getCurrentAnimation()->name != GetAnimationPath("Idle"))
+				PlayAnimation("Idle");
+		}
+		else {
+			if (animator->getCurrentAnimation()->name != GetAnimationPath("Running"))
+				PlayAnimation("Running");
+		}
+	}
+	else {
+		if (this->is_jumping && this->wait_to_finish_animation < 0.0f) {
+			if (animator->getCurrentAnimation()->name != GetAnimationPath("After_jump"))
+				PlayAnimation("Idle");  //PlayAnimation("After_jump"); //Need to find one
+		}
+		else {
+			this->wait_to_finish_animation -= elapsed_time;
+		}
+	}
+
 	// Calculate the horizontal speed (consider only x and z components)
 	float horizontal_speed = sqrt(new_velocity.x * new_velocity.x + new_velocity.z * new_velocity.z);
 
 	if (horizontal_speed < this->max_speed) {
 		velocity = new_velocity;
-	}
+	} 
 	else {
 		float vertical_component = new_velocity.y;
 		Vector3 horizontal_velocity = Vector3(new_velocity.x, 0.0f, new_velocity.z).normalize() * max_speed;
@@ -363,6 +388,10 @@ void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&posit
 		this->time_for_groundpound = 0.5f;
 		position.y += 0.4f;
 		Audio::Play("data/sounds/Jump.wav", 0.2);
+		if (animator->getCurrentAnimation()->name != GetAnimationPath("Jump")) {
+			PlayAnimation("Jump", false);
+			this->wait_to_finish_animation = 2.0f;
+		}
 	}
 	//Ground pound
 	if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && !this->onFloor && !this->ground_pound && this->time_for_groundpound < 0.0) {

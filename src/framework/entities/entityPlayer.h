@@ -23,11 +23,12 @@ public:
 	bool ground_pound = false;
 	bool is_dashing = false;
 	float dash_timer = 0.0;
-	float time_for_groundpound = 0.0;
+	float time_for_groundpound = 0.0f;
 	bool move_xz;
 	float dash_cooldown;
 	bool sprinting;
 	const float max_speed = 20.0f;
+	float wait_to_finish_animation = 0.0f;
 
 	//Parameters to perform collisions
 	float height;
