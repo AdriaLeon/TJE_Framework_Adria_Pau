@@ -18,7 +18,6 @@ EntityMesh::EntityMesh(Mesh* mesh, Material material, const std::string& initial
 
 	this->material = material;
 	this->isInstanced = false;
-	this->animated = true;
 
 	ItsAnimated();
 	PlayAnimation(initial_animation);
