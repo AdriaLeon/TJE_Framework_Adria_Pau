@@ -238,6 +238,8 @@ void World::check_chekpoints() {
 		}
 		if (position.y <= -170) {
 			this->player->model.setTranslation(this->checkpoints[this->current_check_point]);
+			this->player->velocity = vec3(0.0f, 2.0f, 0.0f);
+			this->player->PlayAnimation("Idle", true, 0.0f);
 			Audio::Play("data/sounds/ReviveSound.wav");
 		}
 }
