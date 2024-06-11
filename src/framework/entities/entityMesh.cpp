@@ -75,7 +75,12 @@ void EntityMesh::render(Camera* camera) {
 			material.shader = Shader::Get("data/shaders/skinning.vs", "data/shaders/color.fs");
 		}
 		else {
-			material.shader = Shader::Get(isInstanced ? ("data/shaders/basic.vs", "data/shaders/texture.fs") : ("data/shaders/basic.vs", "data/shaders/flat.fs"));
+			if (material.diffuse) {
+				material.shader = Shader::Get(("data/shaders/basic.vs", "data/shaders/texture.fs"));
+			}
+			else {
+				material.shader = Shader::Get(("data/shaders/basic.vs", "data/shaders/color.fs"));
+			}
 		}
 	}
 
@@ -86,10 +91,23 @@ void EntityMesh::render(Camera* camera) {
 	material.shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
 	material.shader->setUniform("u_time", time);
 
+	if (use_pong) {
+		material.shader->setUniform("ambient_light", vec3(0.5f, 0.5f, 0.5f));
+		material.shader->setUniform("u_light_color", vec3(1.0f, 1.0f, 1.0f));
+		material.shader->setUniform("u_light_direction", vec3(-1.0f, 1.0f, 0.0f));
+		material.shader->setUniform("shininess", 32.0f);
+	}
 
 	if (material.diffuse) {
 		material.shader->setUniform("u_color", Vector4(1, 1, 1, 1));
 		material.shader->setUniform("u_texture", material.diffuse, 0);
+
+		if (use_pong) {
+			// By default values
+			material.shader->setUniform("u_Ka", material.ka);
+			material.shader->setUniform("u_Kd", material.kd);
+			material.shader->setUniform("u_Ks", material.ks);
+		}
 	}
 	else {
 		material.shader->setUniform("u_color", material.color);

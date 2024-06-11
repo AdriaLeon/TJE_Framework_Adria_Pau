@@ -36,6 +36,7 @@ class EntityMesh : public Entity {
 	bool isInstanced;
 	int layer = NONE;
 	bool animated = false;
+	bool use_pong = false;
 
 	Animator* animator;
 
