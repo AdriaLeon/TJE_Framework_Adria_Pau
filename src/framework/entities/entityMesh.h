@@ -44,9 +44,10 @@ class EntityMesh : public Entity {
 	bool IsInstanciated();
 
 	//Mesh and animation must have the same file name (excluding format)
-	void PlayAnimation(const std::string& name, bool loop = true);
+	void PlayAnimation(const std::string& name, bool loop = true, float transition_time = 0.2f);
 	void ItsAnimated();
 	std::string GetAnimationPath(const std::string& name);
+	void FreezeAnimation(bool freeze);
 
 	// Methods overwritten from base class
 	void render(Camera* camera);

@@ -536,7 +536,9 @@ void Animator::stopAnimation()
 
 void Animator::update(float delta_time)
 {
-	time += delta_time;
+	if (!freeze) {
+		time += delta_time;
+	}
 
 	if (!current_animation)
 		return;
@@ -610,6 +612,10 @@ void Animator::update(float delta_time)
 	}
 
 	last_time = t;
+}
+
+void Animator::freezeAnimation(bool freeze) {
+	this->freeze = freeze; 
 }
 
 // CALLBACKS

@@ -134,6 +134,7 @@ void EntityPlayer::update(float elapsed_time) {
 	new_velocity = velocity + move_dir;
 
 	if (this->onFloor) {
+		FreezeAnimation(false);
 		if (new_velocity.length() <= 5.0f) {
 			if (animator->getCurrentAnimation()->name != GetAnimationPath("Idle"))
 				PlayAnimation("Idle");
@@ -144,12 +145,13 @@ void EntityPlayer::update(float elapsed_time) {
 		}
 	}
 	else {
-		if (this->is_jumping && this->wait_to_finish_animation < 0.0f) {
-			if (animator->getCurrentAnimation()->name != GetAnimationPath("After_jump"))
-				PlayAnimation("Idle");  //PlayAnimation("After_jump"); //Need to find one
+		if (this->wait_to_finish_animation < 0.0f) {
+			if (animator->getCurrentAnimation()->name != GetAnimationPath("After_Jump"))
+				PlayAnimation("After_Jump", true, 1.0f);
 		}
 		else {
 			this->wait_to_finish_animation -= elapsed_time;
+			this->wait_to_freeze -= elapsed_time;
 		}
 	}
 
@@ -175,13 +177,6 @@ void EntityPlayer::update(float elapsed_time) {
 			this->dash_timer = 0.0;
 			velocity = velocity / 5.0f;
 		}
-	}
-	
-	if (in_the_air == this->onFloor) {
-		this->dash_cooldown = 0.0f;
-	}
-	else if (this->onFloor) {
-		this->dash_cooldown -= elapsed_time;
 	}
 
 	if (this->onFloor) {
@@ -225,6 +220,14 @@ void EntityPlayer::update(float elapsed_time) {
 	handle_collisions(FastCollisions, WallsCollisions, GroundCollisions, position, elapsed_time, final_vel);
 
 	position += final_vel * elapsed_time;
+
+	if (in_the_air == this->onFloor) {
+		this->dash_cooldown = 0.0f;
+		this->wait_to_finish_animation = 0.15f;
+	}
+	else if (this->onFloor) {
+		this->dash_cooldown -= elapsed_time;
+	}
 
 	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
 	if (move_dir.length() == 0 && this->onFloor) {
@@ -385,12 +388,11 @@ void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&posit
 		this->is_jumping = true;
 		this->onFloor = false;
 		this->gravity = -9.81f * 2.0f;
-		this->time_for_groundpound = 0.5f;
+		this->time_for_groundpound = 0.6f;
 		position.y += 0.4f;
 		Audio::Play("data/sounds/Jump.wav", 0.2);
 		if (animator->getCurrentAnimation()->name != GetAnimationPath("Jump")) {
 			PlayAnimation("Jump", false);
-			this->wait_to_finish_animation = 2.0f;
 		}
 	}
 	//Ground pound

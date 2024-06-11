@@ -124,6 +124,8 @@ class Animator {
 	float last_time = 0.0f;
 	std::vector<AnimationCallback> callbacks;
 
+	bool freeze = false;
+
 public:
 
 	Animator() {};
@@ -133,6 +135,8 @@ public:
 	void stopAnimation();
 
 	void update(float delta_time);
+
+	void freezeAnimation(bool freeze);
 
 	void addCallback(const std::string& filename, std::function<void(float)> callback, float time);
 	void addCallback(const std::string& filename, std::function<void(float)> callback, int keyframe);

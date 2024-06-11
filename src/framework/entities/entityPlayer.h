@@ -29,6 +29,7 @@ public:
 	bool sprinting;
 	const float max_speed = 20.0f;
 	float wait_to_finish_animation = 0.0f;
+	float wait_to_freeze = 0.0;
 
 	//Parameters to perform collisions
 	float height;
