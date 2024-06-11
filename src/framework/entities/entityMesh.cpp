@@ -92,8 +92,8 @@ void EntityMesh::render(Camera* camera) {
 	material.shader->setUniform("u_time", time);
 
 	if (use_pong) {
-		material.shader->setUniform("ambient_light", vec3(0.5f, 0.5f, 0.5f));
-		material.shader->setUniform("u_light_color", vec3(1.0f, 1.0f, 1.0f));
+		material.shader->setUniform("ambient_light", vec3(0.4f, 0.5f, 0.6f));
+		material.shader->setUniform("u_light_color", vec3(0.9f, 0.9f, 1.0f) * 2.0f);
 		material.shader->setUniform("u_light_direction", vec3(-1.0f, 1.0f, 0.0f));
 		material.shader->setUniform("shininess", 32.0f);
 	}
