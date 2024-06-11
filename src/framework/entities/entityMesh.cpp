@@ -96,17 +96,14 @@ void EntityMesh::render(Camera* camera) {
 		material.shader->setUniform("u_light_color", vec3(0.9f, 0.9f, 1.0f) * 2.0f);
 		material.shader->setUniform("u_light_direction", vec3(-1.0f, 1.0f, 0.0f));
 		material.shader->setUniform("shininess", 32.0f);
+		material.shader->setUniform("u_Ka", material.ka);
+		material.shader->setUniform("u_Kd", material.kd);
+		material.shader->setUniform("u_Ks", material.ks);
 	}
 
 	if (material.diffuse) {
 		material.shader->setUniform("u_color", Vector4(1, 1, 1, 1));
 		material.shader->setUniform("u_texture", material.diffuse, 0);
-
-		if (use_pong) {
-			material.shader->setUniform("u_Ka", material.ka);
-			material.shader->setUniform("u_Kd", material.kd);
-			material.shader->setUniform("u_Ks", material.ks);
-		}
 	}
 	else {
 		material.shader->setUniform("u_color", material.color);
