@@ -103,7 +103,6 @@ void EntityMesh::render(Camera* camera) {
 		material.shader->setUniform("u_texture", material.diffuse, 0);
 
 		if (use_pong) {
-			// By default values
 			material.shader->setUniform("u_Ka", material.ka);
 			material.shader->setUniform("u_Kd", material.kd);
 			material.shader->setUniform("u_Ks", material.ks);
@@ -112,6 +111,12 @@ void EntityMesh::render(Camera* camera) {
 	else {
 		material.shader->setUniform("u_color", material.color);
 		material.shader->setUniform("u_texture", Texture::getWhiteTexture(), 0);
+	}
+
+	if (fog) {
+		material.shader->setUniform("fogMaxDist", 1000.0f);
+		material.shader->setUniform("fogMinDis", 100.0f);
+		material.shader->setUniform("fog_color", vec3(0.7f, 0.7f, 0.7f));
 	}
 
 
@@ -125,7 +130,7 @@ void EntityMesh::render(Camera* camera) {
 
 		// Discard objects whose bounding sphere is not inside the camera frustum
 		if ((!camera->testBoxInFrustum(sphere_center, halfsize) ||
-			camera->eye.distance(sphere_center) > 5000.0f))
+			camera->eye.distance(sphere_center) > 2000.0f))
 			return;
 
 		material.shader->setUniform("u_model", globalMatrix);
@@ -151,7 +156,7 @@ void EntityMesh::render(Camera* camera) {
 
 			// Discard instance if its bounding sphere is not inside the camera frustum
 			if (!camera->testBoxInFrustum(instance_sphere_center, halfsize) ||
-				camera->eye.distance(instance_sphere_center) > 5000.0f)
+				camera->eye.distance(instance_sphere_center) > 2000.0f)
 				continue;
 
 			models_to_render.push_back(models[i]);

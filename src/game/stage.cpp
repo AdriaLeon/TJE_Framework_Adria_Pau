@@ -55,16 +55,11 @@ void IntroStage::render( void ) {
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 ;
-	// Create model matrix for cube
-	Matrix44 m;
-	m.rotate(angle * DEG2RAD, Vector3(0.0f, 1.0f, 0.0f));
-	//cube->model = m;
-	//cube->render(camera);
 	 
 	world->renderAll(camera);
 
 	// Draw the floor grid
-	drawGrid();
+	//drawGrid();
 }
 
 void IntroStage::update(float second_elapsed) {

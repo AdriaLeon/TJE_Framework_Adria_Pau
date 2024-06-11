@@ -109,17 +109,18 @@ bool World::parseScene(const char* filename)
 		// Create instanced entity
 		if (render_data.models.size() > 1) {
 			if(!new_entity->isInstanced)
-				new_entity->material.shader = Shader::Get("data/shaders/instanced.vs", "data/shaders/pong_color.fs");
+				new_entity->material.shader = Shader::Get("data/shaders/instanced.vs", "data/shaders/pong_color_fog.fs");
 			new_entity->isInstanced = true;
 			new_entity->models = render_data.models; // Add all instances
 		}
 		// Create normal entity
 		else {
-			new_entity->material.shader = Shader::Get("data/shaders/basic.vs", "data/shaders/pong_color.fs");
+			new_entity->material.shader = Shader::Get("data/shaders/basic.vs", "data/shaders/pong_color_fog.fs");
 			new_entity->model = render_data.models[0];
 		}
 
 		new_entity->use_pong = true;
+		new_entity->fog = true;
 
 		// Add entity to scene root
 		root->addChild(new_entity);
@@ -131,7 +132,7 @@ bool World::parseScene(const char* filename)
 
 void World::loadPlayer() {
 	Texture* texture = Texture::Get("data/Player/Texture.png");
-	Shader* shader = Shader::Get("data/shaders/skinning.vs", "data/shaders/pong_texture.fs");
+	Shader* shader = Shader::Get("data/shaders/skinning.vs", "data/shaders/pong_texture_fog.fs");
 	Mesh* mesh = Mesh::Get("data/Player/Initial_Astronaut.MESH");
 	Material material;
 	material.diffuse = texture;
@@ -139,6 +140,7 @@ void World::loadPlayer() {
 	EntityPlayer* tmp = new EntityPlayer(mesh, material);
 	this->player = tmp;
 	this->player->use_pong = true;
+	this->player->fog = true;
 	Vector3 init_position = Vector3(0.0, 10.000000, 0.0);
 	this->player->model.setTranslation(init_position);
 }

@@ -37,6 +37,7 @@ class EntityMesh : public Entity {
 	int layer = NONE;
 	bool animated = false;
 	bool use_pong = false;
+	bool fog = false;
 
 	Animator* animator;
 

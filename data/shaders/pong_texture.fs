@@ -9,7 +9,7 @@ uniform vec3 u_Ks;
 uniform vec3 ambient_light;
 uniform vec3 u_light_color;
 uniform vec3 u_light_direction;
-uniform vec3 u_camera_pos;
+uniform vec3 u_camera_position;
 uniform float shininess;
 
 uniform vec4 u_color;
@@ -22,7 +22,7 @@ void main()
     vec4 Color = u_color * texture2D( u_texture, uv );
     
     vec3 N = normalize(v_normal);
-    vec3 V = normalize(u_camera_pos - v_world_position);
+    vec3 V = normalize(u_camera_position - v_world_position);
     vec3 L = normalize(u_light_direction);
     vec3 R = reflect(-L, N);
 

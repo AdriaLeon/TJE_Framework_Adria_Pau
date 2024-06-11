@@ -11,6 +11,12 @@ uniform vec3 u_light_direction;
 uniform vec3 u_camera_position;
 uniform float shininess;
 
+//Fog
+uniform float fogMaxDist;
+uniform float fogMinDist;
+uniform vec3 fog_color;
+
+
 void main()
 {
     vec4 Color = vec4(u_Kd, 1.0);
@@ -34,6 +40,14 @@ void main()
     // Final light calculation
     vec3 light = ambient + diffuse + specular;
 
+    //Add light
+    Color.xyz = Color.xyz * light;
+
+    // Pass to the shader the fog color and the min/max dist
+    float dist = length(u_camera_position - v_world_position);
+    float fog_factor = clamp( 1.0 - abs(fogMaxDist - dist) / (fogMaxDist - fogMinDist), 0.0, 1.0);
+    vec3 final_color = mix(Color.xyz, fog_color, fog_factor);
+
     // Output final color
-    gl_FragColor = vec4(Color.xyz * light, 1.0);
+    gl_FragColor = vec4(final_color.xyz, 1.0);
 }
