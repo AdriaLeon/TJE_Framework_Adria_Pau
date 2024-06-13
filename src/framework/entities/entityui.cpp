@@ -24,6 +24,8 @@ EntityUI::EntityUI(Vector2 pos, Vector2 s, const Material& mat, eButtonId button
 void EntityUI::render(Camera* camera) {
 	if (!visible) return;
 
+	if (!mesh) return;
+
 	if (material.diffuse) {
 		material.shader = Shader::Get(("data/shaders/basic.vs", "data/shaders/texture.fs"));
 	}
@@ -35,6 +37,8 @@ void EntityUI::render(Camera* camera) {
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA);
+
+	material.shader->enable();
 
 	World* world = World::get_instance();
 	Matrix44 viewProj = world->camera2D->viewprojection_matrix;
@@ -53,22 +57,14 @@ void EntityUI::render(Camera* camera) {
 		material.shader->setUniform("u_texture", Texture::getWhiteTexture(), 0);
 	}
 
-	const Matrix44& globalMatrix = getGlobalMatrix();
-
-	// Compute bounding sphere center in world coords
-	Vector3 sphere_center = globalMatrix * mesh->box.center;
-	Vector3 halfsize = globalMatrix * mesh->box.halfsize;
-
-	// Discard objects whose bounding sphere is not inside the camera frustum
-	if ((!camera->testBoxInFrustum(sphere_center, halfsize) ||
-		camera->eye.distance(sphere_center) > 2000.0f))
-		return;
-
-	material.shader->setUniform("u_model", globalMatrix);
-
 	mesh->render(GL_TRIANGLES);
 
 	material.shader->disable();
+
+	for (size_t i = 0; i < children.size(); i++)
+	{
+		children[i]->render(camera);
+	}
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);

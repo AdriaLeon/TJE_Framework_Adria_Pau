@@ -21,8 +21,8 @@ World::World() {
 	loadAudios();
 	channelBG = Audio::Play("data/sounds/Bgm.wav", 0.3, BASS_SAMPLE_LOOP);
 	camera2D = new Camera();
-	camera2D->lookAt(Vector3(0.0f, 1.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-	camera2D->setPerspective(70.0f, width / height, 0.1f, 100.0f);
+	camera2D->view_matrix.setIdentity();
+	camera2D->setOrthographic(0.0f, width, height, 0, -1.0f, 1.0f);
 	loadUI();
 
 	
