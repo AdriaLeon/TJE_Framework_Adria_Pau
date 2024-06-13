@@ -34,6 +34,7 @@ void World::loadUI() {
 
 	Material jump_mat;
 	jump_mat.diffuse = Texture::Get("data/textures/ui/hombre-saltando.png");
+	jump_mat.shader = Shader::Get(("data/shaders/basic.vs", "data/shaders/texture.fs"));
 	bg = new EntityUI(Vector2(width * 0.5, height * 0.5), Vector2(width, height), jump_mat);
 }
 
@@ -194,11 +195,14 @@ void World::renderAll(Camera* camera) {
 	player->render(camera);
 
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	/*
-	if (bg) {
+	
+	
+	/*if (bg) {
 		bg->render(camera2D);
 	}
 	*/
+	
+	
 }
 
 void World::updateAll(float delta_time) {

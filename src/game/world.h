@@ -53,6 +53,7 @@ public:
     void check_chekpoints();
     void loadAudios();
     void loadUI();
+    void renderUI();
 
     //bool check_player_collisions(Vector3& target_pos);
 };
