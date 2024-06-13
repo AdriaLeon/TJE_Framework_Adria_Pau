@@ -194,7 +194,11 @@ void World::renderAll(Camera* camera) {
 	player->render(camera);
 
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//bg.render(camera2D);
+	/*
+	if (bg) {
+		bg->render(camera2D);
+	}
+	*/
 }
 
 void World::updateAll(float delta_time) {
