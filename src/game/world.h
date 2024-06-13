@@ -6,6 +6,7 @@
 #include "framework/entities/entityMesh.h"
 #include "framework/entities/entityPlayer.h"
 #include "framework/entities/entityCollider.h"
+#include "framework/entities/entityui.h"
 #include "framework/camera.h"
 #include "framework/audio.h"
 #include "game.h"
@@ -23,7 +24,7 @@ public:
     Camera* camera2D;
     int current_check_point = 0;
     std::vector<Vector3> checkpoints = { Vector3(0.0f, -3.4f, 0.0f), Vector3(242.0f, -4.0f, 3.5f), Vector3(522.0f, 28.0f, 8.0f), Vector3(870.0f, -109.7f, 7.0f), Vector3(1411.67f, - 71.9f, 32.1f), Vector3(1895.71f, - 76.92f, - 25.55f)};
-
+    std::vector<EntityUI*> ui_elements;
     EntityMesh* landscape;
     EntityPlayer* player;
     HCHANNEL channelBG;
