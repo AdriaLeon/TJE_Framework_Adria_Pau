@@ -17,7 +17,7 @@ enum eButtonId {
 class EntityUI : public EntityMesh {
 public:
 	EntityUI(Vector2 size, const Material& material);
-	EntityUI(Vector3 pos, Vector2 size, const Material& material, eButtonId button_id = UndefinedButton);
+	EntityUI(Vector2 pos, Vector2 size, const Material& material, eButtonId button_id = UndefinedButton);
 	~EntityUI() {};
 
 	Vector2 position;
@@ -26,7 +26,7 @@ public:
 	float mask = 1.0f;
 	eButtonId button_type;
 
-	void Render(Camera* camera);
+	void render(Camera* camera);
 
 private:
 };

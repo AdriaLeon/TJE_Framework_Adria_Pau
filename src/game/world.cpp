@@ -7,6 +7,9 @@ World* World::instance = nullptr;
 
 World::World() {
 
+	int width = Game::instance->window_width;
+	int height = Game::instance->window_height;
+
 	instance = this;
 	root = new Entity();
 	player = nullptr;
@@ -19,10 +22,19 @@ World::World() {
 	channelBG = Audio::Play("data/sounds/Bgm.wav", 0.3, BASS_SAMPLE_LOOP);
 	camera2D = new Camera();
 	camera2D->lookAt(Vector3(0.0f, 1.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-	camera2D->setPerspective(70.0f, Game::instance->window_height / Game::instance->window_height, 0.1f, 100.0f);
-
+	camera2D->setPerspective(70.0f, width / height, 0.1f, 100.0f);
+	loadUI();
 
 	
+}
+
+void World::loadUI() {
+	int width = Game::instance->window_width;
+	int height = Game::instance->window_height;
+
+	Material jump_mat;
+	jump_mat.diffuse = Texture::Get("data/textures/ui/hombre-saltando.png");
+	bg = new EntityUI(Vector2(width * 0.5, height * 0.5), Vector2(width, height), jump_mat);
 }
 
 void World::addEntity(Entity* entity) {
@@ -180,6 +192,9 @@ void World::renderAll(Camera* camera) {
 
 	root->render(camera);
 	player->render(camera);
+
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//bg.render(camera2D);
 }
 
 void World::updateAll(float delta_time) {

@@ -8,9 +8,20 @@ EntityUI::EntityUI(Vector2 s, const Material& mat) {
 	this->mesh = new Mesh();
 	mesh->createQuad(0.0, 0.0, s.x, s.y, false);
 	this->material = mat;
+	this->button_type = UndefinedButton;
 }
 
-void EntityUI::Render(Camera* camera) {
+EntityUI::EntityUI(Vector2 pos, Vector2 s, const Material& mat, eButtonId button_id) {
+	this->mesh = new Mesh();
+	mesh->createQuad(0.0f, 0.0f, s.x, s.y, false);
+	this->material = mat;
+	this->button_type = button_id;
+
+	model.setIdentity();
+	model.translate(pos.x, pos.y, 0.0);
+}
+
+void EntityUI::render(Camera* camera) {
 	if (!visible) return;
 
 	if (material.diffuse) {
@@ -29,8 +40,9 @@ void EntityUI::Render(Camera* camera) {
 	Matrix44 viewProj = world->camera2D->viewprojection_matrix;
 
 	material.shader->setUniform("u_model", model);
+	material.shader->setUniform("u_camera_position",world->camera2D->eye);
 	material.shader->setUniform("u_viewprojection", viewProj);
-	material.shader->setUniform("u_color", material.color);
+	material.shader->setUniform("u_time", time);
 
 	if (material.diffuse) {
 		material.shader->setUniform("u_color", Vector4(1, 1, 1, 1));
