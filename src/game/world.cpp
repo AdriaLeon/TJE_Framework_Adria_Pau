@@ -17,6 +17,11 @@ World::World() {
 	loadPlayer();
 	loadAudios();
 	channelBG = Audio::Play("data/sounds/Bgm.wav", 0.3, BASS_SAMPLE_LOOP);
+	camera2D = new Camera();
+	camera2D->lookAt(Vector3(0.0f, 1.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+	camera2D->setPerspective(70.0f, Game::instance->window_height / Game::instance->window_height, 0.1f, 100.0f);
+
+
 	
 }
 

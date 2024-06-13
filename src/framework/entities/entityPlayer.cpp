@@ -29,76 +29,7 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, mat
 }
 
 void EntityPlayer::render(Camera* camera) {
-
-
-
-
-	//Change orientation
 	EntityMesh::render(camera);
-	//Return it to normal
-	
-	//Rendering colliders spheres
-	/*Mesh* mesh = Mesh::Get("data/meshes/sphere.obj");
-
-	float sphere_radius = 0.3f;
-	Vector3 center = Vector3(0.0f, height - 2.0f, 0.0f);
-
-	// Generate directions using sin and cos
-	std::vector<Vector3> directions;
-	for (int i = 0; i < 4; ++i) {
-		float angle = i * (M_PI / (2.0f)) + (M_PI / 4.0f); // Increment angle by 45 degrees (π/4 radians)
-		directions.push_back(Vector3(cos(angle), 0, sin(angle)));
-	}
-
-	for (int i = 0; i < 3; ++i) {
-		Vector3 sphereCenter = center;
-
-			// Translate and scale the model matrix
-			Matrix44 m = model;
-			m.translate(sphereCenter.x, sphereCenter.y, sphereCenter.z);
-			m.scale(sphere_radius, sphere_radius, sphere_radius);
-
-			// Set up material properties and shader uniforms
-			material.shader->enable();
-			material.shader->setUniform("u_color", Vector4(0.0f, 1.0f, 0.0f, 1.0f));
-			material.shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
-			material.shader->setUniform("u_model", m);
-
-			// Render the sphere mesh
-			mesh->render(GL_LINES);
-
-			// Disable the shader
-			material.shader->disable();
-
-		center += Vector3(0.0f, 0.6f, 0.0f);
-	}
-
-	center -= Vector3(0.0f, 0.3f, 0.0f);
-	sphere_radius = 0.2f;
-	float distance = sphere_radius; // Distance between the centers of touching spheres
-
-	// Loop through each direction vector in directions
-	for (const auto& dir : directions) {
-		// Calculate the sphere center using the direction vector and the distance
-		Vector3 sphereCenter = center + dir * distance;
-
-		// Translate and scale the model matrix
-		Matrix44 m = model;
-		m.translate(sphereCenter.x, sphereCenter.y, sphereCenter.z);
-		m.scale(sphere_radius, sphere_radius, sphere_radius);
-
-		// Set up material properties and shader uniforms
-		material.shader->enable();
-		material.shader->setUniform("u_color", Vector4(0.0f, 1.0f, 0.0f, 1.0f));
-		material.shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
-		material.shader->setUniform("u_model", m);
-
-		// Render the sphere mesh
-		mesh->render(GL_LINES);
-
-		// Disable the shader
-		material.shader->disable();
-	}*/
 };
 
 

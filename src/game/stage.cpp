@@ -12,6 +12,7 @@ void IntroStage::onEnter() {
 
 	world = new World();
 
+
     //We set the first person camera parameters
     Game::instance->mouse_locked = true;
     SDL_ShowCursor(!Game::instance->mouse_locked);
