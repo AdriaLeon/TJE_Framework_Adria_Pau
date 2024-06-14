@@ -9,6 +9,7 @@
 
 enum {
 	INTRO_STAGE,
+	TITLE_STAGE,
 	//CONTROLS_STAGE,
 	//MENU,
 	PLAY_STAGE,
@@ -18,10 +19,12 @@ enum {
 
 // Forward declaration of World class
 class World;
+class EntityUI;
+class Camera;
 
 class Stage
 {
-	int type = INTRO_STAGE;
+	int type = TITLE_STAGE;
 
 public:
 	World* world;
@@ -35,6 +38,22 @@ public:
 	virtual void onExit() {};
 	virtual void render( void ) {};
 	virtual void update(float second_elapsed) {};
+};
+
+class TitleStage : public Stage {
+	int type = TITLE_STAGE;
+
+public:
+	std::vector<EntityUI*> images;
+	Camera* camera2D;
+	TitleStage() {};
+	virtual void onEnter() override;
+	virtual void onExit() override;
+	void loadIMG();
+	void rederIMG();
+
+	virtual void render(void) override;
+	virtual void update(float second_elapsed) override;
 };
 
 class IntroStage : public Stage

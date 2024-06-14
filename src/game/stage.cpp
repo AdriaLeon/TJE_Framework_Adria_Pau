@@ -1,5 +1,49 @@
 #include "stage.h"
+#include "framework/includes.h"
+#include "framework/utils.h"
+#include "framework/entities/entity.h"
+#include "framework/entities/entityMesh.h"
+#include "framework/entities/entityui.h"
+#include "framework/camera.h"
+#include "framework/audio.h"
+#include "game.h"
+#include <string>
+void TitleStage::onEnter() {
+    int width = Game::instance->window_width;
+    int height = Game::instance->window_height;
+    Audio::Init();
+    camera2D = new Camera();
+    camera2D->view_matrix.setIdentity();
+    camera2D->setOrthographic(0.0f, width, height, 0, -1.0f, 1.0f);
+    loadIMG();
+}
 
+void TitleStage::loadIMG() {
+    int width = Game::instance->window_width;
+    int height = Game::instance->window_height;
+
+    Material example;
+    example.diffuse = Texture::Get("data/textures/intro/ejemplo.png");
+    EntityUI* img1 = new EntityUI(Vector2(width*0.25, height*0.25), Vector2(800, 600), example);
+    images.push_back(img1);
+}
+
+void TitleStage::update(float second_elapsed) {
+    if (Input::wasKeyPressed(SDL_SCANCODE_SPACE)) {
+        Game::instance->goToStage(INTRO_STAGE);
+        onExit();
+    }
+
+    // Actualiza otros elementos de TitleStage si es necesario
+}
+
+void TitleStage::render(void) {
+    images[0]->render(camera2D);
+}
+
+void TitleStage::onExit() {
+
+}
 
 void IntroStage::onEnter() {
 
@@ -19,27 +63,6 @@ void IntroStage::onEnter() {
     SDL_SetRelativeMouseMode((SDL_bool)(Game::instance->mouse_locked));
     camera->default_camera = false;
     camera->first_person_mode_front = true;
-
-	//Method 1
-    // Load one texture using the Texture Manager
-	/*Texture* texture;
-    texture = Texture::Get("data/textures/texture.tga");
-
-    // Example of shader loading using the shaders manager
-	Shader* shader;
-    shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
-
-    Mesh* mesh;
-    // Example of loading Mesh from Mesh Manager
-    mesh = Mesh::Get("data/meshes/Ghost Character.ASE");
-
-    cube = new EntityMesh(mesh, shader, texture, "Char");
-
-	//Method 2
-	cube = new EntityMesh((char*)"data/meshes/box.ASE", (char*)"data/shaders/basic.vs", (char*)"data/shaders/texture.fs", (char*)"data/textures/texture.tga", "Cube");
-
-	cube->render(camera);
-	*/
 }
 
 void IntroStage::onExit() {
@@ -59,8 +82,6 @@ void IntroStage::render( void ) {
 	 
 	world->renderAll(camera);
 
-	// Draw the floor grid
-	//drawGrid();
 }
 
 void IntroStage::update(float second_elapsed) {

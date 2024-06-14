@@ -44,8 +44,7 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 
 	//Initialize the stages
 	stages[INTRO_STAGE] = new IntroStage();
-	stages[PLAY_STAGE] = new PlayStage();
-	stages[GAME_OVER_STAGE] = new GameOverStage();
+	stages[TITLE_STAGE] = new TitleStage();
 	
 	// OpenGL flags
 	glEnable( GL_CULL_FACE ); //render both sides of every triangle
@@ -54,7 +53,7 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 
 	// Hide the cursor
 	SDL_ShowCursor(!mouse_locked); //hide or show the mouse
-	goToStage(INTRO_STAGE);
+	goToStage(TITLE_STAGE);
 }
 
 void Game::goToStage(int new_stage) {
