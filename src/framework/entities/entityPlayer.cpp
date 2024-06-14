@@ -24,6 +24,7 @@ EntityPlayer::EntityPlayer(Mesh* mesh, Material material) : EntityMesh(mesh, mat
 	this->coyoteTime = 0.2f;
 	this->timeSinceGrounded = 0.0f;
 	this->groundPoundChannel = 0;
+	this->onfloorChannel = 0;
 	this->hasLanded = false;
 	entityType = eEntityType::PLAYER;
 }
@@ -266,6 +267,10 @@ void EntityPlayer::handle_collisions(std::vector<sCollisionData> FastCollisions,
 				}
 			}
 			if (!hasLanded) {
+				if (this->onfloorChannel != 0) {
+					Audio::Stop(onfloorChannel);
+					onfloorChannel = 0;
+				}
 				Audio::Play("data/sounds/OnGround.wav", 0.1);
 				this->hasLanded = true;
 			}

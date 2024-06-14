@@ -40,6 +40,7 @@ public:
 
 	//Parameters for handling sound effects
 	HCHANNEL groundPoundChannel;
+	HCHANNEL onfloorChannel;
 	bool hasLanded;
 
 	//Channels stored
