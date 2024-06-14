@@ -17,12 +17,17 @@
 class World {
 public:
     static World* instance;
-    std::vector<Entity*> entities;  //we may create a superior class method or do a list for each type of entity I will leave like this at the moment
+    std::vector<Entity*> entities; 
     Entity* root;
+    //UI params
     EntityUI* jump_icon;
     EntityUI* dash_icon;
     EntityUI* ground_icon;
     EntityUI* running_icon;
+    bool tutorial_visible = true;
+    int current_tutorial = 0;
+    std::vector<EntityUI> tutorials;
+    float tutorial_timer = 10.0f;
     float camera_yaw;
     float camera_pitch;
     Camera* camera2D;

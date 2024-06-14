@@ -316,6 +316,10 @@ void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&posit
 		printf("%f %f %f\n", this->model.getTranslation().x, this->model.getTranslation().y, this->model.getTranslation().z);
 	}
 
+	if (Input::wasKeyPressed(SDL_SCANCODE_Q)) { //Hide the tutorials
+		world->tutorial_visible = !world->tutorial_visible;
+	}
+
 	//Añado un boton de correr por si hay que probar cosas, en teoria la version final no tendra
 	if (Input::isKeyPressed(SDL_SCANCODE_LSHIFT)) {
 		this->sprinting = true;

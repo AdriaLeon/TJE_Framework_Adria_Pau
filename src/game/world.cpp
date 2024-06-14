@@ -31,30 +31,44 @@ World::World() {
 void World::loadUI() {
 	int width = Game::instance->window_width;
 	int height = Game::instance->window_height;
+	Material jump_mat, dash_mat, ground_mat, run_mat , tut_1, tut_2, tut_3, tut_4;
 
-	Material jump_mat;
 	jump_mat.diffuse = Texture::Get("data/textures/ui/jump_button.png");
 	jump_icon = new EntityUI(Vector2(width * 0.4, height * 0.45), Vector2(width*0.05, width * 0.05), jump_mat);
 
-	Material dash_mat;
 	dash_mat.diffuse = Texture::Get("data/textures/ui/dash_button.png");
 	dash_icon = new EntityUI(Vector2(width * 0.43, height * 0.45), Vector2(width * 0.05, width * 0.05), dash_mat);
 
-	Material ground_mat;
 	ground_mat.diffuse = Texture::Get("data/textures/ui/ground_button.png");
 	ground_icon = new EntityUI(Vector2(width * 0.46, height * 0.45), Vector2(width * 0.05, width * 0.05), ground_mat);
 
-	Material run_mat;
 	run_mat.diffuse = Texture::Get("data/textures/ui/running.png");
 	running_icon = new EntityUI(Vector2(width * 0.05, height * 0.45), Vector2(width * 0.05, width * 0.05), run_mat);
-}
+
+	tut_1.diffuse = Texture::Get("data/textures/ui/tutorial1.png");
+	EntityUI* tut1 = new EntityUI(Vector2(width*0.25, 10), Vector2(800, 50), tut_1);
+	tutorials.push_back(*tut1);
+	tut_2.diffuse = Texture::Get("data/textures/ui/tutorial2.png");
+	EntityUI* tut2 = new EntityUI(Vector2(width * 0.25, 10), Vector2(800, 50), tut_2);
+	tutorials.push_back(*tut2);
+	tut_3.diffuse = Texture::Get("data/textures/ui/tutorial3.png");
+	EntityUI* tut3 = new EntityUI(Vector2(width * 0.25, 10), Vector2(800, 50), tut_3);
+	tutorials.push_back(*tut3);
+	tut_4.diffuse = Texture::Get("data/textures/ui/tutorial4ex.png");
+	EntityUI* tut4 = new EntityUI(Vector2(width * 0.25, 10), Vector2(800, 50), tut_4);
+	tutorials.push_back(*tut4);
+} 
 
 void World::renderUI() {
-	if (jump_icon && dash_icon && ground_icon) {
+	if (jump_icon && dash_icon && ground_icon && running_icon) {
 		jump_icon->render(camera2D);
 		dash_icon->render(camera2D);
 		ground_icon->render(camera2D);
 		running_icon->render(camera2D);
+	}
+
+	if (this->tutorial_visible && tutorial_timer > 0.0f) {
+		tutorials[current_tutorial].render(camera2D);
 	}
 }
 
@@ -224,6 +238,9 @@ void World::updateAll(float delta_time) {
 	player->update(delta_time);
 	root->update(delta_time);
 	check_chekpoints();
+	if (this->tutorial_timer > 0.0f) {
+		tutorial_timer -= delta_time;
+	}
 }
 
 void World::updateCubemap(Camera* camera) {
@@ -284,6 +301,11 @@ void World::check_chekpoints() {
 			this->player->velocity = vec3(0.0f, 2.0f, 0.0f);
 			this->player->PlayAnimation("Idle", true, 0.0f);
 			Audio::Play("data/sounds/ReviveSound.wav");
+		}
+		if ((current_tutorial == 0 && position.x > 100) || (current_tutorial == 1 && position.x > 520) || (current_tutorial == 2 && position.x > 930)) {
+			this->tutorial_visible = true;
+			current_tutorial++;
+			tutorial_timer = 10.0f;
 		}
 }
 
