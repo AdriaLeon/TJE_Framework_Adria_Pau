@@ -11,9 +11,6 @@ EntityUI::EntityUI(Vector2 s, const Material& mat) {
 	mesh->createQuad(0.0, 0.0, s.x, s.y, true);
 	this->material = mat;
 	this->button_type = UndefinedButton;
-	if (!this->material.shader) {
-		this->material.shader = Shader::Get(("data/shaders/basic.vs", "data/shaders/texture.fs"));
-	}
 }
 
 EntityUI::EntityUI(Vector2 pos, Vector2 s, const Material& mat, eButtonId button_id) {
@@ -24,9 +21,6 @@ EntityUI::EntityUI(Vector2 pos, Vector2 s, const Material& mat, eButtonId button
 	this->material = mat;
 	this->button_type = button_id;
 
-	if (!this->material.shader) {
-		this->material.shader = Shader::Get(("data/shaders/basic.vs", "data/shaders/texture.fs"));
-	}
 
 	model.setIdentity();	
 	model.translate(pos.x, pos.y, 0.0);
@@ -36,27 +30,23 @@ void EntityUI::render(Camera* camera) {
 	if (!visible) return;
 
 	if (!mesh) return;
-
+	
 	if (this->material.shader) {
-		printf("hola! 1");
 	}
 	else {
-		printf("hola! 2");
+		if (material.diffuse) {
+			this->material.shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
+		}
+		else {
+			this->material.shader = Shader::Get("data/shaders/basic.vs", "data/shaders/color.fs");
+		}
 	}
-	/*
-	if (material.diffuse) {
-		this->material.shader = Shader::Get(("data/shaders/basic.vs", "data/shaders/texture.fs"));
-	}
-	else {
-		this->material.shader = Shader::Get(("data/shaders/basic.vs", "data/shaders/color.fs"));
-	}
-	*/
+
 	// Enable if we want to do transparency
 	// glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	material.shader->enable();
 
 	World* world = World::get_instance();
