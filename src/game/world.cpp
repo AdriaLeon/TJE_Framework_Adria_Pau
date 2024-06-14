@@ -43,6 +43,10 @@ void World::loadUI() {
 	Material ground_mat;
 	ground_mat.diffuse = Texture::Get("data/textures/ui/ground_button.png");
 	ground_icon = new EntityUI(Vector2(width * 0.46, height * 0.45), Vector2(width * 0.05, width * 0.05), ground_mat);
+
+	Material run_mat;
+	run_mat.diffuse = Texture::Get("data/textures/ui/running.png");
+	running_icon = new EntityUI(Vector2(width * 0.05, height * 0.45), Vector2(width * 0.05, width * 0.05), run_mat);
 }
 
 void World::renderUI() {
@@ -50,6 +54,7 @@ void World::renderUI() {
 		jump_icon->render(camera2D);
 		dash_icon->render(camera2D);
 		ground_icon->render(camera2D);
+		running_icon->render(camera2D);
 	}
 }
 

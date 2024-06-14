@@ -22,6 +22,7 @@ public:
     EntityUI* jump_icon;
     EntityUI* dash_icon;
     EntityUI* ground_icon;
+    EntityUI* running_icon;
     float camera_yaw;
     float camera_pitch;
     Camera* camera2D;

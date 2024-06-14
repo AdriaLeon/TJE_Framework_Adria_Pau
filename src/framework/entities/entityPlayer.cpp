@@ -45,7 +45,6 @@ void EntityPlayer::update(float elapsed_time) {
 
 	bool in_the_air = !this->onFloor;
 
-	//Guardamos speed_mult a parte por si queremos hacer un botón de sprint
 	float speed_mult = this->walkSpeed;
 
 	Vector3 position = model.getTranslation();
@@ -140,8 +139,8 @@ void EntityPlayer::update(float elapsed_time) {
 	Vector3 final_vel = velocity;
 	if (this->sprinting) //When sprinting x and z velocity double  (Do it so that you maintain sprinting when you started sprinting in the ground but 
 		//you cannot start sprinting in the air)
-		final_vel.x *= 2.0f;
-		final_vel.z *= 2.0f;
+		final_vel.x *= 1.45f;
+		final_vel.z *= 1.45f;
 
 	//If player is not colliding then we allow it to move
 	Vector3 next_pos = position + final_vel * elapsed_time;
@@ -320,9 +319,11 @@ void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&posit
 	//Añado un boton de correr por si hay que probar cosas, en teoria la version final no tendra
 	if (Input::isKeyPressed(SDL_SCANCODE_LSHIFT)) {
 		this->sprinting = true;
+		world->running_icon->visible = true;
 	}
 	else {
 		this->sprinting = false;
+		world->running_icon->visible = false;
 	}
 
 	//Jump code
