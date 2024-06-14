@@ -42,8 +42,7 @@ void EntityUI::render(Camera* camera) {
 		}
 	}
 
-	// Enable if we want to do transparency
-	// glDisable(GL_BLEND);
+	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA);
@@ -79,4 +78,5 @@ void EntityUI::render(Camera* camera) {
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
 }

@@ -33,11 +33,24 @@ void World::loadUI() {
 	int height = Game::instance->window_height;
 
 	Material jump_mat;
-	jump_mat.diffuse = Texture::Get("data/textures/ui/hombre-saltando.png");
-	bg = new EntityUI(Vector2(width * 0.5, height * 0.5), Vector2(width/4, height/4), jump_mat);
+	jump_mat.diffuse = Texture::Get("data/textures/ui/jump_button.png");
+	jump_icon = new EntityUI(Vector2(width * 0.4, height * 0.45), Vector2(width*0.05, width * 0.05), jump_mat);
 
-	Entity* example2 = new EntityUI(Vector2(0, 0), Vector2(width / 4, height / 4), jump_mat);
-	bg->addChild(example2);
+	Material dash_mat;
+	dash_mat.diffuse = Texture::Get("data/textures/ui/dash_button.png");
+	dash_icon = new EntityUI(Vector2(width * 0.43, height * 0.45), Vector2(width * 0.05, width * 0.05), dash_mat);
+
+	Material ground_mat;
+	ground_mat.diffuse = Texture::Get("data/textures/ui/ground_button.png");
+	ground_icon = new EntityUI(Vector2(width * 0.46, height * 0.45), Vector2(width * 0.05, width * 0.05), ground_mat);
+}
+
+void World::renderUI() {
+	if (jump_icon && dash_icon && ground_icon) {
+		jump_icon->render(camera2D);
+		dash_icon->render(camera2D);
+		ground_icon->render(camera2D);
+	}
 }
 
 void World::addEntity(Entity* entity) {
@@ -196,12 +209,8 @@ void World::renderAll(Camera* camera) {
 	root->render(camera);
 	player->render(camera);
 
+	renderUI();
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	
-	if (bg) {
-		bg->render(camera2D);
-	}
 	
 	
 }

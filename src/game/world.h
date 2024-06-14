@@ -19,7 +19,9 @@ public:
     static World* instance;
     std::vector<Entity*> entities;  //we may create a superior class method or do a list for each type of entity I will leave like this at the moment
     Entity* root;
-    Entity* bg;
+    EntityUI* jump_icon;
+    EntityUI* dash_icon;
+    EntityUI* ground_icon;
     float camera_yaw;
     float camera_pitch;
     Camera* camera2D;

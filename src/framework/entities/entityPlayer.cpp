@@ -38,6 +38,7 @@ void EntityPlayer::render(Camera* camera) {
 
 void EntityPlayer::update(float elapsed_time) {
 
+	World* world = World::get_instance();
 	float camera_yaw = World::get_instance()->camera_yaw;
 	Matrix44 mYaw;
 	mYaw.setRotation(camera_yaw, Vector3(0, 1, 0));
@@ -117,6 +118,10 @@ void EntityPlayer::update(float elapsed_time) {
 		this->timeSinceGrounded += elapsed_time;
 	}
 
+	if (!this->ground_pound && this->time_for_groundpound < 0.0) {
+		world->ground_icon->visible = true;
+	}
+
 	// Apply gravity if the player is not on the floor
 	if (!this->onFloor) {
 		this->time_for_groundpound -= elapsed_time;
@@ -129,6 +134,7 @@ void EntityPlayer::update(float elapsed_time) {
 	}
 	else {
 		velocity.y = -2.0f;
+		world->jump_icon->visible = true;
 	}
 
 	Vector3 final_vel = velocity;
@@ -158,6 +164,10 @@ void EntityPlayer::update(float elapsed_time) {
 	}
 	else if (this->onFloor) {
 		this->dash_cooldown -= elapsed_time;
+	}
+
+	if (dash_cooldown <= 0.0f) {
+		world->dash_icon->visible = true;
 	}
 
 	//Reducimos velocity mientras no nos movemos (lentamente para que sea más smooth)
@@ -279,6 +289,8 @@ void EntityPlayer::setMaterial(Material material) {
 
 void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&position) {
 
+	World* world = World::get_instance();
+
 	Vector3 front = Vector3(1, 0, 0);
 
 	// Rotate the front vector according to the camera yaw
@@ -325,6 +337,7 @@ void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&posit
 		if (animator->getCurrentAnimation()->name != GetAnimationPath("Jump")) {
 			PlayAnimation("Jump", false);
 		}
+		world->jump_icon->visible = false;
 	}
 	//Ground pound
 	if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && !this->onFloor && !this->ground_pound && this->time_for_groundpound < 0.0) {
@@ -337,6 +350,7 @@ void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&posit
 			groundPoundChannel = 0;
 		}
 		groundPoundChannel = Audio::Play("data/sounds/GroundPound.wav", 0.3);
+		world->ground_icon->visible = false;
 	}
 	//Dash
 	if (!this->is_dashing && Input::isMousePressed(SDL_BUTTON_LEFT) && this->dash_cooldown <= 0.0f && !this->ground_pound) { //Input::isKeyPressed(SDL_BUTTON_LEFT)) {
@@ -344,6 +358,7 @@ void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&posit
 		this->dash_timer = 0.2;
 		this->dash_cooldown = 0.2;
 		Audio::Play("data/sounds/Dash.wav", 0.3);
+		world->dash_icon->visible = false;
 		//Tenemos que hacer un contador de 1 o 2 segundos que empiece al pulsar el dash y que cuando acabe le reste 5 a la velocidad y devuelva el bool a false
 	}
 }
