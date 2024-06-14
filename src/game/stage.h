@@ -47,6 +47,7 @@ public:
 	std::vector<EntityUI*> images;
 	Camera* camera2D;
 	TitleStage() {};
+	int current_img = 0;
 	virtual void onEnter() override;
 	virtual void onExit() override;
 	void loadIMG();

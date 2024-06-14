@@ -38,7 +38,7 @@ void TitleStage::update(float second_elapsed) {
 }
 
 void TitleStage::render(void) {
-    images[0]->render(camera2D);
+    images[this->current_img]->render(camera2D);
 }
 
 void TitleStage::onExit() {
