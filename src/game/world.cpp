@@ -19,7 +19,7 @@ World::World() {
 	parseScene("data/level.scene");
 	loadPlayer();
 	loadAudios();
-	channelBG = Audio::Play("data/sounds/Bgm.wav", 0.3, BASS_SAMPLE_LOOP);
+	channelBG = Audio::Play("data/sounds/Bgm.wav", 0.2, BASS_SAMPLE_LOOP);
 	camera2D = new Camera();
 	camera2D->view_matrix.setIdentity();
 	camera2D->setOrthographic(0.0f, width, height, 0, -1.0f, 1.0f);
@@ -35,6 +35,9 @@ void World::loadUI() {
 	Material jump_mat;
 	jump_mat.diffuse = Texture::Get("data/textures/ui/hombre-saltando.png");
 	bg = new EntityUI(Vector2(width * 0.5, height * 0.5), Vector2(width/4, height/4), jump_mat);
+
+	Entity* example2 = new EntityUI(Vector2(0, 0), Vector2(width / 4, height / 4), jump_mat);
+	bg->addChild(example2);
 }
 
 void World::addEntity(Entity* entity) {

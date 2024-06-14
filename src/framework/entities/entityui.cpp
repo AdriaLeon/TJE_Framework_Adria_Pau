@@ -71,11 +71,11 @@ void EntityUI::render(Camera* camera) {
 
 	material.shader->disable();
 
-	/*for (size_t i = 0; i < children.size(); i++)
+	for (size_t i = 0; i < children.size(); i++)
 	{
 		children[i]->render(camera);
 	}
-	*/
+	
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
