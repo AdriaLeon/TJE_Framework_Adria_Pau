@@ -326,12 +326,18 @@ void EntityPlayer::handle_inputs(Vector3& move_dir, Matrix44 mYaw, Vector3&posit
 	}
 
 	//Añado un boton de correr por si hay que probar cosas, en teoria la version final no tendra
-	if (Input::isKeyPressed(SDL_SCANCODE_LSHIFT)) {
-		this->sprinting = true;
+	if (this->onFloor) {
+		if (Input::isKeyPressed(SDL_SCANCODE_LSHIFT)) {
+			this->sprinting = true;
+		}
+		else {
+			this->sprinting = false;
+		}
+	}
+	if (this->sprinting) {
 		world->running_icon->visible = true;
 	}
 	else {
-		this->sprinting = false;
 		world->running_icon->visible = false;
 	}
 
