@@ -10,8 +10,8 @@
 enum {
 	TITLE_STAGE,
 	LEVEL_STAGE,
-	PLAY_STAGE,
-	GAME_OVER_STAGE,
+	PAUSE_STAGE,
+	END_STAGE,
 	STAGES_SIZE
 };
 
@@ -45,7 +45,7 @@ public:
 	std::vector<EntityUI*> images;
 	Camera* camera2D;
 	TitleStage() {};
-	int current_img = 0;
+	int current_img;
 	float timer;
 	HCHANNEL TitleBG = 0;
 	virtual void onEnter() override;
@@ -65,12 +65,34 @@ public:
 
 	float angle;
 	EntityMesh* cube;
-
+	HCHANNEL channelBG;
 	LevelStage() {};
 	virtual void onEnter() override;
 	virtual void onExit() override;
 
 	virtual void render( void ) override;
+	virtual void update(float second_elapsed) override;
+};
+
+class EndStage : public Stage
+{
+	int type = END_STAGE;
+
+public:
+
+	std::vector<EntityUI*> images;
+	Camera* camera2D;
+	int current_img;
+	float timer;
+	HCHANNEL TitleBG;
+
+	EndStage() {};
+	virtual void onEnter() override;
+	virtual void onExit() override;
+	void loadIMG();
+	void rederIMG();
+
+	virtual void render(void) override;
 	virtual void update(float second_elapsed) override;
 };
 
