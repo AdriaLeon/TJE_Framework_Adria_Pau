@@ -8,28 +8,56 @@
 #include "framework/audio.h"
 #include "game.h"
 #include <string>
+float time_to_wait = 7.0f;
+
 void TitleStage::onEnter() {
     int width = Game::instance->window_width;
     int height = Game::instance->window_height;
     Audio::Init();
+    Audio::Get("data/sounds/Title.wav");
     camera2D = new Camera();
     camera2D->view_matrix.setIdentity();
     camera2D->setOrthographic(0.0f, width, height, 0, -1.0f, 1.0f);
     loadIMG();
+    this->timer = time_to_wait + 4.0f; //First one has extra time
 }
 
 void TitleStage::loadIMG() {
     int width = Game::instance->window_width;
     int height = Game::instance->window_height;
 
-    Material example;
-    example.diffuse = Texture::Get("data/textures/intro/ejemplo.png");
-    EntityUI* img1 = new EntityUI(Vector2(width*0.25, height*0.25), Vector2(800, 600), example);
+    Material img1_mat, img2_mat, img3_mat, img4_mat, img5_mat;
+    img1_mat.diffuse = Texture::Get("data/textures/intro/intro1.png");
+    EntityUI* img1 = new EntityUI(Vector2(width*0.25, height*0.25), Vector2(800, 600), img1_mat);
     images.push_back(img1);
+    img2_mat.diffuse = Texture::Get("data/textures/intro/intro2.png");
+    EntityUI* img2 = new EntityUI(Vector2(width * 0.25, height * 0.25), Vector2(800, 600), img2_mat);
+    images.push_back(img2);
+    img3_mat.diffuse = Texture::Get("data/textures/intro/intro3.png");
+    EntityUI* img3 = new EntityUI(Vector2(width * 0.25, height * 0.25), Vector2(800, 600), img3_mat);
+    images.push_back(img3);
+    img4_mat.diffuse = Texture::Get("data/textures/intro/intro4.png");
+    EntityUI* img4 = new EntityUI(Vector2(width * 0.25, height * 0.25), Vector2(800, 600), img4_mat);
+    images.push_back(img4);
+    img5_mat.diffuse = Texture::Get("data/textures/intro/intro5.png");
+    EntityUI* img5 = new EntityUI(Vector2(width * 0.25, height * 0.25), Vector2(800, 600), img5_mat);
+    images.push_back(img5);
 }
 
 void TitleStage::update(float second_elapsed) {
-    if (Input::wasKeyPressed(SDL_SCANCODE_SPACE)) {
+    if (this->timer > 0.0f) {
+        this->timer -= second_elapsed;
+    }
+    else if(this->current_img < this->images.size() - 1){
+        current_img++;
+        this->timer = time_to_wait;
+    }
+    if (this->current_img == this->images.size() - 1) {
+        if (this->TitleBG == 0) {
+            TitleBG = Audio::Play("data/sounds/Title.wav", 0.2, BASS_SAMPLE_LOOP);
+        }
+    }
+    if ((Input::wasKeyPressed(SDL_SCANCODE_SPACE) && this->current_img == this->images.size() - 1) || Input::wasKeyPressed(SDL_SCANCODE_Q)) {
         Game::instance->goToStage(INTRO_STAGE);
         onExit();
     }
@@ -42,7 +70,8 @@ void TitleStage::render(void) {
 }
 
 void TitleStage::onExit() {
-
+    images.clear();
+    Audio::Stop(TitleBG);
 }
 
 void IntroStage::onEnter() {
@@ -53,6 +82,7 @@ void IntroStage::onEnter() {
     camera = new Camera();
     camera->lookAt(Vector3(0.f, 100.f, 100.f), Vector3(0.f, 0.f, 0.f), Vector3(0.f, 1.f, 0.f)); //position the camera and point to 0,0,0
     camera->setPerspective(70.f, Game::instance->window_width / (float)Game::instance->window_height, 0.1f, 10000.f); //set the projection, we want to be perspective
+    World::instance->channelBG = Audio::Play("data/sounds/Bgm.wav", 0.2, BASS_SAMPLE_LOOP);
 
 	world = new World();
 

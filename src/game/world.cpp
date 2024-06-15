@@ -19,7 +19,7 @@ World::World() {
 	parseScene("data/level.scene");
 	loadPlayer();
 	loadAudios();
-	channelBG = Audio::Play("data/sounds/Bgm.wav", 0.2, BASS_SAMPLE_LOOP);
+
 	camera2D = new Camera();
 	camera2D->view_matrix.setIdentity();
 	camera2D->setOrthographic(0.0f, width, height, 0, -1.0f, 1.0f);

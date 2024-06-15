@@ -271,7 +271,7 @@ void EntityPlayer::handle_collisions(std::vector<sCollisionData> FastCollisions,
 					Audio::Stop(onfloorChannel);
 					onfloorChannel = 0;
 				}
-				Audio::Play("data/sounds/OnGround.wav", 0.1);
+				Audio::Play("data/sounds/OnGround.wav", 0.05);
 				this->hasLanded = true;
 			}
 		}

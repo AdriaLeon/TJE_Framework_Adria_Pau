@@ -48,6 +48,8 @@ public:
 	Camera* camera2D;
 	TitleStage() {};
 	int current_img = 0;
+	float timer;
+	HCHANNEL TitleBG = 0;
 	virtual void onEnter() override;
 	virtual void onExit() override;
 	void loadIMG();
