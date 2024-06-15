@@ -15,6 +15,8 @@ World::World() {
 	player = nullptr;
 	loadCubeMap();
 
+	this->current_tutorial = 0;
+
 	//parseScene("data/myscene.scene");
 	parseScene("data/level.scene");
 	loadPlayer();
@@ -24,6 +26,9 @@ World::World() {
 	camera2D->view_matrix.setIdentity();
 	camera2D->setOrthographic(0.0f, width, height, 0, -1.0f, 1.0f);
 	loadUI();
+
+	this->end_reached = false;
+	this->current_check_point = 0;
 
 	
 }
@@ -306,6 +311,9 @@ void World::check_chekpoints() {
 			this->tutorial_visible = true;
 			current_tutorial++;
 			tutorial_timer = 10.0f;
+		}
+		if ((position.x > 2060 && position.y > -65 && position.z < -100) || position.x < -50) {
+			this->end_reached = true;
 		}
 }
 

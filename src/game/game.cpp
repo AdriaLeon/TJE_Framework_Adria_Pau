@@ -45,6 +45,7 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	//Initialize the stages
 	stages[LEVEL_STAGE] = new LevelStage();
 	stages[TITLE_STAGE] = new TitleStage();
+	stages[END_STAGE] = new EndStage();
 	
 	// OpenGL flags
 	glEnable( GL_CULL_FACE ); //render both sides of every triangle
