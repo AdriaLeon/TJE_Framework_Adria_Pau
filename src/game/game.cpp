@@ -43,7 +43,7 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	
 
 	//Initialize the stages
-	stages[INTRO_STAGE] = new IntroStage();
+	stages[LEVEL_STAGE] = new LevelStage();
 	stages[TITLE_STAGE] = new TitleStage();
 	
 	// OpenGL flags

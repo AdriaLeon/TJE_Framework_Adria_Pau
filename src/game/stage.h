@@ -8,10 +8,8 @@
 #include <string>
 
 enum {
-	INTRO_STAGE,
 	TITLE_STAGE,
-	//CONTROLS_STAGE,
-	//MENU,
+	LEVEL_STAGE,
 	PLAY_STAGE,
 	GAME_OVER_STAGE,
 	STAGES_SIZE
@@ -59,49 +57,20 @@ public:
 	virtual void update(float second_elapsed) override;
 };
 
-class IntroStage : public Stage
+class LevelStage : public Stage
 {
-	int type = INTRO_STAGE;
+	int type = LEVEL_STAGE;
 
 public:
 
 	float angle;
 	EntityMesh* cube;
 
-	IntroStage() {};
+	LevelStage() {};
 	virtual void onEnter() override;
 	virtual void onExit() override;
 
 	virtual void render( void ) override;
 	virtual void update(float second_elapsed) override;
-};
-
-class PlayStage : public Stage
-{
-	int type = PLAY_STAGE;
-
-public:
-
-	PlayStage() {};
-	virtual void onEnter() override;
-	virtual void onExit() override;
-
-	virtual void render(void) override;
-	virtual void update(float second_elapsed) override;
-};
-
-class GameOverStage : public Stage
-{
-	int type = GAME_OVER_STAGE;
-
-public:
-
-	GameOverStage() {};
-	virtual void onEnter() override;
-	virtual void onExit() override;
-
-	virtual void render(void) override;
-	virtual void update(float second_elapsed) override;
-
 };
 

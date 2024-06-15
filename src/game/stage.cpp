@@ -58,7 +58,7 @@ void TitleStage::update(float second_elapsed) {
         }
     }
     if ((Input::wasKeyPressed(SDL_SCANCODE_SPACE) && this->current_img == this->images.size() - 1) || Input::wasKeyPressed(SDL_SCANCODE_Q)) {
-        Game::instance->goToStage(INTRO_STAGE);
+        Game::instance->goToStage(LEVEL_STAGE);
         onExit();
     }
 
@@ -74,7 +74,7 @@ void TitleStage::onExit() {
     Audio::Stop(TitleBG);
 }
 
-void IntroStage::onEnter() {
+void LevelStage::onEnter() {
 
 	angle = 0;
 
@@ -95,11 +95,11 @@ void IntroStage::onEnter() {
     camera->first_person_mode_front = true;
 }
 
-void IntroStage::onExit() {
+void LevelStage::onExit() {
 	world->removeAllEntities();
 };
 
-void IntroStage::render( void ) {
+void LevelStage::render( void ) {
 
 	// Set the camera as default
 	camera->enable();
@@ -114,7 +114,7 @@ void IntroStage::render( void ) {
 
 }
 
-void IntroStage::update(float second_elapsed) {
+void LevelStage::update(float second_elapsed) {
 
     float speed = second_elapsed * mouse_speed; //the speed is defined by the seconds_elapsed so it goes constant
 
@@ -224,13 +224,3 @@ void updateCameraPosition(Camera* camera, Vector3 targetEye, Vector3 targetCente
     // Update the camera position
     camera->lookAt(currentEye, currentCenter, Vector3(0, 1, 0));
 }
-
-void PlayStage::onEnter() {};
-void PlayStage::onExit() {};
-void PlayStage::render(void) {}; 
-void PlayStage::update(float second_elapsed) {};
-
-void GameOverStage::onEnter() {};
-void GameOverStage::onExit() {};
-void GameOverStage::render(void) {};
-void GameOverStage::update(float second_elapsed) {};
