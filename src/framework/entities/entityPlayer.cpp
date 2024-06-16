@@ -138,10 +138,12 @@ void EntityPlayer::update(float elapsed_time) {
 	}
 
 	Vector3 final_vel = velocity;
+	final_vel.x *= 1.45f;
+	final_vel.z *= 1.45f;
 	if (this->sprinting) //When sprinting x and z velocity double  (Do it so that you maintain sprinting when you started sprinting in the ground but 
 		//you cannot start sprinting in the air)
-		final_vel.x *= 1.45f;
-		final_vel.z *= 1.45f;
+		final_vel.x *= 1.1f;
+		final_vel.z *= 1.1f;
 
 	//If player is not colliding then we allow it to move
 	Vector3 next_pos = position + final_vel * elapsed_time;
@@ -282,7 +284,7 @@ void EntityPlayer::handle_collisions(std::vector<sCollisionData> FastCollisions,
 	}
 
 	velocity = final_vel;
-	if (this->sprinting)
+	//if (this->sprinting)
 		velocity.x = final_vel.x / 2.0f;
 		velocity.z = final_vel.z / 2.0f;
 }
