@@ -140,9 +140,7 @@ void LevelStage::onEnter() {
     camera = new Camera();
     camera->lookAt(Vector3(0.f, 100.f, 100.f), Vector3(0.f, 0.f, 0.f), Vector3(0.f, 1.f, 0.f)); //position the camera and point to 0,0,0
     camera->setPerspective(70.f, Game::instance->window_width / (float)Game::instance->window_height, 0.1f, 10000.f); //set the projection, we want to be perspective
-    if (this->channelBG == 0) {
-        this->channelBG = Audio::Play("data/sounds/Bgm.wav", 0.2, BASS_SAMPLE_LOOP);
-    }
+    this->channelBG = Audio::Play("data/sounds/Bgm.wav", 0.2, BASS_SAMPLE_LOOP);
 
 	world = new World();
 
@@ -186,8 +184,8 @@ void LevelStage::update(float second_elapsed) {
         onExit();
     }
     if (world->restart_level) {
-        Game::instance->goToStage(LEVEL_STAGE);
         onExit();
+        Game::instance->goToStage(LEVEL_STAGE);
     }
 
     float speed = second_elapsed * mouse_speed; //the speed is defined by the seconds_elapsed so it goes constant
