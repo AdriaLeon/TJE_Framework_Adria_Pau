@@ -83,42 +83,33 @@ void EntityUI::render(Camera* camera) {
 
 void EntityUI::updateUI(float elapsed_time) {
 	Vector2 mouse_pos = Input::mouse_position;
+	World* world = World::get_instance();
 
-	if (this->button_type != UndefinedButton && mouse_pos.x > (position.x - size.x * 0.5) && mouse_pos.x < (position.x + size.x * 0.5) && mouse_pos.y >(position.y - size.y * 0.5) && mouse_pos.y < (position.y + size.y * 0.5)) {
-		/*
-		if (Input::isMousePressed(SDL_BUTTON_LEFT) && !stage->mouse_clicked) {
-			stage->mouse_clicked = true;
-			switch (button_id) {
-			case PlayButton:
-				stage->play_button_pressed = true;
-				break;
-			case OptionsButton:
-				stage->options = true;
-				break;
-			case ExitButton:
-				stage->options = false;
-				break;
-			case KeyWalk:
-				stage->selected_keybind = StageManager::WALK;
-				stage->keybinds[stage->selected_keybind] = true;
-				break;
-			case KeyJump:
-				stage->selected_keybind = StageManager::JUMP;
-				stage->keybinds[stage->selected_keybind] = true;
-				break;
-			case KeyDash:
-				stage->selected_keybind = StageManager::DASH;
-				stage->keybinds[stage->selected_keybind] = true;
-				break;
-			case KeyShoot:
-				stage->selected_keybind = StageManager::SHOOT;
-				stage->keybinds[stage->selected_keybind] = true;
-				break;
-			case KeyAuto:
-				stage->selected_keybind = StageManager::AUTO;
-				stage->keybinds[stage->selected_keybind] = true;
-				break;
+	if (this->button_type != UndefinedButton && world->on_pause) {
+
+		float min_x = this->position.x + 60;
+		float max_x = min_x + this->size.x;
+		float min_y = this->position.y + 60*button_type;
+		float max_y = min_y + this->size.y;
+
+		// Check if our mouse is inside the button
+		if (mouse_pos.x > min_x && mouse_pos.x < max_x && mouse_pos.y > min_y && mouse_pos.y < max_y) {	
+			if (Input::isMousePressed(SDL_BUTTON_LEFT)) {
+				switch (this->button_type) {
+				case Restart_level:
+					printf(" + Restart level clicked\n");
+					world->restart_level = true;
+					break;
+				case Restart_game:
+					printf(" + Restart game clicked\n");
+					world->restart_all = true;
+					break;
+				case Resume:
+					printf(" + Resume clicked\n");
+					world->resume = true;
+					break;
+				}
 			}
-			*/
+		}
 	}
 }

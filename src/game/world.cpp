@@ -26,16 +26,55 @@ World::World() {
 	camera2D->view_matrix.setIdentity();
 	camera2D->setOrthographic(0.0f, width, height, 0, -1.0f, 1.0f);
 	loadUI();
+	loadGUI();
 
 	this->end_reached = false;
 	this->current_check_point = 0;
+	this->tutorial_visible = true;
+	this->on_pause = false;
+	this->restart_all = false;
+	this->restart_level = false;
+	this->resume = false;
 
 	
 }
 
-void World::loadUI() {
+void World::loadGUI(){
 	int width = Game::instance->window_width;
 	int height = Game::instance->window_height;
+
+	Material restart_game_mat, restart_lev_mat, resume_mat, bg_mat;
+
+	bg_mat.diffuse = Texture::Get("data/textures/gui/bg_pause.png");
+	EntityUI* bg = new EntityUI(Vector2(width * 0.25, height * 0.25), Vector2(800, 600), bg_mat);
+	gui_icons.push_back(*bg);
+
+	restart_lev_mat.diffuse = Texture::Get("data/textures/gui/restart_level.png");
+	this->restart_lev_ui = new EntityUI(Vector2(width * 0.25, height * 0.15), Vector2(540/2, 125/2), restart_lev_mat, Restart_level);
+	gui_icons.push_back(*restart_lev_ui);
+
+	restart_game_mat.diffuse = Texture::Get("data/textures/gui/reload_game.png");
+	this->restart_game_ui = new EntityUI(Vector2(width * 0.25, height * 0.25), Vector2(540 / 2, 125 / 2), restart_game_mat, Restart_game);
+	gui_icons.push_back(*restart_game_ui);
+
+	resume_mat.diffuse = Texture::Get("data/textures/gui/resume.png");
+	this->resume_ui = new EntityUI(Vector2(width * 0.25, height * 0.35), Vector2(540 / 2, 125 / 2), resume_mat, Resume);
+	gui_icons.push_back(*resume_ui);
+
+}
+
+void World::renderGUI(){
+	if (this->on_pause) {
+		for (int i = 0; i < gui_icons.size(); i++) {
+			gui_icons[i].render(camera2D);
+		}
+	}
+}
+
+void World::loadUI() {
+	int width = Game::instance->window_width;
+	int height = Game::instance->window_height
+;
 	Material jump_mat, dash_mat, ground_mat, run_mat , tut_1, tut_2, tut_3, tut_4;
 
 	jump_mat.diffuse = Texture::Get("data/textures/ui/jump_button.png");
@@ -234,17 +273,32 @@ void World::renderAll(Camera* camera) {
 	player->render(camera);
 
 	renderUI();
+	renderGUI();
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	
 }
 
 void World::updateAll(float delta_time) {
-	player->update(delta_time);
-	root->update(delta_time);
-	check_chekpoints();
-	if (this->tutorial_timer > 0.0f) {
-		tutorial_timer -= delta_time;
+	if (Input::wasKeyPressed(SDL_SCANCODE_P) || this->resume) {
+		this->on_pause = !this->on_pause;
+		Game::instance->mouse_locked = !Game::instance->mouse_locked;
+		SDL_ShowCursor(!Game::instance->mouse_locked);
+		SDL_SetRelativeMouseMode((SDL_bool)(Game::instance->mouse_locked));
+		if (!this->on_pause) {
+			this->resume = false;
+			this->restart_level = false;
+			this->restart_all = false;
+		}
+
+	}
+	if (!this->on_pause) {
+		player->update(delta_time);
+		root->update(delta_time);
+		check_chekpoints();
+		if (this->tutorial_timer > 0.0f) {
+			tutorial_timer -= delta_time;
+		}
 	}
 }
 

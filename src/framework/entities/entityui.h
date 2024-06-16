@@ -9,9 +9,10 @@
 
 enum eButtonId {
 	UndefinedButton,
-	OptionButton,
-	ExitButton,
-	Background
+	Restart_level,
+	Restart_game,
+	Resume,
+	GUI_SIZE
 };
 
 class EntityUI : public EntityMesh {

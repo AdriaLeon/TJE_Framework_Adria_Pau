@@ -12,6 +12,11 @@
 #include "game.h"
 #include <string>
 
+enum Pause_Buttons {
+    BG,
+    RESTART,
+    RESUME
+};
 
 
 class World {
@@ -24,7 +29,7 @@ public:
     EntityUI* dash_icon;
     EntityUI* ground_icon;
     EntityUI* running_icon;
-    bool tutorial_visible = true;
+    bool tutorial_visible;
     int current_tutorial;
     std::vector<EntityUI> tutorials;
     float tutorial_timer = 10.0f;
@@ -36,6 +41,14 @@ public:
     EntityMesh* landscape;
     EntityPlayer* player;
     bool end_reached;
+    bool on_pause;
+    std::vector<EntityUI> gui_icons;
+    EntityUI* restart_lev_ui;
+    EntityUI* restart_game_ui;
+    EntityUI* resume_ui;
+    bool restart_all;
+    bool restart_level;
+    bool resume;
 
     //Constructor
     World();
@@ -62,6 +75,8 @@ public:
     void loadAudios();
     void loadUI();
     void renderUI();
+    void loadGUI();
+    void renderGUI();
 
     //bool check_player_collisions(Vector3& target_pos);
 };

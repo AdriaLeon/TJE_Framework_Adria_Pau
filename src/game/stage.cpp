@@ -10,6 +10,7 @@
 #include <string>
 float time_to_wait = 7.0f;
 
+
 void EndStage::onEnter() {
     int width = Game::instance->window_width;
     int height = Game::instance->window_height;
@@ -80,6 +81,9 @@ void TitleStage::onEnter() {
     this->timer = time_to_wait + 4.0f; //First one has extra time
     this->TitleBG = 0;
     this->current_img = 0;
+   if (this->TitleBG == 0) {
+        TitleBG = Audio::Play("data/sounds/Title.wav", 0.2, BASS_SAMPLE_LOOP);
+    }
 }
 
 void TitleStage::loadIMG() {
@@ -111,11 +115,6 @@ void TitleStage::update(float seconds_elapsed) {
     else if(this->current_img < this->images.size() - 1){
         current_img++;
         this->timer = time_to_wait;
-    }
-    if (this->current_img == this->images.size() - 1) {
-        if (this->TitleBG == 0) {
-            TitleBG = Audio::Play("data/sounds/Title.wav", 0.2, BASS_SAMPLE_LOOP);
-        }
     }
     if ((Input::wasKeyPressed(SDL_SCANCODE_SPACE) && this->current_img == this->images.size() - 1) || Input::wasKeyPressed(SDL_SCANCODE_Q)) {
         Game::instance->goToStage(LEVEL_STAGE);
@@ -157,8 +156,8 @@ void LevelStage::onEnter() {
 }
 
 void LevelStage::onExit() {
-	world->removeAllEntities();
     Audio::Stop(this->channelBG);
+	world->removeAllEntities();
 };
 
 void LevelStage::render( void ) {
@@ -178,8 +177,16 @@ void LevelStage::render( void ) {
 
 void LevelStage::update(float second_elapsed) {
 
-    if (World::instance->end_reached) {
+    if (world->end_reached) {
         Game::instance->goToStage(END_STAGE);
+        onExit();
+    }
+    if(world->restart_all){
+        Game::instance->goToStage(TITLE_STAGE);
+        onExit();
+    }
+    if (world->restart_level) {
+        Game::instance->goToStage(LEVEL_STAGE);
         onExit();
     }
 
@@ -187,95 +194,100 @@ void LevelStage::update(float second_elapsed) {
 
     world->updateAll(second_elapsed);
 
-    // Example
-    angle += (float)second_elapsed * 10.0f;
-
-    static float yaw = 0.0f;
-    static float pitch = 0.0f;
-
-    // Mouse input to rotate the cam
-    if (Input::isMousePressed(SDL_BUTTON_LEFT) || Game::instance->mouse_locked) //is left button pressed?
-    {
-        //TODO: Ajustar la sensibilidad 
-        yaw -= Input::mouse_delta.x * speed;
-        pitch -= Input::mouse_delta.y * speed;
-        // Limit pitch to avoid flipping
-        pitch = clamp(pitch, -1.5f, 1.0f);
-
-        
-        camera->rotate(yaw, Vector3(0.0f, 1.0f, 0.0f));
-        camera->rotate(pitch, camera->getLocalVector(Vector3(1.0f, 0.0f, 0.0f)));
+    if (world->on_pause) {
+        world->restart_game_ui->updateUI(second_elapsed);
+        world->restart_lev_ui->updateUI(second_elapsed);
+        world->resume_ui->updateUI(second_elapsed);
     }
+    else {
+        angle += (float)second_elapsed * 10.0f;
+
+        static float yaw = 0.0f;
+        static float pitch = 0.0f;
+
+        // Mouse input to rotate the cam
+        if (Input::isMousePressed(SDL_BUTTON_LEFT) || Game::instance->mouse_locked) //is left button pressed?
+        {
+            yaw -= Input::mouse_delta.x * speed;
+            pitch -= Input::mouse_delta.y * speed;
+            // Limit pitch to avoid flipping
+            pitch = clamp(pitch, -1.5f, 1.0f);
 
 
-    // Toggle between first person and third person view when 'C' is pressed
-    if (Input::wasKeyPressed(SDL_SCANCODE_C))
-    {
-        Game::instance->mouse_locked = !Game::instance->mouse_locked;
-        SDL_ShowCursor(!Game::instance->mouse_locked);
-        SDL_SetRelativeMouseMode((SDL_bool)(Game::instance->mouse_locked));
-        camera->default_camera = !camera->default_camera;
-        if (camera->default_camera == true) {
-            //Set the default position of the camera
-            camera->lookAt(Vector3(0.f, 100.f, 100.f), Vector3(0.f, 0.f, 0.f), Vector3(0.f, 1.f, 0.f));
-            camera->setPerspective(70.f, Game::instance->window_width / (float)Game::instance->window_height, 0.1f, 10000.f);
-        }
-    }
-
-    if (Input::wasKeyPressed(SDL_SCANCODE_X))
-    {
-        camera->first_person_mode_front = !camera->first_person_mode_front;
-    }
-
-    if (camera->default_camera)
-    {
-        if (Input::isKeyPressed(SDL_SCANCODE_LSHIFT)) speed *= 10; //move faster with left shift
-        if (Input::isKeyPressed(SDL_SCANCODE_UP)) camera->move(Vector3(0.0f, 0.0f, 1.0f) * speed);
-        if (Input::isKeyPressed(SDL_SCANCODE_DOWN)) camera->move(Vector3(0.0f, 0.0f, -1.0f) * speed);
-        if (Input::isKeyPressed(SDL_SCANCODE_LEFT)) camera->move(Vector3(1.0f, 0.0f, 0.0f) * speed);
-        if (Input::isKeyPressed(SDL_SCANCODE_RIGHT)) camera->move(Vector3(-1.0f, 0.0f, 0.0f) * speed);
-    }
-    else
-    {
-        // First and Third person view
-        Matrix44 pitch_matrix;
-        pitch_matrix.setRotation(pitch, Vector3(-1.0f, 0.0f, 0.0f)); // Pitch rotation
-
-        Matrix44 yaw_matrix;
-        yaw_matrix.setRotation(yaw, Vector3(0.0f, 1.0f, 0.0f)); // Yaw rotation
-
-        // Combine pitch and yaw rotations
-        Matrix44 final_rotation = pitch_matrix * yaw_matrix;
-
-        // Update camera position to follow the player
-        Vector3 front = final_rotation.frontVector().normalize();
-
-        Vector3 eye;
-        // First person view
-        if (camera->first_person_mode_front) {
-            eye = world->player->model.getTranslation() + Vector3(0.0f, 3.5f, 0.0f) + front; // Adjust height to player's eye level
-        }
-        else { // Third person view
-            eye = world->player->model.getTranslation() + Vector3(0.0f, 4.5f, 0.0f) - 10 * front;
+            camera->rotate(yaw, Vector3(0.0f, 1.0f, 0.0f));
+            camera->rotate(pitch, camera->getLocalVector(Vector3(1.0f, 0.0f, 0.0f)));
         }
 
 
-        float smoothingFactor = 0.5f; // Adjust this factor for smoother transitions (between 0 and 1)
+        // Toggle between first person and third person view when 'C' is pressed
+        if (Input::wasKeyPressed(SDL_SCANCODE_C))
+        {
+            Game::instance->mouse_locked = !Game::instance->mouse_locked;
+            SDL_ShowCursor(!Game::instance->mouse_locked);
+            SDL_SetRelativeMouseMode((SDL_bool)(Game::instance->mouse_locked));
+            camera->default_camera = !camera->default_camera;
+            if (camera->default_camera == true) {
+                //Set the default position of the camera
+                camera->lookAt(Vector3(0.f, 100.f, 100.f), Vector3(0.f, 0.f, 0.f), Vector3(0.f, 1.f, 0.f));
+                camera->setPerspective(70.f, Game::instance->window_width / (float)Game::instance->window_height, 0.1f, 10000.f);
+            }
+        }
 
-        // Interpolate current position towards the target position
-        eye = lerp(eye, camera->eye, smoothingFactor * second_elapsed);
+        if (Input::wasKeyPressed(SDL_SCANCODE_X))
+        {
+            camera->first_person_mode_front = !camera->first_person_mode_front;
+        }
 
-        //Do ray tracing in case tha camera in third person enters a wall.
-        Vector3 center = eye + front;
+        if (camera->default_camera)
+        {
+            if (Input::isKeyPressed(SDL_SCANCODE_LSHIFT)) speed *= 10; //move faster with left shift
+            if (Input::isKeyPressed(SDL_SCANCODE_UP)) camera->move(Vector3(0.0f, 0.0f, 1.0f) * speed);
+            if (Input::isKeyPressed(SDL_SCANCODE_DOWN)) camera->move(Vector3(0.0f, 0.0f, -1.0f) * speed);
+            if (Input::isKeyPressed(SDL_SCANCODE_LEFT)) camera->move(Vector3(1.0f, 0.0f, 0.0f) * speed);
+            if (Input::isKeyPressed(SDL_SCANCODE_RIGHT)) camera->move(Vector3(-1.0f, 0.0f, 0.0f) * speed);
+        }
+        else
+        {
+            // First and Third person view
+            Matrix44 pitch_matrix;
+            pitch_matrix.setRotation(pitch, Vector3(-1.0f, 0.0f, 0.0f)); // Pitch rotation
 
-        center = lerp(center, camera->center, smoothingFactor * second_elapsed);
+            Matrix44 yaw_matrix;
+            yaw_matrix.setRotation(yaw, Vector3(0.0f, 1.0f, 0.0f)); // Yaw rotation
 
-        // Update the camera position
-        camera->lookAt(eye, center, Vector3(0, 1, 0));
+            // Combine pitch and yaw rotations
+            Matrix44 final_rotation = pitch_matrix * yaw_matrix;
+
+            // Update camera position to follow the player
+            Vector3 front = final_rotation.frontVector().normalize();
+
+            Vector3 eye;
+            // First person view
+            if (camera->first_person_mode_front) {
+                eye = world->player->model.getTranslation() + Vector3(0.0f, 3.5f, 0.0f) + front; // Adjust height to player's eye level
+            }
+            else { // Third person view
+                eye = world->player->model.getTranslation() + Vector3(0.0f, 4.5f, 0.0f) - 10 * front;
+            }
+
+
+            float smoothingFactor = 0.5f; // Adjust this factor for smoother transitions (between 0 and 1)
+
+            // Interpolate current position towards the target position
+            eye = lerp(eye, camera->eye, smoothingFactor * second_elapsed);
+
+            //Do ray tracing in case tha camera in third person enters a wall.
+            Vector3 center = eye + front;
+
+            center = lerp(center, camera->center, smoothingFactor * second_elapsed);
+
+            // Update the camera position
+            camera->lookAt(eye, center, Vector3(0, 1, 0));
+        }
+
+        world->setCamerayaw(camera);
+        world->updateCubemap(camera);
     }
-
-    world->setCamerayaw(camera);
-    world->updateCubemap(camera);
 }
 
 void updateCameraPosition(Camera* camera, Vector3 targetEye, Vector3 targetCenter, float deltaTime) {
