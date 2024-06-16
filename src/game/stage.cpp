@@ -62,7 +62,6 @@ void EndStage::update(float seconds_elapsed){
 
     if ((Input::wasKeyPressed(SDL_SCANCODE_SPACE) && this->current_img == this->images.size() - 1) || Input::wasKeyPressed(SDL_SCANCODE_Q)) {
         Game::instance->goToStage(LEVEL_STAGE);
-        onExit();
     }
 }
 void EndStage::render(){
@@ -117,8 +116,7 @@ void TitleStage::update(float seconds_elapsed) {
         this->timer = time_to_wait;
     }
     if ((Input::wasKeyPressed(SDL_SCANCODE_SPACE) && this->current_img == this->images.size() - 1) || Input::wasKeyPressed(SDL_SCANCODE_Q)) {
-        Game::instance->goToStage(LEVEL_STAGE);
-        onExit();
+        Game::instance->goToStage(LEVEL_STAGE);;
     }
 
 }
@@ -177,14 +175,11 @@ void LevelStage::update(float second_elapsed) {
 
     if (world->end_reached) {
         Game::instance->goToStage(END_STAGE);
-        onExit();
     }
     if(world->restart_all){
         Game::instance->goToStage(TITLE_STAGE);
-        onExit();
     }
     if (world->restart_level) {
-        onExit();
         Game::instance->goToStage(LEVEL_STAGE);
     }
 
