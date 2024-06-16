@@ -27,6 +27,7 @@ public:
 	eButtonId button_type;
 
 	void render(Camera* camera);
+	void updateUI(float elapsed_time);
 
 private:
 };

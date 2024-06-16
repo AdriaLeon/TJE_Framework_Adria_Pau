@@ -80,3 +80,45 @@ void EntityUI::render(Camera* camera) {
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 }
+
+void EntityUI::updateUI(float elapsed_time) {
+	Vector2 mouse_pos = Input::mouse_position;
+
+	if (this->button_type != UndefinedButton && mouse_pos.x > (position.x - size.x * 0.5) && mouse_pos.x < (position.x + size.x * 0.5) && mouse_pos.y >(position.y - size.y * 0.5) && mouse_pos.y < (position.y + size.y * 0.5)) {
+		/*
+		if (Input::isMousePressed(SDL_BUTTON_LEFT) && !stage->mouse_clicked) {
+			stage->mouse_clicked = true;
+			switch (button_id) {
+			case PlayButton:
+				stage->play_button_pressed = true;
+				break;
+			case OptionsButton:
+				stage->options = true;
+				break;
+			case ExitButton:
+				stage->options = false;
+				break;
+			case KeyWalk:
+				stage->selected_keybind = StageManager::WALK;
+				stage->keybinds[stage->selected_keybind] = true;
+				break;
+			case KeyJump:
+				stage->selected_keybind = StageManager::JUMP;
+				stage->keybinds[stage->selected_keybind] = true;
+				break;
+			case KeyDash:
+				stage->selected_keybind = StageManager::DASH;
+				stage->keybinds[stage->selected_keybind] = true;
+				break;
+			case KeyShoot:
+				stage->selected_keybind = StageManager::SHOOT;
+				stage->keybinds[stage->selected_keybind] = true;
+				break;
+			case KeyAuto:
+				stage->selected_keybind = StageManager::AUTO;
+				stage->keybinds[stage->selected_keybind] = true;
+				break;
+			}
+			*/
+	}
+}
